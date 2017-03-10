@@ -1,0 +1,54 @@
+---
+
+models:
+
+- operationSignature: ENTITY_SEARCH(INSTANCE)
+  scoreFunction: A
+  maxResults: 1
+
+  rankings:
+  - id: A
+    specificRankingModelType: LEVENSHTEIN
+    threshold:
+      type: MIN
+      value: 0
+
+
+- operationSignature: FILTER(INSTANCE)
+  scoreFunction: A
+  maxResults: 1000
+
+  rankings:
+  - id: A
+    specificRankingModelType: W2V
+    weight: 0.9
+    threshold:
+      type: MIN
+      value: 0.8
+
+
+- operationSignature: FILTER_BY_CLASS(INSTANCE, CLASS)
+  scoreFunction: A
+  maxResults: 1000
+
+  rankings:
+  - id: A
+    specificRankingModelType: W2V
+    weight: 0.9
+    threshold:
+      type: MIN
+      value: 0.8
+
+
+
+- operationSignature: PIVOTED_SEARCH(INSTANCE, PROPERTY)
+  scoreFunction: A
+  maxResults: 500
+
+  rankings:
+
+  - id: A
+    specificRankingModelType: W2V
+    threshold:
+      type: AUTO
+

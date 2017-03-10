@@ -1,0 +1,41 @@
+<configuration debug="false" scan="false">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} %-5level|%logger{45} %M - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/stargraph.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>../logs/stargraph.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <pattern>%d{yyyyMMdd-HH:mm:ss.SSS} %-5level %logger{0} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="TRACE">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <logger name="net.stargraph" level="INFO" additivity="true">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.elasticsearch" level="INFO" additivity="true"/>
+    <logger name="org.apache" level="WARN" additivity="true"/>
+    <logger name="org.glassfish" level="WARN" additivity="true"/>
+    <logger name="io.netty" level="WARN" additivity="true"/>
+    <logger name="Jena" level="WARN" additivity="true"/>
+
+</configuration>

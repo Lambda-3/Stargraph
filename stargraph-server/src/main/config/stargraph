@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+cd "${0%/*}"
+
+BINDIR=`pwd`
+ROOTDIR="${BINDIR}/.."
+CONFDIR="${ROOTDIR}/conf"
+LIBDIR="${ROOTDIR}/lib"
+
+STARGRAPH_JAVA_OPTS=${STARGRAPH_JAVA_OPTS:--Xmx16g -Xms16g}
+echo "STARGRAPH_JAVA_OPTS: ${STARGRAPH_JAVA_OPTS}"
+
+cmd="java -jar -server ${STARGRAPH_JAVA_OPTS} \
+-Djava.net.preferIPv4Stack=true \
+-Dfile.encoding=UTF-8 \
+-Dlogback.configurationFile=${CONFDIR}/logback.xml \
+${LIBDIR}/${project.artifactId}-${project.version}.jar ${CONFDIR}/stargraph.conf"
+
+
+exec ${cmd}

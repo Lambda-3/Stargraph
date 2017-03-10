@@ -1,0 +1,49 @@
+[
+  {
+    "text": "Barack Obama.",
+    "nes": [
+      {
+        "value": "Barack Obama",
+        "cat": "PERSON"
+      }
+    ]
+  },
+  {
+    "text": "Barack Hussein Obama II (,; born August 4, 1961) is the 44th and current President of the United States, and the first African American to hold the office.",
+    "nes": [
+      {
+        "value": "Barack Hussein Obama",
+        "cat": "PERSON"
+      },
+      {
+        "value": "4, 1961",
+        "cat": "DATE"
+      },
+      {
+        "value": "current",
+        "cat": "DATE"
+      },
+      {
+        "value": "States",
+        "cat": "LOCATION"
+      },
+      {
+        "value": "African American",
+        "cat": "MISC"
+      }
+    ]
+  },
+  {
+    "text": "Born in Honolulu, Hawaii, Obama is a graduate of Columbia University and Harvard Law School, where Barack Hussein Obama served as president of the \"Harvard Law Review\".",
+    "nes": [
+      {
+        "value": "Honolulu Hawaii",
+        "cat": "LOCATION"
+      },
+      {
+        "value": "Columbia University Harvard Law School Harvard Law Review",
+        "cat": "ORGANIZATION"
+      }
+    ]
+  }
+]

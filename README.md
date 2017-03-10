@@ -1,6 +1,16 @@
-# Coming Soon!
+# StarGraph Project
 
-The team is working to remove all proprietary dependencies and make the source code available soon.
+Next NoSQL Database for the __Knowledge Heavy User__.
 
-# Stargraph
-StarGraph (aka *graph) is a graph database to query large Knowledge Graphs. Playing with Knowledge Graphs can be useful if you are developing AI applications or doing data analysis over complex domains. 
+- __stargraph-core__: Implements the Database Core Operations.
+- __stargraph-model__: Plugable data model representation.
+- __stargraph-server__: A REST like interface.
+
+## Runtime Dependencies
+
+- Elasticsearch server 5.x
+- Indra Service Endpoint
+- The Wordnet Database
+
+
+

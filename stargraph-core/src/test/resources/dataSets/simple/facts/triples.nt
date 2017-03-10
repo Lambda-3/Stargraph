@@ -1,0 +1,15 @@
+<http://dbpedia.org/resource/President_of_the_United_States> <http://dbpedia.org/property/incumbent> <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Armed_Forces> <http://dbpedia.org/property/commanderInChief> <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Barack_Obama> <http://dbpedia.org/property/name> "Barack Obama"@en .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/name> "Sergio"@en .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/lastname> "Malandro"@en .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/job> "Funny Man"@en .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/age> "60"^^<http://www.w3.org/2001/XMLSchema#integer> .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/homepage> <http://example.com/> .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/homepage> <http://example.com> .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/ageInSeconds> "1892160000"^^<http://dbpedia.org/datatype/seconds> .
+<http://dbpedia.org/resource/Sergio> <http://dbpedia.org/property/_> "No Scoring"@en .
+<http://dbpedia.org/resource/%22Sergio%22> <http://dbpedia.org/property/any> "Whatever"@en .
+<http://dbpedia.org/example/File:Sergio.jpg> <http://dbpedia.org/property/name> "Sergio.jpg"@en .
+<http://dbpedia.org/example/File:Sergio.png> <http://dbpedia.org/property/thumbnail> "Sergio.png"@en .
+<http://dbpedia.org/resource/1939_Stanley_Cup_Finals> <http://dbpedia.org/property/1–3–_> "Bobby Bauer, 2 – 16:31"@en .
