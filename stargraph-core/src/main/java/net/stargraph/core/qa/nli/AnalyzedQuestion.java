@@ -16,4 +16,12 @@ public final class AnalyzedQuestion {
     void addAnnotations(List<Word> annotatedWords) {
         this.annotatedWords = Objects.requireNonNull(annotatedWords);
     }
+
+    @Override
+    public String toString() {
+        return "AnalyzedQuestion{" +
+                "question='" + question + '\'' +
+                ", annotatedWords=" + annotatedWords +
+                '}';
+    }
 }

@@ -23,7 +23,7 @@ public final class QuestionAnalyzer {
     public AnalyzedQuestion analyse(String question) {
         AnalyzedQuestion analyzed = new AnalyzedQuestion(question);
         analyzed.addAnnotations(annotator.run(language, question));
-        return null;
+        return analyzed;
     }
 
 }
