@@ -1,7 +1,8 @@
 package net.stargraph.core.qa.annotator;
 
+import net.stargraph.Language;
 import net.stargraph.StarGraphException;
-import net.stargraph.core.qa.Language;
+import net.stargraph.UnsupportedLanguageException;
 
 import java.util.HashSet;
 
@@ -18,8 +19,9 @@ public abstract class PartOfSpeechSet extends HashSet<POSTag> {
                 return EnglishPOSSet.getInstance();
             case DE:
             case PT:
-                throw new StarGraphException("Not Implemented yet!");
+                throw new UnsupportedLanguageException(language);
+            default:
+                throw new StarGraphException("Unknown Language: '" + language + "'");
         }
-        throw new StarGraphException("NO Part Of Speech Set defined for '" + language + "'");
     }
 }

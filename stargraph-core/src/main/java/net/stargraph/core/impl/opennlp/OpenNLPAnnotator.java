@@ -2,7 +2,7 @@ package net.stargraph.core.impl.opennlp;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
-import net.stargraph.core.qa.Language;
+import net.stargraph.Language;
 import net.stargraph.core.qa.annotator.Annotator;
 import net.stargraph.core.qa.annotator.PartOfSpeechSet;
 import net.stargraph.core.qa.annotator.Word;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class OpenNLPAnnotator implements Annotator {
@@ -33,6 +34,7 @@ public final class OpenNLPAnnotator implements Annotator {
     private File modelsDir;
 
     public OpenNLPAnnotator(Config config) {
+        Objects.requireNonNull(config);
         this.tokenizerModels = new ConcurrentHashMap<>();
         this.posModels = new ConcurrentHashMap<>();
         this.modelsDir = new File(config.getString("opennlp.models-dir"));

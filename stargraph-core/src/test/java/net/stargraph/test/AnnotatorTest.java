@@ -1,8 +1,9 @@
 package net.stargraph.test;
 
 import com.typesafe.config.ConfigFactory;
+import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
-import net.stargraph.core.qa.Language;
+import net.stargraph.Language;
 import net.stargraph.core.qa.annotator.Annotator;
 import net.stargraph.core.qa.annotator.Word;
 import org.testng.Assert;
@@ -31,9 +32,9 @@ public final class AnnotatorTest {
         Assert.assertEquals(annotatedWords, expected);
     }
 
-    @Test(enabled = false)
+    @Test(expectedExceptions = UnsupportedLanguageException.class)
     public void germanTest() {
         Annotator annotator = new OpenNLPAnnotator(ConfigFactory.load().getConfig("stargraph"));
-        List<Word> annotatedWords = annotator.run(Language.DE, "Wir haben zusammen noch keine Schweine gehütet!");
+        annotator.run(Language.DE, "Wir haben zusammen noch keine Schweine gehütet!");
     }
 }

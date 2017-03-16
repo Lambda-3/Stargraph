@@ -1,4 +1,4 @@
-package net.stargraph.core.qa;
+package net.stargraph;
 
 public enum Language {
 

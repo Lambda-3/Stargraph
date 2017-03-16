@@ -1,6 +1,6 @@
 package net.stargraph.core.qa.annotator;
 
-import net.stargraph.core.qa.Language;
+import net.stargraph.Language;
 
 import java.util.List;
 
