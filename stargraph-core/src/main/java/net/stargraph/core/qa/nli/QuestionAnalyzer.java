@@ -10,14 +10,14 @@ import java.util.Objects;
 public final class QuestionAnalyzer {
     private Language language;
     private Annotator annotator;
-    private List<SyntaticRule> syntaticRules;
-    private List<QueryPlan> queryPlans;
+    private List<DataModelTypePattern> dataModelTypePatterns;
+    private List<QueryPlanPattern> queryPlanPatterns;
 
     public QuestionAnalyzer(Language language, Annotator annotator, Rules rules) {
         this.language = Objects.requireNonNull(language);
         this.annotator = Objects.requireNonNull(annotator);
-        this.syntaticRules = rules.getSyntaticRules(language);
-        this.queryPlans = rules.getQueryPlans(language);
+        this.dataModelTypePatterns = rules.getDataModelTypeRules(language);
+        this.queryPlanPatterns = rules.getQueryPlanRules(language);
     }
 
     public AnalyzedQuestion analyse(String question) {

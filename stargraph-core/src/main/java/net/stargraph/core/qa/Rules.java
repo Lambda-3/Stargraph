@@ -6,62 +6,68 @@ import com.typesafe.config.ConfigValue;
 import net.stargraph.Language;
 import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.qa.nli.DataModelType;
-import net.stargraph.core.qa.nli.QueryPlan;
-import net.stargraph.core.qa.nli.SyntaticRule;
+import net.stargraph.core.qa.nli.QueryPlanPattern;
+import net.stargraph.core.qa.nli.DataModelTypePattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Rules {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("qa");
 
-    private Map<Language, List<SyntaticRule>> syntaticRules;
-    private Map<Language, List<QueryPlan>> queryPlans;
+    private Map<Language, List<DataModelTypePattern>> dataModelTypePatterns;
+    private Map<Language, List<QueryPlanPattern>> queryPlanPatterns;
 
     public Rules(Config config) {
         logger.info(marker, "Loading Rules.");
-        this.syntaticRules = loadRules(Objects.requireNonNull(config));
-        this.queryPlans = loadPlans(Objects.requireNonNull(config));
+        this.dataModelTypePatterns = loadDataModelTypePatterns(Objects.requireNonNull(config));
+        this.queryPlanPatterns = loadQueryPlanPatterns(Objects.requireNonNull(config));
     }
 
-    public List<SyntaticRule> getSyntaticRules(Language language) {
-        if (syntaticRules.containsKey(language)) {
-            return syntaticRules.get(language);
+    public List<DataModelTypePattern> getDataModelTypeRules(Language language) {
+        if (dataModelTypePatterns.containsKey(language)) {
+            return dataModelTypePatterns.get(language);
         }
         throw new UnsupportedLanguageException(language);
     }
 
-    public List<QueryPlan> getQueryPlans(Language language) {
-        if (queryPlans.containsKey(language)) {
-            return queryPlans.get(language);
+    public List<QueryPlanPattern> getQueryPlanRules(Language language) {
+        if (queryPlanPatterns.containsKey(language)) {
+            return queryPlanPatterns.get(language);
         }
         throw new UnsupportedLanguageException(language);
     }
 
-    private Map<Language, List<SyntaticRule>> loadRules(Config config) {
-        Map<Language, List<SyntaticRule>> rulesByLang = new HashMap<>();
-        ConfigObject configObject = config.getObject("syntatic-patterns");
+    private Map<Language, List<DataModelTypePattern>> loadDataModelTypePatterns(Config config) {
+        Map<Language, List<DataModelTypePattern>> rulesByLang = new HashMap<>();
+        ConfigObject configObject = config.getObject("rules.syntatic-pattern");
 
         configObject.keySet().forEach(strLang -> {
             Language language = Language.valueOf(strLang.toUpperCase());
 
             rulesByLang.compute(language, (l, r) -> {
 
-                List<SyntaticRule> rules = new ArrayList<>();
+                List<DataModelTypePattern> rules = new ArrayList<>();
                 List<? extends Config> patternCfg = configObject.toConfig().getConfigList(strLang);
 
                 for (Config cfg : patternCfg) {
                     Map.Entry<String, ConfigValue> entry = cfg.entrySet().stream().findFirst().orElse(null);
-                    String patternStr = entry.getKey();
-                    String modelStr = (String) entry.getValue().unwrapped();
-                    rules.add(new SyntaticRule(patternStr, DataModelType.valueOf(modelStr)));
+                    String modelStr = entry.getKey();
+                    @SuppressWarnings("unchecked")
+                    List<String> patternList = (List<String>) entry.getValue().unwrapped();
+                    rules.addAll(patternList.stream()
+                            .map(p -> new DataModelTypePattern(p, DataModelType.valueOf(modelStr)))
+                            .collect(Collectors.toList()));
                 }
 
-                logger.info(marker, "Loaded {} syntatic patterns for '{}'", rules.size(), l);
+                logger.trace(marker, "All rules for '{}': {}", l, rules);
+
+                logger.info(marker, "Loaded {} Data Model Type patterns for '{}'", rules.size(), l);
 
                 return rules;
             });
@@ -71,30 +77,30 @@ public final class Rules {
         return rulesByLang;
     }
 
-    private Map<Language, List<QueryPlan>> loadPlans(Config config) {
-        Map<Language, List<QueryPlan>> plansByLang = new HashMap<>();
-        ConfigObject configObject = config.getObject("planner-patterns");
+    private Map<Language, List<QueryPlanPattern>> loadQueryPlanPatterns(Config config) {
+        Map<Language, List<QueryPlanPattern>> rulesByLang = new HashMap<>();
+        ConfigObject configObject = config.getObject("rules.planner-pattern");
 
         configObject.keySet().forEach(strLang -> {
             Language language = Language.valueOf(strLang.toUpperCase());
 
-            plansByLang.compute(language, (l, q) -> {
+            rulesByLang.compute(language, (l, q) -> {
 
-                List<QueryPlan> plans = new ArrayList<>();
+                List<QueryPlanPattern> plans = new ArrayList<>();
 
                 Config langCfg = configObject.toConfig().getConfig(strLang);
                 langCfg.entrySet().forEach(entry -> {
                     String patternStr = entry.getKey();
                     List<String> tripleStrList = langCfg.getStringList(patternStr);
-                    plans.add(new QueryPlan(patternStr, tripleStrList));
+                    plans.add(new QueryPlanPattern(patternStr, tripleStrList));
                 });
 
-                logger.info(marker, "Loaded {} plans patterns for '{}'", plans.size(), l);
+                logger.info(marker, "Loaded {} Query Plan patterns for '{}'", plans.size(), l);
 
                 return plans;
             });
         });
 
-        return plansByLang;
+        return rulesByLang;
     }
 }
