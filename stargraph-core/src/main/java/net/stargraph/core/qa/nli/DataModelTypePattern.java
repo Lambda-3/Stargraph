@@ -20,6 +20,11 @@ public final class DataModelTypePattern {
 		return dataModelType;
 	}
 
+	public boolean isLexical() {
+        return dataModelType == DataModelType.TYPE
+                || dataModelType == DataModelType.OPERATION || dataModelType == DataModelType.STOP;
+    }
+
     @Override
     public String toString() {
         return "DataModelTypePattern{" +
