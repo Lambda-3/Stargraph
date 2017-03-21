@@ -2,6 +2,7 @@ package net.stargraph.core.qa.nli;
 
 import net.stargraph.core.qa.annotator.Word;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -9,6 +10,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public final class QuestionView {
+    private static final Pattern punctPattern = Pattern.compile("[(){},.;!?<>%]");
+
     private List<Word> annotated;
     private String questionStr;
     private String posTagStr;
@@ -33,7 +36,21 @@ public final class QuestionView {
         return posTagStr;
     }
 
-    public QuestionView transform(DataModelTypePattern rule) {
+    QuestionView clean(List<Pattern> stopPatterns) {
+
+        stopPatterns.forEach(pattern -> {
+            Matcher matcher = pattern.matcher(questionStr);
+            if (matcher.matches()) {
+                questionStr = replace(pattern, questionStr, "").value;
+            }
+        });
+
+        questionStr = compact(questionStr);
+
+        return new QuestionView(annotated, questionStr, posTagStr);
+    }
+
+    QuestionView transform(DataModelTypePattern rule) {
         final DataModelType modelType = Objects.requireNonNull(rule).getDataModelType();
         final Pattern rulePattern = Pattern.compile(rule.getPattern());
 
@@ -42,15 +59,15 @@ public final class QuestionView {
             String newPosTagStr = posTagStr;
 
             if (rule.isLexical()) {
-                Replacement<String, String> replacement = replace(rulePattern, questionStr, modelType);
+                Replacement<String, String> replacement = replaceWithModelType(rulePattern, questionStr, modelType);
                 newQuestionStr = replacement.value;
             }
             else {
-                Replacement<String, String> posTagReplacement = replace(rulePattern, posTagStr, modelType);
+                Replacement<String, String> posTagReplacement = replaceWithModelType(rulePattern, posTagStr, modelType);
                 newPosTagStr = posTagReplacement.value;
 
                 Pattern qPattern = findQuestionPattern(posTagReplacement);
-                Replacement<String, String> questionReplacement = replace(qPattern, questionStr, modelType);
+                Replacement<String, String> questionReplacement = replaceWithModelType(qPattern, questionStr, modelType);
                 newQuestionStr = questionReplacement.value;
             }
 
@@ -84,14 +101,18 @@ public final class QuestionView {
         return m1.matches() || m2.matches();
     }
 
-    private Replacement<String, String> replace(Pattern pattern, String target, DataModelType modelType) {
+    private Replacement<String, String> replaceWithModelType(Pattern pattern, String target, DataModelType modelType) {
         String placeHolder = createPlaceholder(target, modelType);
+        return replace(pattern, target, placeHolder);
+    }
+
+    private Replacement<String, String> replace(Pattern pattern, String target, String replacementStr) {
         Matcher matcher = pattern.matcher(target);
         if (matcher.matches()) {
-            // As we expect just one capture capture per pattern this will replace the capture by the desired replacement.
+            // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
             StringBuffer sb = new StringBuffer();
             String capturedStr = matcher.group(1);
-            matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), placeHolder));
+            matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), replacementStr));
             matcher.appendTail(sb);
             return new Replacement<>(sb.toString(), capturedStr);
         }
@@ -106,6 +127,18 @@ public final class QuestionView {
         }
         return placeHolder;
     }
+
+    private String compact(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        String punctLess = punctPattern.matcher(str).replaceAll(" ");
+
+        return Arrays.stream(punctLess.split("\\s")).map(String::trim)
+                .filter(s -> !s.isEmpty()).collect(Collectors.joining(" "));
+    }
+
 
     @Override
     public String toString() {

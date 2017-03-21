@@ -6,6 +6,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public final class AnalyzedQuestion {
     private String question;
@@ -24,6 +25,13 @@ public final class AnalyzedQuestion {
 
     void transform(DataModelTypePattern rule) {
         QuestionView newView = views.peek().transform(rule);
+        if (newView != null) {
+            views.push(newView);
+        }
+    }
+
+    void clean(List<Pattern> stopPatterns) {
+        QuestionView newView = views.peek().clean(stopPatterns);
         if (newView != null) {
             views.push(newView);
         }

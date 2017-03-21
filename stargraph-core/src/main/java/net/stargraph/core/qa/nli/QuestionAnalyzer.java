@@ -10,6 +10,7 @@ import org.slf4j.MarkerFactory;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public final class QuestionAnalyzer {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -19,12 +20,14 @@ public final class QuestionAnalyzer {
     private Annotator annotator;
     private List<DataModelTypePattern> dataModelTypePatterns;
     private List<QueryPlanPattern> queryPlanPatterns;
+    private List<Pattern> stopPatterns;
 
     public QuestionAnalyzer(Language language, Annotator annotator, Rules rules) {
         this.language = Objects.requireNonNull(language);
         this.annotator = Objects.requireNonNull(annotator);
         this.dataModelTypePatterns = rules.getDataModelTypeRules(language);
         this.queryPlanPatterns = rules.getQueryPlanRules(language);
+        this.stopPatterns = rules.getStopRules(language);
     }
 
     public AnalyzedQuestion analyse(String question) {
@@ -32,7 +35,12 @@ public final class QuestionAnalyzer {
         AnalyzedQuestion analyzed = new AnalyzedQuestion(question);
         analyzed.addAnnotations(annotator.run(language, question));
         resolveDataModel(analyzed);
+        cleanup(analyzed);
         return analyzed;
+    }
+
+    private void cleanup(AnalyzedQuestion analyzedQuestion) {
+        analyzedQuestion.clean(stopPatterns);
     }
 
     private void resolveDataModel(AnalyzedQuestion analyzedQuestion) {

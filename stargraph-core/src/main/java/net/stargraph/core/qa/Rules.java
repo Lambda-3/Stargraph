@@ -6,14 +6,15 @@ import com.typesafe.config.ConfigValue;
 import net.stargraph.Language;
 import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.qa.nli.DataModelType;
-import net.stargraph.core.qa.nli.QueryPlanPattern;
 import net.stargraph.core.qa.nli.DataModelTypePattern;
+import net.stargraph.core.qa.nli.QueryPlanPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public final class Rules {
@@ -22,11 +23,13 @@ public final class Rules {
 
     private Map<Language, List<DataModelTypePattern>> dataModelTypePatterns;
     private Map<Language, List<QueryPlanPattern>> queryPlanPatterns;
+    private Map<Language, List<Pattern>> stopPatterns;
 
     public Rules(Config config) {
         logger.info(marker, "Loading Rules.");
         this.dataModelTypePatterns = loadDataModelTypePatterns(Objects.requireNonNull(config));
         this.queryPlanPatterns = loadQueryPlanPatterns(Objects.requireNonNull(config));
+        this.stopPatterns = loadStopPatterns(config);
     }
 
     public List<DataModelTypePattern> getDataModelTypeRules(Language language) {
@@ -39,6 +42,13 @@ public final class Rules {
     public List<QueryPlanPattern> getQueryPlanRules(Language language) {
         if (queryPlanPatterns.containsKey(language)) {
             return queryPlanPatterns.get(language);
+        }
+        throw new UnsupportedLanguageException(language);
+    }
+
+    public List<Pattern> getStopRules(Language language) {
+        if (stopPatterns.containsKey(language)) {
+            return stopPatterns.get(language);
         }
         throw new UnsupportedLanguageException(language);
     }
@@ -102,5 +112,23 @@ public final class Rules {
         });
 
         return rulesByLang;
+    }
+
+    private Map<Language, List<Pattern>> loadStopPatterns(Config config) {
+        Map<Language, List<Pattern>> stopByLang = new HashMap<>();
+        ConfigObject configObject = config.getObject("rules.stop-pattern");
+
+        configObject.keySet().forEach(strLang -> {
+            Language language = Language.valueOf(strLang.toUpperCase());
+            List<String> patternStr = configObject.toConfig().getStringList(strLang);
+
+            stopByLang.compute(language,
+                    (lang, pattern) -> patternStr.stream().map(Pattern::compile).collect(Collectors.toList()));
+
+            logger.info(marker, "Loaded {} Stop patterns for '{}'", stopByLang.get(language).size(), language);
+
+        });
+
+        return stopByLang;
     }
 }
