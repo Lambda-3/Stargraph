@@ -13,7 +13,7 @@ public final class AnalyzedQuestion {
     private List<Word> annotatedWords;
     private Deque<QuestionView> views;
 
-    public AnalyzedQuestion(String question) {
+    AnalyzedQuestion(String question) {
         this.question = Objects.requireNonNull(question);
         this.views = new ArrayDeque<>();
     }
@@ -39,16 +39,16 @@ public final class AnalyzedQuestion {
         }
     }
 
-    public QuestionView getView() {
+    private QuestionView getLast() {
         return views.peek();
     }
 
     @Override
     public String toString() {
         return "AnalyzedQuestion{" +
-                "question='" + question + '\'' +
-                ", annotatedWords=" + annotatedWords +
-                ", posView='" + views.peek() + '\'' +
+                "q='" + question + '\'' +
+                ", POS=" + annotatedWords +
+                ", Bindings='" + getLast().getBindings() + '\'' +
                 '}';
     }
 }

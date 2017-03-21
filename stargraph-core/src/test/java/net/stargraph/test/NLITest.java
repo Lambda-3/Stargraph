@@ -14,7 +14,7 @@ public final class NLITest {
         Analyzers analyzers = new Analyzers(ConfigFactory.load().getConfig("stargraph"));
         QuestionAnalyzer analyzer = analyzers.getQuestionAnalyzer(Language.EN);
         AnalyzedQuestion analyzed = analyzer.analyse("Who is the wife of Barack Obama?");
-        System.out.println(analyzed.getView());
+        System.out.println(analyzed);
     }
 
 }

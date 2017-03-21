@@ -28,12 +28,12 @@ public final class QuestionView {
                 annotated.stream().map(w -> w.getPosTag().getTag()).collect(Collectors.joining(" ")));
     }
 
-    public String getQuestion() {
-        return questionStr;
-    }
-
-    public String getPosTag() {
-        return posTagStr;
+    public List<DataModelBinding> getBindings() {
+        return Arrays.stream(questionStr.split("\\s"))
+                .map(this::getBinding)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     QuestionView clean(List<Pattern> stopPatterns) {
@@ -144,6 +144,9 @@ public final class QuestionView {
                 .filter(s -> !s.isEmpty()).collect(Collectors.joining(" "));
     }
 
+    private Optional<DataModelBinding> getBinding(String term) {
+        return dataModelBindings.stream().filter(binding -> binding.getPlaceHolder().equals(term)).findFirst();
+    }
 
     @Override
     public String toString() {
