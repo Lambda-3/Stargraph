@@ -29,7 +29,7 @@ public final class QuestionAnalyzer {
 
     public AnalyzedQuestion analyse(String question) {
         logger.info(marker, "Analyzing '{}'", Objects.requireNonNull(question));
-        AnalyzedQuestion analyzed = new AnalyzedQuestion(language, question);
+        AnalyzedQuestion analyzed = new AnalyzedQuestion(question);
         analyzed.addAnnotations(annotator.run(language, question));
         resolveDataModel(analyzed);
         return analyzed;

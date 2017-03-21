@@ -1,6 +1,5 @@
 package net.stargraph.core.qa.nli;
 
-import net.stargraph.Language;
 import net.stargraph.core.qa.annotator.Word;
 
 import java.util.ArrayDeque;
@@ -10,12 +9,10 @@ import java.util.Objects;
 
 public final class AnalyzedQuestion {
     private String question;
-    private Language language;
     private List<Word> annotatedWords;
     private Deque<QuestionView> views;
 
-    public AnalyzedQuestion(Language language, String question) {
-        this.language = Objects.requireNonNull(language);
+    public AnalyzedQuestion(String question) {
         this.question = Objects.requireNonNull(question);
         this.views = new ArrayDeque<>();
     }
