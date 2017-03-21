@@ -2,9 +2,7 @@ package net.stargraph.core.qa.nli;
 
 import net.stargraph.core.qa.annotator.Word;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,15 +13,17 @@ public final class QuestionView {
     private List<Word> annotated;
     private String questionStr;
     private String posTagStr;
+    private List<DataModelBinding> dataModelBindings;
 
-    private QuestionView(List<Word> annotated, String questionStr, String posTagStr) {
+    private QuestionView(List<DataModelBinding> dataModelBindings, List<Word> annotated, String questionStr, String posTagStr) {
+        this.dataModelBindings = Objects.requireNonNull(dataModelBindings);
         this.annotated = Objects.requireNonNull(annotated);
         this.questionStr = Objects.requireNonNull(questionStr);
         this.posTagStr = Objects.requireNonNull(posTagStr);
     }
 
     public QuestionView(List<Word> annotated) {
-        this(Objects.requireNonNull(annotated),
+        this(Collections.emptyList(), Objects.requireNonNull(annotated),
                 annotated.stream().map(Word::getText).collect(Collectors.joining(" ")),
                 annotated.stream().map(w -> w.getPosTag().getTag()).collect(Collectors.joining(" ")));
     }
@@ -47,37 +47,43 @@ public final class QuestionView {
 
         questionStr = compact(questionStr);
 
-        return new QuestionView(annotated, questionStr, posTagStr);
+        return new QuestionView(dataModelBindings, annotated, questionStr, posTagStr);
     }
 
-    QuestionView transform(DataModelTypePattern rule) {
+    QuestionView resolve(DataModelTypePattern rule) {
         final DataModelType modelType = Objects.requireNonNull(rule).getDataModelType();
         final Pattern rulePattern = Pattern.compile(rule.getPattern());
+
+        final List<DataModelBinding> bindings = new LinkedList<>(dataModelBindings);
 
         if (matches(rulePattern)) {
             String newQuestionStr;
             String newPosTagStr = posTagStr;
 
             if (rule.isLexical()) {
-                Replacement<String, String> replacement = replaceWithModelType(rulePattern, questionStr, modelType);
+                String placeHolder = createPlaceholder(questionStr, modelType);
+                Replacement replacement = replace(rulePattern, questionStr, placeHolder);
                 newQuestionStr = replacement.value;
             }
             else {
-                Replacement<String, String> posTagReplacement = replaceWithModelType(rulePattern, posTagStr, modelType);
+                String placeHolder = createPlaceholder(posTagStr, modelType);
+                Replacement posTagReplacement = replace(rulePattern, posTagStr, placeHolder);
                 newPosTagStr = posTagReplacement.value;
 
-                Pattern qPattern = findQuestionPattern(posTagReplacement);
-                Replacement<String, String> questionReplacement = replaceWithModelType(qPattern, questionStr, modelType);
+                String subStr = findSubStr(posTagReplacement);
+                Replacement questionReplacement = replace(subStr, questionStr, placeHolder);
                 newQuestionStr = questionReplacement.value;
+
+                bindings.add(new DataModelBinding(modelType, subStr, placeHolder));
             }
 
-            return new QuestionView(annotated, newQuestionStr, newPosTagStr);
+            return new QuestionView(bindings, annotated, newQuestionStr, newPosTagStr);
         }
 
         return null;
     }
 
-    private Pattern findQuestionPattern(Replacement<String, String> replacement) {
+    private String findSubStr(Replacement replacement) {
         String[] capture = Objects.requireNonNull(replacement).capture.split("\\s");
         int startIdx = 0;
         String subStr = null;
@@ -92,7 +98,7 @@ public final class QuestionView {
             startIdx++;
         }
 
-        return subStr != null ? Pattern.compile(String.format("^.+(%s).+$", subStr)) : null;
+        return subStr;
     }
 
     private boolean matches(Pattern pattern) {
@@ -101,12 +107,11 @@ public final class QuestionView {
         return m1.matches() || m2.matches();
     }
 
-    private Replacement<String, String> replaceWithModelType(Pattern pattern, String target, DataModelType modelType) {
-        String placeHolder = createPlaceholder(target, modelType);
-        return replace(pattern, target, placeHolder);
+    private Replacement replace(String subStr, String target, String replacementStr) {
+        return replace(Pattern.compile(String.format("^.+(%s).+$", Objects.requireNonNull(subStr))), target, replacementStr);
     }
 
-    private Replacement<String, String> replace(Pattern pattern, String target, String replacementStr) {
+    private Replacement replace(Pattern pattern, String target, String replacementStr) {
         Matcher matcher = pattern.matcher(target);
         if (matcher.matches()) {
             // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
@@ -114,9 +119,9 @@ public final class QuestionView {
             String capturedStr = matcher.group(1);
             matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), replacementStr));
             matcher.appendTail(sb);
-            return new Replacement<>(sb.toString(), capturedStr);
+            return new Replacement(sb.toString(), capturedStr);
         }
-        return new Replacement<>(target, null);
+        return new Replacement(target, null);
     }
 
     private String createPlaceholder(String target, DataModelType modelType) {
@@ -148,11 +153,11 @@ public final class QuestionView {
                 '}';
     }
 
-    private static class Replacement<S, T> {
-        final S value;
-        final T capture;
+    private static class Replacement {
+        final String value;
+        final String capture;
 
-        Replacement(S value, T capture) {
+        Replacement(String value, String capture) {
             this.value = value;
             this.capture = capture;
         }

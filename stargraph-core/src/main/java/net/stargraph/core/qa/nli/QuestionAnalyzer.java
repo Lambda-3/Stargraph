@@ -33,17 +33,11 @@ public final class QuestionAnalyzer {
     public AnalyzedQuestion analyse(String question) {
         logger.info(marker, "Analyzing '{}'", Objects.requireNonNull(question));
         AnalyzedQuestion analyzed = new AnalyzedQuestion(question);
-        analyzed.addAnnotations(annotator.run(language, question));
-        resolveDataModel(analyzed);
-        cleanup(analyzed);
+        analyzed.annotate(annotator.run(language, question));
+        analyzed.resolve(dataModelTypePatterns);
+        analyzed.clean(stopPatterns);
         return analyzed;
     }
 
-    private void cleanup(AnalyzedQuestion analyzedQuestion) {
-        analyzedQuestion.clean(stopPatterns);
-    }
 
-    private void resolveDataModel(AnalyzedQuestion analyzedQuestion) {
-        dataModelTypePatterns.forEach(analyzedQuestion::transform);
-    }
 }

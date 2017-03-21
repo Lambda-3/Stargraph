@@ -18,16 +18,18 @@ public final class AnalyzedQuestion {
         this.views = new ArrayDeque<>();
     }
 
-    void addAnnotations(List<Word> annotatedWords) {
+    void annotate(List<Word> annotatedWords) {
         this.annotatedWords = Objects.requireNonNull(annotatedWords);
         this.views.add(new QuestionView(annotatedWords));
     }
 
-    void transform(DataModelTypePattern rule) {
-        QuestionView newView = views.peek().transform(rule);
-        if (newView != null) {
-            views.push(newView);
-        }
+    void resolve(List<DataModelTypePattern> rules) {
+        rules.forEach(rule -> {
+            QuestionView newView = views.peek().resolve(rule);
+            if (newView != null) {
+                views.push(newView);
+            }
+        });
     }
 
     void clean(List<Pattern> stopPatterns) {
