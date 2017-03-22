@@ -8,47 +8,47 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public final class AnalyzedQuestion {
+public final class QuestionAnalysis {
     private String question;
     private List<Word> annotatedWords;
-    private Deque<QuestionView> views;
+    private Deque<AnalysisStep> steps;
 
-    AnalyzedQuestion(String question) {
+    QuestionAnalysis(String question) {
         this.question = Objects.requireNonNull(question);
-        this.views = new ArrayDeque<>();
+        this.steps = new ArrayDeque<>();
     }
 
     void annotate(List<Word> annotatedWords) {
         this.annotatedWords = Objects.requireNonNull(annotatedWords);
-        this.views.add(new QuestionView(annotatedWords));
+        this.steps.add(new AnalysisStep(annotatedWords));
     }
 
     void resolve(List<DataModelTypePattern> rules) {
         rules.forEach(rule -> {
-            QuestionView newView = views.peek().resolve(rule);
-            if (newView != null) {
-                views.push(newView);
+            AnalysisStep step = steps.peek().resolve(rule);
+            if (step != null) {
+                steps.push(step);
             }
         });
     }
 
     void clean(List<Pattern> stopPatterns) {
-        QuestionView newView = views.peek().clean(stopPatterns);
-        if (newView != null) {
-            views.push(newView);
+        AnalysisStep step = steps.peek().clean(stopPatterns);
+        if (step != null) {
+            steps.push(step);
         }
     }
 
-    private QuestionView getLast() {
-        return views.peek();
+    public AnalysisStep getResult() {
+        return steps.peek();
     }
 
     @Override
     public String toString() {
-        return "AnalyzedQuestion{" +
+        return "Analysis{" +
                 "q='" + question + '\'' +
                 ", POS=" + annotatedWords +
-                ", Bindings='" + getLast().getBindings() + '\'' +
+                ", Bindings='" + getResult().getBindings() + '\'' +
                 '}';
     }
 }

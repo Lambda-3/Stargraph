@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class QuestionView {
+public final class AnalysisStep {
     private static final Pattern punctPattern = Pattern.compile("[(){},.;!?<>%]");
 
     private List<Word> annotated;
@@ -15,14 +15,14 @@ public final class QuestionView {
     private String posTagStr;
     private List<DataModelBinding> dataModelBindings;
 
-    private QuestionView(List<DataModelBinding> dataModelBindings, List<Word> annotated, String questionStr, String posTagStr) {
+    private AnalysisStep(List<DataModelBinding> dataModelBindings, List<Word> annotated, String questionStr, String posTagStr) {
         this.dataModelBindings = Objects.requireNonNull(dataModelBindings);
         this.annotated = Objects.requireNonNull(annotated);
         this.questionStr = Objects.requireNonNull(questionStr);
         this.posTagStr = Objects.requireNonNull(posTagStr);
     }
 
-    public QuestionView(List<Word> annotated) {
+    public AnalysisStep(List<Word> annotated) {
         this(Collections.emptyList(), Objects.requireNonNull(annotated),
                 annotated.stream().map(Word::getText).collect(Collectors.joining(" ")),
                 annotated.stream().map(w -> w.getPosTag().getTag()).collect(Collectors.joining(" ")));
@@ -36,7 +36,7 @@ public final class QuestionView {
                 .collect(Collectors.toList());
     }
 
-    QuestionView clean(List<Pattern> stopPatterns) {
+    AnalysisStep clean(List<Pattern> stopPatterns) {
 
         stopPatterns.forEach(pattern -> {
             Matcher matcher = pattern.matcher(questionStr);
@@ -47,10 +47,10 @@ public final class QuestionView {
 
         questionStr = compact(questionStr);
 
-        return new QuestionView(dataModelBindings, annotated, questionStr, posTagStr);
+        return new AnalysisStep(dataModelBindings, annotated, questionStr, posTagStr);
     }
 
-    QuestionView resolve(DataModelTypePattern rule) {
+    AnalysisStep resolve(DataModelTypePattern rule) {
         final DataModelType modelType = Objects.requireNonNull(rule).getDataModelType();
         final Pattern rulePattern = Pattern.compile(rule.getPattern());
 
@@ -77,7 +77,7 @@ public final class QuestionView {
                 bindings.add(new DataModelBinding(modelType, subStr, placeHolder));
             }
 
-            return new QuestionView(bindings, annotated, newQuestionStr, newPosTagStr);
+            return new AnalysisStep(bindings, annotated, newQuestionStr, newPosTagStr);
         }
 
         return null;
@@ -150,7 +150,7 @@ public final class QuestionView {
 
     @Override
     public String toString() {
-        return "QuestionView{" +
+        return "Step{" +
                 "questionStr='" + questionStr + '\'' +
                 ", posTagStr='" + posTagStr + '\'' +
                 '}';

@@ -1,7 +1,7 @@
 package net.stargraph.test;
 
 import net.stargraph.core.qa.annotator.Word;
-import net.stargraph.core.qa.nli.QuestionView;
+import net.stargraph.core.qa.nli.AnalysisStep;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class DataModelTypePatternsTest {
                 new Word(NNP, "Obama"),
                 new Word(PUNCT, "?"));
 
-        QuestionView view = new QuestionView(annotated);
+        AnalysisStep view = new AnalysisStep(annotated);
         System.out.println(view);
     }
 

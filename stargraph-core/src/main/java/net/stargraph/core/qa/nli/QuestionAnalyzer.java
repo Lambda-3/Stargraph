@@ -30,13 +30,13 @@ public final class QuestionAnalyzer {
         this.stopPatterns = rules.getStopRules(language);
     }
 
-    public AnalyzedQuestion analyse(String question) {
+    public QuestionAnalysis analyse(String question) {
         logger.info(marker, "Analyzing '{}'", Objects.requireNonNull(question));
-        AnalyzedQuestion analyzed = new AnalyzedQuestion(question);
-        analyzed.annotate(annotator.run(language, question));
-        analyzed.resolve(dataModelTypePatterns);
-        analyzed.clean(stopPatterns);
-        return analyzed;
+        QuestionAnalysis analysis = new QuestionAnalysis(question);
+        analysis.annotate(annotator.run(language, question));
+        analysis.resolve(dataModelTypePatterns);
+        analysis.clean(stopPatterns);
+        return analysis;
     }
 
 
