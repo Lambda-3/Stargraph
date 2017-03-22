@@ -1,11 +1,11 @@
-package net.stargraph.core.qa;
+package net.stargraph.core.query;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import net.stargraph.Language;
 import net.stargraph.UnsupportedLanguageException;
-import net.stargraph.core.qa.nli.*;
+import net.stargraph.core.query.nli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;

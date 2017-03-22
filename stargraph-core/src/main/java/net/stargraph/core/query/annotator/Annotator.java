@@ -1,4 +1,4 @@
-package net.stargraph.core.qa.annotator;
+package net.stargraph.core.query.annotator;
 
 import net.stargraph.Language;
 import net.stargraph.StarGraphException;

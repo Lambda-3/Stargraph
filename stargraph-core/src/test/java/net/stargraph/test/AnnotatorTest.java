@@ -4,15 +4,15 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
 import net.stargraph.Language;
-import net.stargraph.core.qa.annotator.Annotator;
-import net.stargraph.core.qa.annotator.Word;
+import net.stargraph.core.query.annotator.Annotator;
+import net.stargraph.core.query.annotator.Word;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static net.stargraph.core.qa.annotator.EnglishPOSSet.*;
+import static net.stargraph.core.query.annotator.EnglishPOSSet.*;
 
 public final class AnnotatorTest {
 

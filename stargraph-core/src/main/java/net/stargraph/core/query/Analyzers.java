@@ -1,10 +1,10 @@
-package net.stargraph.core.qa;
+package net.stargraph.core.query;
 
 import com.typesafe.config.Config;
 import net.stargraph.Language;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
-import net.stargraph.core.qa.annotator.Annotator;
-import net.stargraph.core.qa.nli.QuestionAnalyzer;
+import net.stargraph.core.query.annotator.Annotator;
+import net.stargraph.core.query.nli.QuestionAnalyzer;
 
 import java.util.concurrent.ConcurrentHashMap;
 

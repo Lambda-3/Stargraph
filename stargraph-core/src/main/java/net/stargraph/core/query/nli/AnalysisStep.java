@@ -1,6 +1,6 @@
-package net.stargraph.core.qa.nli;
+package net.stargraph.core.query.nli;
 
-import net.stargraph.core.qa.annotator.Word;
+import net.stargraph.core.query.annotator.Word;
 
 import java.util.*;
 import java.util.regex.Matcher;

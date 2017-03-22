@@ -1,4 +1,4 @@
-package net.stargraph.core.qa.nli;
+package net.stargraph.core.query.nli;
 
 import java.util.Objects;
 

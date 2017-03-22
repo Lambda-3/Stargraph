@@ -1,4 +1,4 @@
-package net.stargraph.core.qa.annotator;
+package net.stargraph.core.query.annotator;
 
 public final class EnglishPOSSet extends PartOfSpeechSet {
 

@@ -1,13 +1,13 @@
 package net.stargraph.test;
 
-import net.stargraph.core.qa.annotator.Word;
-import net.stargraph.core.qa.nli.AnalysisStep;
+import net.stargraph.core.query.annotator.Word;
+import net.stargraph.core.query.nli.AnalysisStep;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static net.stargraph.core.qa.annotator.EnglishPOSSet.*;
+import static net.stargraph.core.query.annotator.EnglishPOSSet.*;
 
 public class DataModelTypePatternsTest {
 

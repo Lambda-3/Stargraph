@@ -2,9 +2,9 @@ package net.stargraph.test;
 
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.Language;
-import net.stargraph.core.qa.Analyzers;
-import net.stargraph.core.qa.nli.QuestionAnalysis;
-import net.stargraph.core.qa.nli.QuestionAnalyzer;
+import net.stargraph.core.query.Analyzers;
+import net.stargraph.core.query.nli.QuestionAnalysis;
+import net.stargraph.core.query.nli.QuestionAnalyzer;
 import org.testng.annotations.Test;
 
 public final class NLITest {

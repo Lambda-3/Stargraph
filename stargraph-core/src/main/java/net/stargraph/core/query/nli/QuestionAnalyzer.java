@@ -1,9 +1,9 @@
-package net.stargraph.core.qa.nli;
+package net.stargraph.core.query.nli;
 
 import net.stargraph.Language;
 import net.stargraph.UnmappedQueryTypeException;
-import net.stargraph.core.qa.Rules;
-import net.stargraph.core.qa.annotator.Annotator;
+import net.stargraph.core.query.Rules;
+import net.stargraph.core.query.annotator.Annotator;
 
 import java.util.List;
 import java.util.Objects;
