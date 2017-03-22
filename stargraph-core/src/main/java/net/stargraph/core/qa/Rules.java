@@ -5,9 +5,7 @@ import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import net.stargraph.Language;
 import net.stargraph.UnsupportedLanguageException;
-import net.stargraph.core.qa.nli.DataModelType;
-import net.stargraph.core.qa.nli.DataModelTypePattern;
-import net.stargraph.core.qa.nli.QueryPlanPattern;
+import net.stargraph.core.qa.nli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -24,12 +22,14 @@ public final class Rules {
     private Map<Language, List<DataModelTypePattern>> dataModelTypePatterns;
     private Map<Language, List<QueryPlanPattern>> queryPlanPatterns;
     private Map<Language, List<Pattern>> stopPatterns;
+    private Map<Language, List<QueryTypePattern>> queryTypePatterns;
 
     public Rules(Config config) {
         logger.info(marker, "Loading Rules.");
         this.dataModelTypePatterns = loadDataModelTypePatterns(Objects.requireNonNull(config));
         this.queryPlanPatterns = loadQueryPlanPatterns(Objects.requireNonNull(config));
         this.stopPatterns = loadStopPatterns(config);
+        this.queryTypePatterns = loadQueryTypePatterns(config);
     }
 
     public List<DataModelTypePattern> getDataModelTypeRules(Language language) {
@@ -49,6 +49,13 @@ public final class Rules {
     public List<Pattern> getStopRules(Language language) {
         if (stopPatterns.containsKey(language)) {
             return stopPatterns.get(language);
+        }
+        throw new UnsupportedLanguageException(language);
+    }
+
+    public List<QueryTypePattern> getQueryTypeRules(Language language) {
+        if (queryTypePatterns.containsKey(language)) {
+            return queryTypePatterns.get(language);
         }
         throw new UnsupportedLanguageException(language);
     }
@@ -115,20 +122,48 @@ public final class Rules {
     }
 
     private Map<Language, List<Pattern>> loadStopPatterns(Config config) {
-        Map<Language, List<Pattern>> stopByLang = new HashMap<>();
+        Map<Language, List<Pattern>> rulesByLang = new HashMap<>();
         ConfigObject configObject = config.getObject("rules.stop-pattern");
 
         configObject.keySet().forEach(strLang -> {
             Language language = Language.valueOf(strLang.toUpperCase());
             List<String> patternStr = configObject.toConfig().getStringList(strLang);
 
-            stopByLang.compute(language,
+            rulesByLang.compute(language,
                     (lang, pattern) -> patternStr.stream().map(Pattern::compile).collect(Collectors.toList()));
 
-            logger.info(marker, "Loaded {} Stop patterns for '{}'", stopByLang.get(language).size(), language);
+            logger.info(marker, "Loaded {} Stop patterns for '{}'", rulesByLang.get(language).size(), language);
 
         });
 
-        return stopByLang;
+        return rulesByLang;
+    }
+
+    private Map<Language, List<QueryTypePattern>> loadQueryTypePatterns(Config config) {
+        Map<Language, List<QueryTypePattern>> rulesByLang = new HashMap<>();
+        ConfigObject configObject = config.getObject("rules.query-pattern");
+
+        configObject.keySet().forEach(strLang -> {
+            Language language = Language.valueOf(strLang.toUpperCase());
+
+            ConfigObject innerCfg = configObject.toConfig().getObject(strLang);
+
+            List<QueryTypePattern> patterns = new ArrayList<>();
+
+            rulesByLang.compute(language, (l, q) -> {
+                innerCfg.keySet().forEach(key -> {
+                    QueryType queryType = QueryType.valueOf(key);
+                    List<String> patternStr = innerCfg.toConfig().getStringList(key);
+                    patterns.add(new QueryTypePattern(queryType,
+                            patternStr.stream().map(Pattern::compile).collect(Collectors.toList())));
+                });
+
+                logger.info(marker, "Loaded {} Query Type patterns for '{}'", patterns.size(), language);
+                return patterns;
+            });
+
+        });
+
+        return rulesByLang;
     }
 }

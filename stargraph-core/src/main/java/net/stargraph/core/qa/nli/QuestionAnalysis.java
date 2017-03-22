@@ -9,12 +9,14 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public final class QuestionAnalysis {
+    private QueryType queryType;
     private String question;
     private List<Word> annotatedWords;
     private Deque<AnalysisStep> steps;
 
-    QuestionAnalysis(String question) {
+    QuestionAnalysis(String question, QueryType queryType) {
         this.question = Objects.requireNonNull(question);
+        this.queryType = Objects.requireNonNull(queryType);
         this.steps = new ArrayDeque<>();
     }
 
@@ -43,10 +45,15 @@ public final class QuestionAnalysis {
         return steps.peek();
     }
 
+    public QueryType getQueryType() {
+        return queryType;
+    }
+
     @Override
     public String toString() {
         return "Analysis{" +
                 "q='" + question + '\'' +
+                ", queryType'" + queryType + '\'' +
                 ", POS=" + annotatedWords +
                 ", Bindings='" + getResult().getBindings() + '\'' +
                 '}';

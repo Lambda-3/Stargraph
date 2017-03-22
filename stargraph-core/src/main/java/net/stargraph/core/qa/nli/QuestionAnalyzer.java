@@ -1,6 +1,7 @@
 package net.stargraph.core.qa.nli;
 
 import net.stargraph.Language;
+import net.stargraph.UnmappedQueryTypeExcpetion;
 import net.stargraph.core.qa.Rules;
 import net.stargraph.core.qa.annotator.Annotator;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public final class QuestionAnalyzer {
     private List<DataModelTypePattern> dataModelTypePatterns;
     private List<QueryPlanPattern> queryPlanPatterns;
     private List<Pattern> stopPatterns;
+    private List<QueryTypePattern> queryTypePatterns;
 
     public QuestionAnalyzer(Language language, Annotator annotator, Rules rules) {
         this.language = Objects.requireNonNull(language);
@@ -28,16 +30,23 @@ public final class QuestionAnalyzer {
         this.dataModelTypePatterns = rules.getDataModelTypeRules(language);
         this.queryPlanPatterns = rules.getQueryPlanRules(language);
         this.stopPatterns = rules.getStopRules(language);
+        this.queryTypePatterns = rules.getQueryTypeRules(language);
     }
 
     public QuestionAnalysis analyse(String question) {
         logger.info(marker, "Analyzing '{}'", Objects.requireNonNull(question));
-        QuestionAnalysis analysis = new QuestionAnalysis(question);
+        QuestionAnalysis analysis = new QuestionAnalysis(question, selectQueryType(question));
         analysis.annotate(annotator.run(language, question));
         analysis.resolve(dataModelTypePatterns);
         analysis.clean(stopPatterns);
         return analysis;
     }
 
+    private QueryType selectQueryType(String question) {
+        return queryTypePatterns.stream()
+                .filter(p -> p.match(question))
+                .map(QueryTypePattern::getQueryType)
+                .findFirst().orElseThrow(() -> new UnmappedQueryTypeExcpetion(question));
+    }
 
 }
