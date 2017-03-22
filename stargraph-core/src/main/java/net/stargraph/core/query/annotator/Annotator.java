@@ -16,7 +16,7 @@ public abstract class Annotator {
     protected abstract List<Word> doRun(Language language, String sentence);
 
     public final List<Word> run(Language language, String sentence) {
-        logger.info(marker, "Annotating '{}', language: '{}'", sentence, language);
+        logger.debug(marker, "Annotating '{}', language: '{}'", sentence, language);
         try {
             return doRun(language, sentence);
         }

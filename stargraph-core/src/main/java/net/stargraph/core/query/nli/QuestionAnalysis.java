@@ -29,7 +29,7 @@ public final class QuestionAnalysis {
         this.question = Objects.requireNonNull(question);
         this.queryType = Objects.requireNonNull(queryType);
         this.steps = new ArrayDeque<>();
-        logger.info(marker, "Analyzing '{}', detected type is '{}'", question, queryType);
+        logger.debug(marker, "Analyzing '{}', detected type is '{}'", question, queryType);
     }
 
     void annotate(List<Word> annotatedWords) {
@@ -42,7 +42,7 @@ public final class QuestionAnalysis {
             throw new IllegalStateException();
         }
 
-        logger.info(marker, "Resolving Data Models");
+        logger.debug(marker, "Resolving Data Models");
         rules.forEach(rule -> {
             AnalysisStep step = steps.peek().resolve(rule);
             if (step != null) {
@@ -56,7 +56,7 @@ public final class QuestionAnalysis {
             throw new IllegalStateException();
         }
 
-        logger.info(marker, "Cleaning up");
+        logger.debug(marker, "Cleaning up");
         AnalysisStep step = steps.peek().clean(stopPatterns);
         if (step != null) {
             steps.push(step);
@@ -68,7 +68,7 @@ public final class QuestionAnalysis {
             throw new IllegalStateException();
         }
 
-        logger.info(marker, "Searching plan rule..");
+        logger.debug(marker, "Searching plan rule..");
 
         List<DataModelBinding> bindings = steps.peek().getBindings();
         String planId = bindings.stream().map(DataModelBinding::getPlaceHolder).collect(Collectors.joining(" "));
@@ -77,7 +77,7 @@ public final class QuestionAnalysis {
                 .filter(p -> p.match(planId))
                 .findFirst().orElseThrow(() -> new StarGraphException("No plan for '" + planId + "'"));
 
-        logger.info(marker, "Creating SA Query, matched plan is '{}'", planId);
+        logger.debug(marker, "Creating SA Query, matched plan is '{}'", planId);
 
         saSPARQL = new SchemaAgnosticSPARQL(queryType, plan, bindings);
     }
