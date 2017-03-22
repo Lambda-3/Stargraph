@@ -12,7 +12,8 @@ public final class QueryPlanPattern extends ArrayList<String> {
         this.pattern = Objects.requireNonNull(pattern);
     }
 
-    public String getPattern() {
-        return pattern;
+    public boolean match(String planId) {
+        return pattern.contains(Objects.requireNonNull(planId));
     }
+
 }

@@ -1,5 +1,6 @@
 package net.stargraph.core.query.nli;
 
+import net.stargraph.StarGraphException;
 import net.stargraph.core.query.agnostic.SchemaAgnosticSPARQL;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
@@ -67,10 +68,18 @@ public final class QuestionAnalysis {
             throw new IllegalStateException();
         }
 
+        logger.info(marker, "Searching plan rule..");
+
         List<DataModelBinding> bindings = steps.peek().getBindings();
         String planId = bindings.stream().map(DataModelBinding::getPlaceHolder).collect(Collectors.joining(" "));
-        logger.info(marker, "Creating SA Query, plan is '{}'", planId);
-        //
+
+        QueryPlanPattern plan = rules.stream()
+                .filter(p -> p.match(planId))
+                .findFirst().orElseThrow(() -> new StarGraphException("No plan for '" + planId + "'"));
+
+        logger.info(marker, "Creating SA Query, matched plan is '{}'", planId);
+
+        saSPARQL = new SchemaAgnosticSPARQL(queryType, plan, bindings);
     }
 
     public SchemaAgnosticSPARQL getSAQuery() {
