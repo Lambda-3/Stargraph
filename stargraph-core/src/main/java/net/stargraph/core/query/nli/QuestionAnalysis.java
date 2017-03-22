@@ -1,6 +1,6 @@
 package net.stargraph.core.query.nli;
 
-import net.stargraph.core.query.SchemaAgnosticSPARQL;
+import net.stargraph.core.query.agnostic.SchemaAgnosticSPARQL;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
