@@ -1,7 +1,7 @@
 package net.stargraph.core.qa.nli;
 
 import net.stargraph.Language;
-import net.stargraph.UnmappedQueryTypeExcpetion;
+import net.stargraph.UnmappedQueryTypeException;
 import net.stargraph.core.qa.Rules;
 import net.stargraph.core.qa.annotator.Annotator;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public final class QuestionAnalyzer {
         return queryTypePatterns.stream()
                 .filter(p -> p.match(question))
                 .map(QueryTypePattern::getQueryType)
-                .findFirst().orElseThrow(() -> new UnmappedQueryTypeExcpetion(question));
+                .findFirst().orElseThrow(() -> new UnmappedQueryTypeException(question));
     }
 
 }
