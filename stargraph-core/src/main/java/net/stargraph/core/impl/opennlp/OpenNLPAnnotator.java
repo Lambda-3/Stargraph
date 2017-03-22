@@ -1,8 +1,8 @@
 package net.stargraph.core.impl.opennlp;
 
 import com.typesafe.config.Config;
-import net.stargraph.StarGraphException;
 import net.stargraph.Language;
+import net.stargraph.StarGraphException;
 import net.stargraph.core.qa.annotator.Annotator;
 import net.stargraph.core.qa.annotator.PartOfSpeechSet;
 import net.stargraph.core.qa.annotator.Word;
@@ -11,10 +11,6 @@ import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,24 +21,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class OpenNLPAnnotator implements Annotator {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("opennlp");
-
+public final class OpenNLPAnnotator extends Annotator {
     private ConcurrentHashMap<Language, TokenizerModel> tokenizerModels;
     private ConcurrentHashMap<Language, POSModel> posModels;
     private File modelsDir;
 
     public OpenNLPAnnotator(Config config) {
-        Objects.requireNonNull(config);
         this.tokenizerModels = new ConcurrentHashMap<>();
         this.posModels = new ConcurrentHashMap<>();
-        this.modelsDir = new File(config.getString("opennlp.models-dir"));
-        logger.info(marker, "Models dir: {}", modelsDir);
+        this.modelsDir = new File(Objects.requireNonNull(config).getString("opennlp.models-dir"));
+        logger.debug(marker, "Models dir: {}", modelsDir);
     }
 
     @Override
-    public List<Word> run(Language language, String sentence) {
+    public List<Word> doRun(Language language, String sentence) {
         Tokenizer tokenizer = new TokenizerME(getTokenizerModel(language));
         POSTaggerME tagger = new POSTaggerME(getPOSModel(language));
         String[] tokens = tokenizer.tokenize(sentence);
@@ -67,7 +59,7 @@ public final class OpenNLPAnnotator implements Annotator {
     }
 
     private TokenizerModel readTokenizerModel(Language language) {
-        logger.info(marker, "Reading tokenizer model for {}", language);
+        logger.debug(marker, "Reading tokenizer model for {}", language);
         File modelFile = new File(modelsDir, String.format("%s-token.bin", language.name().toLowerCase()));
         try (InputStream in = new FileInputStream(modelFile)) {
             return new TokenizerModel(in);
@@ -77,7 +69,7 @@ public final class OpenNLPAnnotator implements Annotator {
     }
 
     private POSModel readPOSModel(Language language) {
-        logger.info(marker, "Reading POS model for {}", language);
+        logger.debug(marker, "Reading POS model for {}", language);
         File modelFile = new File(modelsDir, String.format("%s-pos-maxent.bin", language.name().toLowerCase()));
         try (InputStream in = new FileInputStream(modelFile)) {
             return new POSModel(in);

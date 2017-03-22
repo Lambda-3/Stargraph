@@ -20,6 +20,10 @@ public final class AnalysisStep {
         this.annotated = Objects.requireNonNull(annotated);
         this.questionStr = Objects.requireNonNull(questionStr);
         this.posTagStr = Objects.requireNonNull(posTagStr);
+
+        if (annotated.isEmpty() || questionStr.isEmpty() || posTagStr.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public AnalysisStep(List<Word> annotated) {
