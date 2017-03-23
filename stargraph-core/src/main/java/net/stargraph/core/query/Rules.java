@@ -96,33 +96,29 @@ public final class Rules {
 
     @SuppressWarnings("unchecked")
     private Map<Language, List<QueryPlanPattern>> loadQueryPlanPatterns(Config config) {
-        Map<Language, List<QueryPlanPattern>> rulesByLang = new HashMap<>();
+        Map<Language, List<QueryPlanPattern>> rulesByLang = new LinkedHashMap<>();
         ConfigObject configObject = config.getObject("rules.planner-pattern");
 
         configObject.keySet().forEach(strLang -> {
             Language language = Language.valueOf(strLang.toUpperCase());
+            List<QueryPlanPattern> plans = new ArrayList<>();
 
-            rulesByLang.compute(language, (l, q) -> {
-
-                List<QueryPlanPattern> plans = new ArrayList<>();
-                Map<String, Object> langCfg = (Map<String, Object>)configObject.get(strLang).unwrapped();
-                langCfg.entrySet().forEach(entry -> {
-                    String patternStr = entry.getKey();
-                    List<String> tripleStrList = (List<String>)entry.getValue();
-                    plans.add(new QueryPlanPattern(patternStr, tripleStrList));
-                });
-
-                logger.info(marker, "Loaded {} Query Plan patterns for '{}'", plans.size(), l);
-
-                return plans;
+            List<? extends ConfigObject> innerCfg = configObject.toConfig().getObjectList(strLang);
+            innerCfg.forEach(e -> {
+                Map<String, Object> plan = e.unwrapped();
+                String planId = plan.keySet().toArray(new String[1])[0];
+                List<String> triplePatterns = (List<String>)plan.values().toArray()[0];
+                plans.add(new QueryPlanPattern(planId, triplePatterns));
             });
+
+            rulesByLang.put(language, plans);
         });
 
         return rulesByLang;
     }
 
     private Map<Language, List<Pattern>> loadStopPatterns(Config config) {
-        Map<Language, List<Pattern>> rulesByLang = new HashMap<>();
+        Map<Language, List<Pattern>> rulesByLang = new LinkedHashMap<>();
         ConfigObject configObject = config.getObject("rules.stop-pattern");
 
         configObject.keySet().forEach(strLang -> {

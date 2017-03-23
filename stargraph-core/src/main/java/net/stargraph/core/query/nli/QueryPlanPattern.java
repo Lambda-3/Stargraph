@@ -13,11 +13,19 @@ public final class QueryPlanPattern extends ArrayList<String> {
     }
 
     public boolean match(String planId) {
-        return pattern.contains(Objects.requireNonNull(planId));
+        return pattern.equals(Objects.requireNonNull(planId));
     }
 
     public String getPlanId() {
         return pattern;
     }
 
+
+    @Override
+    public String toString() {
+        return "QueryPlanPattern{" +
+                "pattern='" + pattern + '\'' +
+                " triples='" + super.toString() + '\'' +
+                '}';
+    }
 }

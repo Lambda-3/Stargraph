@@ -77,7 +77,7 @@ public final class QuestionAnalysis {
                 .filter(p -> p.match(planId))
                 .findFirst().orElseThrow(() -> new StarGraphException("No plan for '" + planId + "'"));
 
-        logger.debug(marker, "Creating SA Query, matched plan is '{}'", planId);
+        logger.debug(marker, "Creating SPARQL Query Builder, matched plan is '{}'", plan);
 
         sparqlQueryBuilder = new SPARQLQueryBuilder(queryType, plan, bindings);
     }
