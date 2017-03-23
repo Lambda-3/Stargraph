@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public final class SPARQLQuery {
+public final class SPARQLQueryBuilder {
     private QueryType queryType;
     private QueryPlanPattern triplePatterns;
     private List<DataModelBinding> bindings;
     private String sparqlQueryStr;
 
-    public SPARQLQuery(QueryType queryType, QueryPlanPattern triplePatterns, List<DataModelBinding> bindings) {
+    public SPARQLQueryBuilder(QueryType queryType, QueryPlanPattern triplePatterns, List<DataModelBinding> bindings) {
         this.queryType = Objects.requireNonNull(queryType);
         this.triplePatterns = Objects.requireNonNull(triplePatterns);
         this.bindings = Objects.requireNonNull(bindings);
-        this.sparqlQueryStr = createQueryString();
+        this.sparqlQueryStr = build();
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class SPARQLQuery {
                 .orElseThrow(() -> new StarGraphException("Unbounded '" + placeHolder + "'"));
     }
 
-    private String createQueryString() {
+    private String build() {
         switch (queryType) {
             case SELECT:
                 return String.format("SELECT * WHERE {\n %s \n}", buildStatements());

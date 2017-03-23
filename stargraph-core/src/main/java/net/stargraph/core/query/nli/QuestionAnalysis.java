@@ -1,7 +1,7 @@
 package net.stargraph.core.query.nli;
 
 import net.stargraph.StarGraphException;
-import net.stargraph.core.query.SPARQLQuery;
+import net.stargraph.core.query.SPARQLQueryBuilder;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public final class QuestionAnalysis {
     private String question;
     private List<Word> annotatedWords;
     private Deque<AnalysisStep> steps;
-    private SPARQLQuery sparqlQuery;
+    private SPARQLQueryBuilder sparqlQueryBuilder;
 
     QuestionAnalysis(String question, QueryType queryType) {
         this.question = Objects.requireNonNull(question);
@@ -79,14 +79,14 @@ public final class QuestionAnalysis {
 
         logger.debug(marker, "Creating SA Query, matched plan is '{}'", planId);
 
-        sparqlQuery = new SPARQLQuery(queryType, plan, bindings);
+        sparqlQueryBuilder = new SPARQLQueryBuilder(queryType, plan, bindings);
     }
 
-    public SPARQLQuery getSPARQLQuery() {
-        if (sparqlQuery == null) {
+    public SPARQLQueryBuilder getSPARQLQueryBuilder() {
+        if (sparqlQueryBuilder == null) {
             throw new IllegalStateException();
         }
-        return sparqlQuery;
+        return sparqlQueryBuilder;
     }
 
     @Override
