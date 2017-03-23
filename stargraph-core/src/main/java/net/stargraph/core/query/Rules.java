@@ -94,6 +94,7 @@ public final class Rules {
         return rulesByLang;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<Language, List<QueryPlanPattern>> loadQueryPlanPatterns(Config config) {
         Map<Language, List<QueryPlanPattern>> rulesByLang = new HashMap<>();
         ConfigObject configObject = config.getObject("rules.planner-pattern");
@@ -104,11 +105,10 @@ public final class Rules {
             rulesByLang.compute(language, (l, q) -> {
 
                 List<QueryPlanPattern> plans = new ArrayList<>();
-
-                Config langCfg = configObject.toConfig().getConfig(strLang);
+                Map<String, Object> langCfg = (Map<String, Object>)configObject.get(strLang).unwrapped();
                 langCfg.entrySet().forEach(entry -> {
                     String patternStr = entry.getKey();
-                    List<String> tripleStrList = langCfg.getStringList(patternStr);
+                    List<String> tripleStrList = (List<String>)entry.getValue();
                     plans.add(new QueryPlanPattern(patternStr, tripleStrList));
                 });
 

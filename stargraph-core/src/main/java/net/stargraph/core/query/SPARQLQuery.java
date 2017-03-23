@@ -27,6 +27,21 @@ public final class SPARQLQuery {
         return sparqlQueryStr;
     }
 
+    public QueryPlanPattern getTriplePatterns() {
+        return triplePatterns;
+    }
+
+    public QueryType getQueryType() {
+        return queryType;
+    }
+
+    public DataModelBinding getBinding(String placeHolder) {
+        return bindings.stream()
+                .filter(b -> b.getPlaceHolder().equals(placeHolder))
+                .findFirst()
+                .orElseThrow(() -> new StarGraphException("Unbounded '" + placeHolder + "'"));
+    }
+
     private String createQueryString() {
         switch (queryType) {
             case SELECT:
@@ -47,11 +62,7 @@ public final class SPARQLQuery {
             StringJoiner stmtJoiner = new StringJoiner(" ");
             for (String placeHolder : triplePattern.split("\\s")) {
                 if (!isVar(placeHolder)) {
-                    DataModelBinding binding = bindings.stream()
-                            .filter(b -> b.getPlaceHolder().equals(placeHolder))
-                            .findFirst()
-                            .orElseThrow(() -> new StarGraphException("Unbounded '" + placeHolder + "'"));
-
+                    DataModelBinding binding = getBinding(placeHolder);
                     stmtJoiner.add(getURI(binding));
                 }
                 else {

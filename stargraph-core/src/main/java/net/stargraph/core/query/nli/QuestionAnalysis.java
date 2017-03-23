@@ -82,7 +82,7 @@ public final class QuestionAnalysis {
         sparqlQuery = new SPARQLQuery(queryType, plan, bindings);
     }
 
-    public SPARQLQuery getSAQuery() {
+    public SPARQLQuery getSPARQLQuery() {
         if (sparqlQuery == null) {
             throw new IllegalStateException();
         }
