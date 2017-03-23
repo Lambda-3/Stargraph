@@ -1,7 +1,7 @@
 package net.stargraph.core.query.nli;
 
 import net.stargraph.StarGraphException;
-import net.stargraph.core.query.agnostic.SchemaAgnosticSPARQL;
+import net.stargraph.core.query.SPARQLQuery;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public final class QuestionAnalysis {
     private String question;
     private List<Word> annotatedWords;
     private Deque<AnalysisStep> steps;
-    private SchemaAgnosticSPARQL saSPARQL;
+    private SPARQLQuery sparqlQuery;
 
     QuestionAnalysis(String question, QueryType queryType) {
         this.question = Objects.requireNonNull(question);
@@ -63,7 +63,7 @@ public final class QuestionAnalysis {
         }
     }
 
-    void resolveSchemaAgnosticQuery(List<QueryPlanPattern> rules) {
+    void resolveSPARQL(List<QueryPlanPattern> rules) {
         if (steps.isEmpty()) {
             throw new IllegalStateException();
         }
@@ -79,14 +79,14 @@ public final class QuestionAnalysis {
 
         logger.debug(marker, "Creating SA Query, matched plan is '{}'", planId);
 
-        saSPARQL = new SchemaAgnosticSPARQL(queryType, plan, bindings);
+        sparqlQuery = new SPARQLQuery(queryType, plan, bindings);
     }
 
-    public SchemaAgnosticSPARQL getSAQuery() {
-        if (saSPARQL == null) {
+    public SPARQLQuery getSAQuery() {
+        if (sparqlQuery == null) {
             throw new IllegalStateException();
         }
-        return saSPARQL;
+        return sparqlQuery;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.stargraph.core.query.agnostic;
+package net.stargraph.core.query;
 
 import net.stargraph.StarGraphException;
 import net.stargraph.core.query.nli.DataModelBinding;
@@ -9,25 +9,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public final class SchemaAgnosticSPARQL {
+public final class SPARQLQuery {
     private QueryType queryType;
     private QueryPlanPattern triplePatterns;
     private List<DataModelBinding> bindings;
-    private String saQuery;
+    private String sparqlQueryStr;
 
-    public SchemaAgnosticSPARQL(QueryType queryType, QueryPlanPattern triplePatterns, List<DataModelBinding> bindings) {
+    public SPARQLQuery(QueryType queryType, QueryPlanPattern triplePatterns, List<DataModelBinding> bindings) {
         this.queryType = Objects.requireNonNull(queryType);
         this.triplePatterns = Objects.requireNonNull(triplePatterns);
         this.bindings = Objects.requireNonNull(bindings);
-        this.saQuery = createSAQueryString();
+        this.sparqlQueryStr = createQueryString();
     }
 
     @Override
     public String toString() {
-        return saQuery;
+        return sparqlQueryStr;
     }
 
-    private String createSAQueryString() {
+    private String createQueryString() {
         switch (queryType) {
             case SELECT:
                 return String.format("SELECT * WHERE {\n %s \n}", buildStatements());

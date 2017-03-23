@@ -39,7 +39,7 @@ public final class QuestionAnalyzer {
         analysis.annotate(annotator.run(language, question));
         analysis.resolveDataModelBindings(dataModelTypePatterns);
         analysis.clean(stopPatterns);
-        analysis.resolveSchemaAgnosticQuery(queryPlanPatterns);
+        analysis.resolveSPARQL(queryPlanPatterns);
         logger.info(marker, "{}", getTimingReport(question, startTime));
         return analysis;
     }
