@@ -62,8 +62,13 @@ public final class SPARQLQueryBuilder {
             StringJoiner stmtJoiner = new StringJoiner(" ");
             for (String placeHolder : triplePattern.split("\\s")) {
                 if (!isVar(placeHolder)) {
-                    DataModelBinding binding = getBinding(placeHolder);
-                    stmtJoiner.add(getURI(binding));
+                    if (!placeHolder.equals("TYPE")) {
+                        DataModelBinding binding = getBinding(placeHolder);
+                        stmtJoiner.add(getURI(binding));
+                    }
+                    else {
+                        stmtJoiner.add("a");
+                    }
                 }
                 else {
                     stmtJoiner.add(placeHolder);

@@ -8,20 +8,35 @@ import net.stargraph.core.query.nli.QueryType;
 import net.stargraph.core.query.nli.QuestionAnalysis;
 import net.stargraph.core.query.nli.QuestionAnalyzer;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public final class NLITest {
 
+    QuestionAnalyzer analyzer;
+
+    @BeforeClass
+    public void beforeClass() {
+        Analyzers analyzers = new Analyzers(ConfigFactory.load().getConfig("stargraph"));
+        analyzer = analyzers.getQuestionAnalyzer(Language.EN);
+    }
+
     @Test
     public void q0() {
-        Analyzers analyzers = new Analyzers(ConfigFactory.load().getConfig("stargraph"));
-        QuestionAnalyzer analyzer = analyzers.getQuestionAnalyzer(Language.EN);
         QuestionAnalysis analyzed = analyzer.analyse("Who is the wife of Barack Obama?");
         SPARQLQueryBuilder builder = analyzed.getSPARQLQueryBuilder();
         Assert.assertEquals(builder.getQueryType(), QueryType.SELECT);
         Assert.assertEquals(builder.getTriplePatterns().getPlanId(), "CLASS_1 INSTANCE_1");
         Assert.assertEquals(builder.getBinding("CLASS_1").getTerm(), "wife");
         Assert.assertEquals(builder.getBinding("INSTANCE_1").getTerm(), "Barack Obama");
+    }
+
+    @Test
+    public void q1() {
+        QuestionAnalysis analyzed = analyzer.analyse("Give me all movies directed by Francis Ford Coppola");
+        SPARQLQueryBuilder builder = analyzed.getSPARQLQueryBuilder();
+        Assert.assertEquals(builder.getQueryType(), QueryType.SELECT);
+        Assert.assertEquals(builder.getTriplePatterns().getPlanId(), "CLASS_1 PROPERTY_1 by INSTANCE_1");
     }
 
 }

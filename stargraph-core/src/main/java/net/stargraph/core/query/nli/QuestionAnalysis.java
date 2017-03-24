@@ -13,7 +13,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public final class QuestionAnalysis {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -43,12 +42,20 @@ public final class QuestionAnalysis {
         }
 
         logger.debug(marker, "Resolving Data Models");
-        rules.forEach(rule -> {
-            AnalysisStep step = steps.peek().resolve(rule);
-            if (step != null) {
-                steps.push(step);
+
+        boolean hasMatch;
+
+        do {
+            hasMatch = false;
+            for (DataModelTypePattern rule : rules) {
+                AnalysisStep step = steps.peek().resolve(rule);
+                if (step != null) {
+                    hasMatch = true;
+                    steps.push(step);
+                    break;
+                }
             }
-        });
+        } while (hasMatch);
     }
 
     void clean(List<Pattern> stopPatterns) {
@@ -68,16 +75,15 @@ public final class QuestionAnalysis {
             throw new IllegalStateException();
         }
 
-        logger.debug(marker, "Searching plan rule..");
-
-        List<DataModelBinding> bindings = steps.peek().getBindings();
-        String planId = bindings.stream().map(DataModelBinding::getPlaceHolder).collect(Collectors.joining(" "));
+        AnalysisStep last = steps.peek();
+        List<DataModelBinding> bindings = last.getBindings();
+        String planId = last.getAnalyzedQuestionStr();
 
         QueryPlanPattern plan = rules.stream()
                 .filter(p -> p.match(planId))
                 .findFirst().orElseThrow(() -> new StarGraphException("No plan for '" + planId + "'"));
 
-        logger.debug(marker, "Creating SPARQL Query Builder, matched plan is '{}'", plan);
+        logger.debug(marker, "Creating SPARQL Query Builder, matched plan for '{}' is '{}'", planId, plan);
 
         sparqlQueryBuilder = new SPARQLQueryBuilder(queryType, plan, bindings);
     }

@@ -82,8 +82,6 @@ public final class Rules {
                             .collect(Collectors.toList()));
                 }
 
-                logger.trace(marker, "All rules for '{}': {}", l, rules);
-
                 logger.info(marker, "Loaded {} Data Model Type patterns for '{}'", rules.size(), l);
 
                 return rules;

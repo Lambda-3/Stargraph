@@ -1,6 +1,10 @@
 package net.stargraph.core.query.nli;
 
 import net.stargraph.core.query.annotator.Word;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -9,6 +13,9 @@ import java.util.stream.Collectors;
 
 public final class AnalysisStep {
     private static final Pattern punctPattern = Pattern.compile("[(){},.;!?<>%]");
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Marker marker = MarkerFactory.getMarker("nli");
 
     private List<Word> annotated;
     private String questionStr;
@@ -24,6 +31,8 @@ public final class AnalysisStep {
         if (annotated.isEmpty() || questionStr.isEmpty() || posTagStr.isEmpty()) {
             throw new IllegalArgumentException();
         }
+
+        logger.debug(marker, "Current Step: question='{}', postags='{}'", questionStr, posTagStr);
     }
 
     public AnalysisStep(List<Word> annotated) {
@@ -87,6 +96,10 @@ public final class AnalysisStep {
         return null;
     }
 
+    String getAnalyzedQuestionStr() {
+        return questionStr;
+    }
+
     private String findSubStr(Replacement replacement) {
         String[] capture = Objects.requireNonNull(replacement).capture.split("\\s");
         int startIdx = 0;
@@ -112,18 +125,23 @@ public final class AnalysisStep {
     }
 
     private Replacement replace(String subStr, String target, String replacementStr) {
-        return replace(Pattern.compile(String.format("^.+(%s).+$", Objects.requireNonNull(subStr))), target, replacementStr);
+        return replace(Pattern.compile(String.format("^.*(%s).*$", Objects.requireNonNull(subStr))), target, replacementStr);
     }
 
     private Replacement replace(Pattern pattern, String target, String replacementStr) {
-        Matcher matcher = pattern.matcher(target);
+        String str = target.trim();
+        Matcher matcher = pattern.matcher(str);
         if (matcher.matches()) {
+            logger.debug(marker, "{} on '{}' with '{}'", pattern, str, replacementStr);
             // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
             StringBuffer sb = new StringBuffer();
             String capturedStr = matcher.group(1);
             matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), replacementStr));
             matcher.appendTail(sb);
             return new Replacement(sb.toString(), capturedStr);
+        }
+        else {
+            logger.warn(marker, "Nothing changed: {} on '{}' with '{}'", pattern, str, replacementStr);
         }
         return new Replacement(target, null);
     }
