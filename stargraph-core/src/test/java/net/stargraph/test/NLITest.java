@@ -37,6 +37,9 @@ public final class NLITest {
         SPARQLQueryBuilder builder = analyzed.getSPARQLQueryBuilder();
         Assert.assertEquals(builder.getQueryType(), QueryType.SELECT);
         Assert.assertEquals(builder.getTriplePatterns().getPlanId(), "CLASS_1 PROPERTY_1 by INSTANCE_1");
+        Assert.assertEquals(builder.getBinding("CLASS_1").getTerm(), "movies");
+        Assert.assertEquals(builder.getBinding("INSTANCE_1").getTerm(), "Francis Ford Coppola");
+        Assert.assertEquals(builder.getBinding("PROPERTY_1").getTerm(), "directed");
     }
 
 }
