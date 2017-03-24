@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -72,6 +73,10 @@ public final class Stargraph {
 
     public Stargraph() {
         this(ConfigFactory.load().getConfig("stargraph"), true);
+    }
+
+    public Stargraph(File appConfigFile) {
+        this(readConfiguration(appConfigFile), true);
     }
 
     public Stargraph(Config cfg, boolean initialize) {
@@ -252,5 +257,12 @@ public final class Stargraph {
         } catch (Exception e) {
             throw new StarGraphException("Can't initialize indexers.", e);
         }
+    }
+
+    public static Config readConfiguration(File file) {
+        Config fromFile = ConfigFactory.parseFile(Objects.requireNonNull(file));
+        Config ref = ConfigFactory.defaultReference();
+        Config sys = ConfigFactory.defaultOverrides();
+        return sys.withFallback(fromFile).withFallback(ref).resolve().getConfig("stargraph");
     }
 }

@@ -11,7 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public final class NLITest {
+public final class NaturalLanguageInterfaceTest {
 
     QuestionAnalyzer analyzer;
 

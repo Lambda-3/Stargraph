@@ -28,7 +28,6 @@ package net.stargraph.server;
 
 import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -92,12 +91,7 @@ public final class Server {
             throw new StarGraphException("Missing home directory as argument!");
         }
 
-        Config fromFile = ConfigFactory.parseFile(Paths.get(args[0]).toFile());
-        Config ref = ConfigFactory.defaultReference();
-        Config sys = ConfigFactory.defaultOverrides();
-        Config cfg = sys.withFallback(fromFile).withFallback(ref).resolve().getConfig("stargraph");
-
-        final Stargraph core = new Stargraph(cfg, true);
+        final Stargraph core = new Stargraph(Paths.get(args[0]).toFile());
         final Server server = new Server(core);
         server.start();
 
