@@ -32,4 +32,19 @@ public final class DataModelBinding {
                 ", placeHolder='" + placeHolder + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DataModelBinding that = (DataModelBinding) o;
+        return modelType == that.modelType &&
+                Objects.equals(term, that.term) &&
+                Objects.equals(placeHolder, that.placeHolder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modelType, term, placeHolder);
+    }
 }

@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.Language;
 import net.stargraph.core.query.Analyzers;
 import net.stargraph.core.query.SPARQLQueryBuilder;
-import net.stargraph.core.query.nli.QueryType;
+import net.stargraph.core.query.QueryType;
 import net.stargraph.core.query.nli.QuestionAnalysis;
 import net.stargraph.core.query.nli.QuestionAnalyzer;
 import org.testng.Assert;

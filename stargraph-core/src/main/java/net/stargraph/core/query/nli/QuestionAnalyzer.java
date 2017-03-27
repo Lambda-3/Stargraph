@@ -2,6 +2,7 @@ package net.stargraph.core.query.nli;
 
 import net.stargraph.Language;
 import net.stargraph.UnmappedQueryTypeException;
+import net.stargraph.core.query.QueryType;
 import net.stargraph.core.query.Rules;
 import net.stargraph.core.query.annotator.Annotator;
 import org.slf4j.Logger;
@@ -19,9 +20,9 @@ public final class QuestionAnalyzer {
     private Language language;
     private Annotator annotator;
     private List<DataModelTypePattern> dataModelTypePatterns;
-    private List<QueryPlanPattern> queryPlanPatterns;
+    private List<QueryPlanPatterns> queryPlanPatterns;
     private List<Pattern> stopPatterns;
-    private List<QueryTypePattern> queryTypePatterns;
+    private List<QueryTypePatterns> queryTypePatterns;
 
     public QuestionAnalyzer(Language language, Annotator annotator, Rules rules) {
         logger.info(marker, "Creating analyzer for '{}'", language);
@@ -47,7 +48,7 @@ public final class QuestionAnalyzer {
     private QueryType selectQueryType(String question) {
         return queryTypePatterns.stream()
                 .filter(p -> p.match(question))
-                .map(QueryTypePattern::getQueryType)
+                .map(QueryTypePatterns::getQueryType)
                 .findFirst().orElseThrow(() -> new UnmappedQueryTypeException(question));
     }
 

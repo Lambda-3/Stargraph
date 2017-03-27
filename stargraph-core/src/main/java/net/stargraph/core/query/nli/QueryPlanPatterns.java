@@ -1,13 +1,15 @@
 package net.stargraph.core.query.nli;
 
+import net.stargraph.core.query.TriplePattern;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class QueryPlanPattern extends ArrayList<String> {
+public final class QueryPlanPatterns extends ArrayList<TriplePattern> {
     private String pattern;
 
-    public QueryPlanPattern(String pattern, List<String> triplePatterns) {
+    public QueryPlanPatterns(String pattern, List<TriplePattern> triplePatterns) {
         super(triplePatterns);
         this.pattern = Objects.requireNonNull(pattern);
     }

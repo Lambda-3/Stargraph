@@ -1,6 +1,7 @@
 package net.stargraph.core.query.nli;
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.query.QueryType;
 import net.stargraph.core.query.SPARQLQueryBuilder;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public final class QuestionAnalysis {
         }
     }
 
-    void resolveSPARQL(List<QueryPlanPattern> rules) {
+    void resolveSPARQL(List<QueryPlanPatterns> rules) {
         if (steps.isEmpty()) {
             throw new IllegalStateException();
         }
@@ -79,7 +80,7 @@ public final class QuestionAnalysis {
         List<DataModelBinding> bindings = last.getBindings();
         String planId = last.getAnalyzedQuestionStr();
 
-        QueryPlanPattern plan = rules.stream()
+        QueryPlanPatterns plan = rules.stream()
                 .filter(p -> p.match(planId))
                 .findFirst().orElseThrow(() -> new StarGraphException("No plan for '" + planId + "'"));
 

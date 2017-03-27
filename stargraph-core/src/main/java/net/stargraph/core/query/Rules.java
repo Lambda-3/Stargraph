@@ -20,9 +20,9 @@ public final class Rules {
     private Marker marker = MarkerFactory.getMarker("qa");
 
     private Map<Language, List<DataModelTypePattern>> dataModelTypePatterns;
-    private Map<Language, List<QueryPlanPattern>> queryPlanPatterns;
+    private Map<Language, List<QueryPlanPatterns>> queryPlanPatterns;
     private Map<Language, List<Pattern>> stopPatterns;
-    private Map<Language, List<QueryTypePattern>> queryTypePatterns;
+    private Map<Language, List<QueryTypePatterns>> queryTypePatterns;
 
     public Rules(Config config) {
         logger.info(marker, "Loading Rules.");
@@ -39,7 +39,7 @@ public final class Rules {
         throw new UnsupportedLanguageException(language);
     }
 
-    public List<QueryPlanPattern> getQueryPlanRules(Language language) {
+    public List<QueryPlanPatterns> getQueryPlanRules(Language language) {
         if (queryPlanPatterns.containsKey(language)) {
             return queryPlanPatterns.get(language);
         }
@@ -53,7 +53,7 @@ public final class Rules {
         throw new UnsupportedLanguageException(language);
     }
 
-    public List<QueryTypePattern> getQueryTypeRules(Language language) {
+    public List<QueryTypePatterns> getQueryTypeRules(Language language) {
         if (queryTypePatterns.containsKey(language)) {
             return queryTypePatterns.get(language);
         }
@@ -93,20 +93,21 @@ public final class Rules {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Language, List<QueryPlanPattern>> loadQueryPlanPatterns(Config config) {
-        Map<Language, List<QueryPlanPattern>> rulesByLang = new LinkedHashMap<>();
+    private Map<Language, List<QueryPlanPatterns>> loadQueryPlanPatterns(Config config) {
+        Map<Language, List<QueryPlanPatterns>> rulesByLang = new LinkedHashMap<>();
         ConfigObject configObject = config.getObject("rules.planner-pattern");
 
         configObject.keySet().forEach(strLang -> {
             Language language = Language.valueOf(strLang.toUpperCase());
-            List<QueryPlanPattern> plans = new ArrayList<>();
+            List<QueryPlanPatterns> plans = new ArrayList<>();
 
             List<? extends ConfigObject> innerCfg = configObject.toConfig().getObjectList(strLang);
             innerCfg.forEach(e -> {
                 Map<String, Object> plan = e.unwrapped();
                 String planId = plan.keySet().toArray(new String[1])[0];
                 List<String> triplePatterns = (List<String>)plan.values().toArray()[0];
-                plans.add(new QueryPlanPattern(planId, triplePatterns));
+                plans.add(new QueryPlanPatterns(planId,
+                        triplePatterns.stream().map(TriplePattern::new).collect(Collectors.toList())));
             });
 
             rulesByLang.put(language, plans);
@@ -133,8 +134,8 @@ public final class Rules {
         return rulesByLang;
     }
 
-    private Map<Language, List<QueryTypePattern>> loadQueryTypePatterns(Config config) {
-        Map<Language, List<QueryTypePattern>> rulesByLang = new HashMap<>();
+    private Map<Language, List<QueryTypePatterns>> loadQueryTypePatterns(Config config) {
+        Map<Language, List<QueryTypePatterns>> rulesByLang = new HashMap<>();
         ConfigObject configObject = config.getObject("rules.query-pattern");
 
         configObject.keySet().forEach(strLang -> {
@@ -142,13 +143,13 @@ public final class Rules {
 
             ConfigObject innerCfg = configObject.toConfig().getObject(strLang);
 
-            List<QueryTypePattern> patterns = new ArrayList<>();
+            List<QueryTypePatterns> patterns = new ArrayList<>();
 
             rulesByLang.compute(language, (l, q) -> {
                 innerCfg.keySet().forEach(key -> {
                     QueryType queryType = QueryType.valueOf(key);
                     List<String> patternStr = innerCfg.toConfig().getStringList(key);
-                    patterns.add(new QueryTypePattern(queryType,
+                    patterns.add(new QueryTypePatterns(queryType,
                             patternStr.stream().map(Pattern::compile).collect(Collectors.toList())));
                 });
 

@@ -1,6 +1,9 @@
 package net.stargraph.test;
 
+import com.typesafe.config.Config;
+import net.stargraph.Language;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.query.AnswerSet;
 import net.stargraph.core.query.QueryEngine;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
@@ -17,11 +20,12 @@ public class NaturalLanguageInterfaceIT {
         if (testConfigFilePath == null) {
             Assert.fail("Configure Java System Property 'stargraph.configFile'");
         }
-        queryEngine = new QueryEngine(Stargraph.readConfiguration(new File(testConfigFilePath)));
+        Config conf = Stargraph.readConfiguration(new File(testConfigFilePath));
+        queryEngine = new QueryEngine("dbpedia-2016", new Stargraph(conf, true));
     }
 
     @Test
     public void q0() {
-        Assert.assertFalse(false);
+        AnswerSet answerSet = queryEngine.nliQuery("Who is the wife of Barack Obama?", Language.EN);
     }
 }

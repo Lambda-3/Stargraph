@@ -2,23 +2,24 @@ package net.stargraph.core.query;
 
 import net.stargraph.StarGraphException;
 import net.stargraph.core.query.nli.DataModelBinding;
-import net.stargraph.core.query.nli.QueryPlanPattern;
-import net.stargraph.core.query.nli.QueryType;
+import net.stargraph.core.query.nli.QueryPlanPatterns;
+import net.stargraph.model.LabeledEntity;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SPARQLQueryBuilder {
     private QueryType queryType;
-    private QueryPlanPattern triplePatterns;
+    private QueryPlanPatterns triplePatterns;
     private List<DataModelBinding> bindings;
+    private Map<DataModelBinding, List<LabeledEntity>> mappings;
     private String sparqlQueryStr;
 
-    public SPARQLQueryBuilder(QueryType queryType, QueryPlanPattern triplePatterns, List<DataModelBinding> bindings) {
+    public SPARQLQueryBuilder(QueryType queryType, QueryPlanPatterns triplePatterns, List<DataModelBinding> bindings) {
         this.queryType = Objects.requireNonNull(queryType);
         this.triplePatterns = Objects.requireNonNull(triplePatterns);
         this.bindings = Objects.requireNonNull(bindings);
+        this.mappings = new ConcurrentHashMap<>();
         this.sparqlQueryStr = build();
     }
 
@@ -27,12 +28,24 @@ public final class SPARQLQueryBuilder {
         return sparqlQueryStr;
     }
 
-    public QueryPlanPattern getTriplePatterns() {
+    public boolean isResolved(DataModelBinding binding) {
+        return mappings.containsKey(binding);
+    }
+
+    public void update(DataModelBinding binding, LabeledEntity entity) {
+        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).add(entity);
+    }
+
+    public QueryPlanPatterns getTriplePatterns() {
         return triplePatterns;
     }
 
     public QueryType getQueryType() {
         return queryType;
+    }
+
+    public List<DataModelBinding> getBindings() {
+        return bindings;
     }
 
     public DataModelBinding getBinding(String placeHolder) {
@@ -60,7 +73,7 @@ public final class SPARQLQueryBuilder {
 
         triplePatterns.forEach(triplePattern -> {
             StringJoiner stmtJoiner = new StringJoiner(" ");
-            for (String placeHolder : triplePattern.split("\\s")) {
+            for (String placeHolder : triplePattern.getPattern().split("\\s")) {
                 if (!isVar(placeHolder)) {
                     if (!placeHolder.equals("TYPE")) {
                         DataModelBinding binding = getBinding(placeHolder);
