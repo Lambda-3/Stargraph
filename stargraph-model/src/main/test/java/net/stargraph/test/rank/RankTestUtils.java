@@ -5,9 +5,8 @@ import net.stargraph.rank.Score;
 
 public final class RankTestUtils {
 
-    static Score create(String v, double d) {
-        return new Score(new Rankable() {
-
+    static Rankable createRankable(String v) {
+        return new Rankable() {
             @Override
             public String toString() {
                 return v;
@@ -18,6 +17,14 @@ public final class RankTestUtils {
                 return v;
             }
 
-        }, d);
+            @Override
+            public String getId() {
+                return v;
+            }
+        };
+    }
+
+    static Score createScore(String v, double d) {
+        return new Score(createRankable(v), d);
     }
 }

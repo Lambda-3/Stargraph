@@ -12,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class QueryEngine {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -42,8 +44,8 @@ public final class QueryEngine {
             resolve(asTriple(triplePattern, bindings), queryBuilder);
         });
 
-        queryBuilder.build();
         System.out.println(queryBuilder);
+        System.out.println(queryBuilder.build());
         return null;
     }
 
@@ -62,13 +64,13 @@ public final class QueryEngine {
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
-            builder.add(binding, (Rankable) scores.get(0).getEntry());
+            builder.add(binding, scores.stream().map(Score::getRankableView).limit(3).collect(Collectors.toList()));
         }
     }
 
     private InstanceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
         List<Rankable> solutions = builder.getSolutions(binding);
-        if (solutions != null) {
+        if (!solutions.isEmpty()) {
             return (InstanceEntity)solutions.get(0);
         }
 
@@ -78,7 +80,7 @@ public final class QueryEngine {
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
             Scores scores = searcher.instanceSearch(searchParams, rankParams);
             InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
-            builder.add(binding, instance);
+            builder.add(binding, Collections.singletonList(instance));
             return instance;
         }
         return null;

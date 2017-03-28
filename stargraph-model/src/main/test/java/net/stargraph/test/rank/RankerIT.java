@@ -10,7 +10,8 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-import static net.stargraph.test.rank.RankTestUtils.create;
+import static net.stargraph.test.rank.RankTestUtils.createRankable;
+import static net.stargraph.test.rank.RankTestUtils.createScore;
 
 public final class RankerIT {
 
@@ -19,10 +20,10 @@ public final class RankerIT {
         ModifiableIndraParams params = ParamsBuilder.word2vec().corpus("wiki-2014").language("EN").url(getIndraURL());
         Ranker ranker = new IndraRanker(params);
 
-        Scores scores = new Scores(Arrays.asList(create("husband", 100), create("husband", 100),
-                create("children", 94), create("partner", 51), create("father", 1)));
+        Scores scores = new Scores(Arrays.asList(createScore("husband", 100), createScore("husband", 100),
+                createScore("children", 94), createScore("partner", 51), createScore("father", 1)));
 
-        Scores rescored = ranker.score(scores, () -> "wife");
+        Scores rescored = ranker.score(scores, createRankable("wife"));
         Assert.assertEquals(rescored.get(0).getRankableView().getValue(), "husband");
     }
 

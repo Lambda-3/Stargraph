@@ -28,9 +28,9 @@ package net.stargraph.rank;
 
 import java.io.Serializable;
 
-@FunctionalInterface
 public interface Rankable extends Serializable {
 
     String getValue();
 
+    String getId();
 }

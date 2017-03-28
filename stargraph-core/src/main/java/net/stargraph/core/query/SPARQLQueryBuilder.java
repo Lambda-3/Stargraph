@@ -56,19 +56,19 @@ public final class SPARQLQueryBuilder {
         if (mappings.containsKey(binding)) {
             return mappings.get(binding);
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    void add(DataModelBinding binding, Rankable entity) {
-        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).add(entity);
+    void add(DataModelBinding binding, List<Rankable> entities) {
+        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).addAll(entities);
     }
 
     String build() {
         switch (queryType) {
             case SELECT:
-                return String.format("SELECT * WHERE {\n %s \n}", buildStatements());
+                return String.format("SELECT * WHERE {\n%s\n}", buildStatements());
             case ASK:
-                return String.format("ASK {\n %s \n}", buildStatements());
+                return String.format("ASK {\n%s\n}", buildStatements());
             case AGGREGATE:
                 throw new StarGraphException("TBD");
         }
@@ -77,28 +77,30 @@ public final class SPARQLQueryBuilder {
     }
 
     private String buildStatements() {
-        StringJoiner tripleJoiner = new StringJoiner(" . \n", "{ ", " }");
+        StringJoiner tripleJoiner = new StringJoiner(" . \n", "{", "}");
 
         triplePatterns.forEach(triplePattern -> {
-            StringJoiner stmtJoiner = new StringJoiner(" ");
-            for (String placeHolder : triplePattern.getPattern().split("\\s")) {
-                if (!isVar(placeHolder)) {
-                    if (!placeHolder.equals("TYPE")) {
-                        DataModelBinding binding = getBinding(placeHolder);
-                        stmtJoiner.add(getURI(binding));
-                    }
-                    else {
-                        stmtJoiner.add("a");
-                    }
-                }
-                else {
-                    stmtJoiner.add(placeHolder);
-                }
-            }
+
+            String[] components = triplePattern.getPattern().split("\\s");
+            List<String> sURIs = placeHolder2URIs(components[0]);
+            List<String> pURIs = placeHolder2URIs(components[1]);
+            List<String> oURIs = placeHolder2URIs(components[2]);
+
+            List<String> prod = cartesianProduct(cartesianProduct(sURIs, pURIs), oURIs);
+
+            StringJoiner stmtJoiner = new StringJoiner("} UNION \n{");
+            prod.forEach(p -> stmtJoiner.add(p.trim()));
+
             tripleJoiner.add(stmtJoiner.toString());
         });
 
         return tripleJoiner.toString();
+    }
+
+    private List<String> cartesianProduct(List<String> x, List<String> y) {
+        List<String> xy = new ArrayList<>();
+        x.forEach(s1 -> y.forEach(s2 -> xy.add(s1.trim() + " " + s2.trim())));
+        return xy;
     }
 
     private List<String> placeHolder2URIs(String placeHolder) {
@@ -112,7 +114,10 @@ public final class SPARQLQueryBuilder {
 
         DataModelBinding binding = getBinding(placeHolder);
         List<Rankable> mappings = getSolutions(binding);
-        return mappings.stream().map(r -> r.getValue()).collect(Collectors.toList());
+        if (mappings.isEmpty()) {
+            return Collections.singletonList(getURI(binding));
+        }
+        return mappings.stream().map(r -> String.format("<%s>", r.getId())).collect(Collectors.toList());
     }
 
     private boolean isVar(String s) {

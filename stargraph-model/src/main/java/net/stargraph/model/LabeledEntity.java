@@ -46,6 +46,7 @@ public abstract class LabeledEntity implements Hashable, Rankable {
         this.value = value;
     }
 
+    @Override
     public String getId() {
         return id;
     }

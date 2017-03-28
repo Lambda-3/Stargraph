@@ -76,6 +76,7 @@ public final class PropertyEntity implements Hashable, Rankable {
         return synonyms;
     }
 
+    @Override
     public String getId() {
         return id;
     }
