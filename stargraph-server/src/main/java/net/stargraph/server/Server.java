@@ -36,6 +36,8 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.URI;
@@ -48,6 +50,7 @@ public final class Server {
     }
 
     private static Logger logger = LoggerFactory.getLogger(Server.class);
+    private static Marker marker = MarkerFactory.getMarker("server");
     private HttpServer httpServer;
     private Stargraph core;
 
@@ -65,8 +68,9 @@ public final class Server {
             rc.register(LoggingFilter.class);
             rc.register(AdminResourceImpl.class);
             rc.register(new KBResourceImpl(core));
+            rc.register(new QueryResourceImpl(core));
             httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(urlStr), rc, true);
-            logger.info("Stargraph listening on {}", urlStr);
+            logger.info(marker, "Stargraph listening on {}", urlStr);
         } catch (Exception e) {
             throw new StarGraphException(e);
         }
@@ -78,7 +82,7 @@ public final class Server {
                 httpServer.shutdownNow();
             }
         } catch (Exception e) {
-            logger.error("Error while terminating HTTP httpServer", e);
+            logger.error(marker, "Error while terminating HTTP httpServer", e);
             e.printStackTrace(System.err);
         }
     }
@@ -96,7 +100,7 @@ public final class Server {
         server.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("Going down...");
+            logger.info(marker, "Going down...");
             server.stop();
             core.terminate();
         }));

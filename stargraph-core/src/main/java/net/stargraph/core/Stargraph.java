@@ -143,6 +143,10 @@ public final class Stargraph {
         return indexers.keySet();
     }
 
+    public boolean hasKB(String id) {
+        return getKBs().stream().anyMatch(kbId -> kbId.getId().equals(id));
+    }
+
     public Language getLanguage(String dbId) {
         Config kbCfg = getKBConfig(dbId);
         return Language.valueOf(kbCfg.getString("language").toUpperCase());

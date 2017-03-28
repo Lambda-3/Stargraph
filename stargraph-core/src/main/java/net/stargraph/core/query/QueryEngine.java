@@ -41,11 +41,18 @@ public final class QueryEngine {
     }
 
     public QueryResponse query(String query) {
-        switch (detectInteractionMode(query)) {
-            case NLI:
-                return nliQuery(query, language);
+        long startTime = System.currentTimeMillis();
+        try {
+            switch (detectInteractionMode(query)) {
+                case NLI:
+                    return nliQuery(query, language);
+            }
+            throw new StarGraphException("Input type not yet supported");
+
+        } finally {
+            long millis = System.currentTimeMillis() - startTime;
+            logger.info(marker, "Query Engine took {}s",  millis / 1000.0);
         }
-        throw new StarGraphException("Input type not yet supported");
     }
 
     private AnswerSet nliQuery(String userQuery, Language language) {

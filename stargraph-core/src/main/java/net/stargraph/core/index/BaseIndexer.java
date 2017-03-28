@@ -50,7 +50,7 @@ import java.util.concurrent.*;
  */
 public abstract class BaseIndexer implements Indexer {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker;
+    protected Marker marker = MarkerFactory.getMarker("index");
     protected KBId kbId;
     protected ObjectMapper mapper;
     protected Stargraph core;
@@ -63,7 +63,6 @@ public abstract class BaseIndexer implements Indexer {
     private ProcessorChain processorChain;
 
     public BaseIndexer(KBId kbId, Stargraph core) {
-        marker = MarkerFactory.getMarker(kbId.toString());
         logger.info(marker, "Initializing {}", kbId);
         this.marker = MarkerFactory.getMarker(kbId.toString());
         this.core = Objects.requireNonNull(core);

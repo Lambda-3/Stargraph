@@ -42,6 +42,7 @@ public abstract class BaseSearcher implements Searcher {
     protected KBId kbId;
 
     public BaseSearcher(KBId kbId, Stargraph core) {
+        logger.info(marker, "Initializing {}", kbId);
         this.core = Objects.requireNonNull(core);
         this.kbId = Objects.requireNonNull(kbId);
     }

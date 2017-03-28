@@ -14,7 +14,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public final class JenaGraphSearcher implements GraphSearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -68,13 +67,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
         }
 
         long millis = System.currentTimeMillis() - startTime;
-        logger.info(marker, "SPARQL query took {} ms [{} min, {} sec]",
-                millis,
-                TimeUnit.MILLISECONDS.toMinutes(millis),
-                TimeUnit.MILLISECONDS.toSeconds(millis) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
-        );
-
+        logger.info(marker, "SPARQL query took {}s", millis / 1000.0);
         return bindings;
     }
 }
