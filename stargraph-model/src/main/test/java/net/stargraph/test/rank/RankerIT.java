@@ -19,7 +19,7 @@ public final class RankerIT {
         ModifiableIndraParams params = ParamsBuilder.word2vec().corpus("wiki-2014").language("EN").url(getIndraURL());
         Ranker ranker = new IndraRanker(params);
 
-        Scores scores = new Scores(Arrays.asList(create("husband", 100),
+        Scores scores = new Scores(Arrays.asList(create("husband", 100), create("husband", 100),
                 create("children", 94), create("partner", 51), create("father", 1)));
 
         Scores rescored = ranker.score(scores, () -> "wife");

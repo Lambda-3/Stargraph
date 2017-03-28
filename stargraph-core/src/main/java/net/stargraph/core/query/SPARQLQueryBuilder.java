@@ -3,16 +3,17 @@ package net.stargraph.core.query;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.core.query.nli.QueryPlanPatterns;
-import net.stargraph.model.LabeledEntity;
+import net.stargraph.rank.Rankable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public final class SPARQLQueryBuilder {
     private QueryType queryType;
     private QueryPlanPatterns triplePatterns;
     private List<DataModelBinding> bindings;
-    private Map<DataModelBinding, List<LabeledEntity>> mappings;
+    private Map<DataModelBinding, List<Rankable>> mappings;
     private String sparqlQueryStr;
 
     public SPARQLQueryBuilder(QueryType queryType, QueryPlanPatterns triplePatterns, List<DataModelBinding> bindings) {
@@ -26,14 +27,6 @@ public final class SPARQLQueryBuilder {
     @Override
     public String toString() {
         return sparqlQueryStr;
-    }
-
-    public boolean isResolved(DataModelBinding binding) {
-        return mappings.containsKey(binding);
-    }
-
-    public void update(DataModelBinding binding, LabeledEntity entity) {
-        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).add(entity);
     }
 
     public QueryPlanPatterns getTriplePatterns() {
@@ -55,7 +48,22 @@ public final class SPARQLQueryBuilder {
                 .orElseThrow(() -> new StarGraphException("Unbounded '" + placeHolder + "'"));
     }
 
-    private String build() {
+    boolean isResolved(DataModelBinding binding) {
+        return mappings.containsKey(binding);
+    }
+
+    List<Rankable> getSolutions(DataModelBinding binding) {
+        if (mappings.containsKey(binding)) {
+            return mappings.get(binding);
+        }
+        return null;
+    }
+
+    void add(DataModelBinding binding, Rankable entity) {
+        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).add(entity);
+    }
+
+    String build() {
         switch (queryType) {
             case SELECT:
                 return String.format("SELECT * WHERE {\n %s \n}", buildStatements());
@@ -93,8 +101,26 @@ public final class SPARQLQueryBuilder {
         return tripleJoiner.toString();
     }
 
+    private List<String> placeHolder2URIs(String placeHolder) {
+        if (isVar(placeHolder)) {
+            return Collections.singletonList(placeHolder);
+        }
+
+        if (isType(placeHolder)) {
+            return Collections.singletonList("a");
+        }
+
+        DataModelBinding binding = getBinding(placeHolder);
+        List<Rankable> mappings = getSolutions(binding);
+        return mappings.stream().map(r -> r.getValue()).collect(Collectors.toList());
+    }
+
     private boolean isVar(String s) {
         return s.startsWith("?VAR");
+    }
+
+    private boolean isType(String s) {
+        return s.startsWith("TYPE");
     }
 
     private String getURI(DataModelBinding binding) {

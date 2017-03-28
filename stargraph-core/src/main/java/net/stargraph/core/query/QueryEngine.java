@@ -6,11 +6,7 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.nli.*;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.LabeledEntity;
-import net.stargraph.rank.ModifiableRankParams;
-import net.stargraph.rank.ModifiableSearchParams;
-import net.stargraph.rank.ParamsBuilder;
-import net.stargraph.rank.Scores;
+import net.stargraph.rank.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -46,13 +42,15 @@ public final class QueryEngine {
             resolve(asTriple(triplePattern, bindings), queryBuilder);
         });
 
+        queryBuilder.build();
+        System.out.println(queryBuilder);
         return null;
     }
 
 
     private void resolve(Triple triple, SPARQLQueryBuilder builder) {
-        InstanceEntity pivot = resolveInstance(triple.s, builder);
-        pivot = pivot != null ? pivot : resolveInstance(triple.o, builder);
+        InstanceEntity pivot = resolvePivot(triple.s, builder);
+        pivot = pivot != null ? pivot : resolvePivot(triple.o, builder);
         resolvePredicate(pivot, triple.p, builder);
     }
 
@@ -64,18 +62,23 @@ public final class QueryEngine {
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
-            builder.update(binding, (LabeledEntity) scores.get(0).getEntry());
+            builder.add(binding, (Rankable) scores.get(0).getEntry());
         }
     }
 
-    private InstanceEntity resolveInstance(DataModelBinding binding, SPARQLQueryBuilder builder) {
-        if (binding.getModelType() == DataModelType.INSTANCE && !builder.isResolved(binding)) {
+    private InstanceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
+        List<Rankable> solutions = builder.getSolutions(binding);
+        if (solutions != null) {
+            return (InstanceEntity)solutions.get(0);
+        }
+
+        if (binding.getModelType() == DataModelType.INSTANCE) {
             EntitySearcher searcher = core.createEntitySearcher();
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
             Scores scores = searcher.instanceSearch(searchParams, rankParams);
             InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
-            builder.update(binding, instance);
+            builder.add(binding, instance);
             return instance;
         }
         return null;

@@ -41,7 +41,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -72,14 +71,17 @@ public final class IndraRanker extends BaseRanker {
         RelatednessResponse response = webTarget.request()
                 .post(Entity.entity(request, MediaType.APPLICATION_JSON_TYPE), RelatednessResponse.class);
 
-        // As we don't care for who is being scored (must be a Rankable instance only) we save here for later lookup
-        Map<String, Rankable> value2Rankable = inputScores
-                .stream().map(Score::getRankableView).collect(Collectors.toMap(Rankable::getValue, r -> r));
-
         Scores rescored = new Scores(inputScores.size());
-        response.getPairs().forEach(p -> rescored.add(new Score(value2Rankable.get(p.t1), p.score)));
+        response.getPairs().forEach(p -> rescored.addAll(find(inputScores, p.t1, p.score)));
 
         rescored.sort(true);
         return rescored;
+    }
+
+    private List<Score> find(Scores scores, String text, double v) {
+        return scores.stream()
+                .map(Score::getRankableView)
+                .filter(s -> s.getValue().equals(text))
+                .map(r -> new Score(r, v)).collect(Collectors.toList());
     }
 }
