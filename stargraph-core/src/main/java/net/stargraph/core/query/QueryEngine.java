@@ -2,7 +2,9 @@ package net.stargraph.core.query;
 
 import net.stargraph.Language;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.query.nli.*;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
@@ -14,6 +16,7 @@ import org.slf4j.MarkerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -24,17 +27,22 @@ public final class QueryEngine {
     private String dbId;
     private Stargraph core;
     private Analyzers analyzers;
+    private GraphSearcher graphSearcher;
+    private Namespace namespace;
 
     public QueryEngine(String dbId, Stargraph core) {
         this.dbId = Objects.requireNonNull(dbId);
         this.core = Objects.requireNonNull(core);
         this.analyzers = new Analyzers(core.getConfig());
+        this.graphSearcher = core.createGraphSearcher(dbId);
+        this.namespace = Namespace.create(core, dbId);
     }
 
     public AnswerSet nliQuery(String userQuery, Language language) {
         QuestionAnalyzer analyzer = this.analyzers.getQuestionAnalyzer(language);
         QuestionAnalysis analysis = analyzer.analyse(userQuery);
         SPARQLQueryBuilder queryBuilder = analysis.getSPARQLQueryBuilder();
+        queryBuilder.setNS(namespace);
 
         QueryPlanPatterns triplePatterns = queryBuilder.getTriplePatterns();
         List<DataModelBinding> bindings = queryBuilder.getBindings();
@@ -44,9 +52,14 @@ public final class QueryEngine {
             resolve(asTriple(triplePattern, bindings), queryBuilder);
         });
 
-        System.out.println(queryBuilder);
-        System.out.println(queryBuilder.build());
-        return null;
+        String sparqlQueryStr = queryBuilder.build();
+        Map<String, List<String>> solutions = graphSearcher.select(sparqlQueryStr);
+
+        AnswerSet answerSet = new AnswerSet(userQuery, queryBuilder);
+        answerSet.setShortAnswer(solutions.get("VAR_1")); // convention, answer must be bound to the first var
+        answerSet.setSolutions(solutions);
+
+        return answerSet;
     }
 
 

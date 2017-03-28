@@ -27,5 +27,6 @@ public class NaturalLanguageInterfaceIT {
     @Test
     public void q0() {
         AnswerSet answerSet = queryEngine.nliQuery("Who is the wife of Barack Obama?", Language.EN);
+        Assert.assertTrue(answerSet.getShortAnswer().contains("http://dbpedia.org/resource/Michelle_Obama"));
     }
 }

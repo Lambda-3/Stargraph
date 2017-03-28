@@ -28,7 +28,6 @@ package net.stargraph.core;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
-import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -46,7 +45,7 @@ public final class Namespace extends HashMap<String, String> {
     private static Logger logger = LoggerFactory.getLogger(Namespace.class);
     private static Marker marker = MarkerFactory.getMarker("core");
 
-    public Namespace(String resource) {
+    private Namespace(String resource) {
         String classPathResource = String.format("%s-namespace.txt", Objects.requireNonNull(resource));
         logger.info(marker, "Namespace resource: {}", classPathResource);
 
@@ -74,8 +73,17 @@ public final class Namespace extends HashMap<String, String> {
         return uri;
     }
 
-    public static Namespace create(Stargraph core, KBId kbId) {
-        Config kbConfig = core.getKBConfig(kbId);
+    public String unmap(String uri) {
+        for (Map.Entry<String, String> entry : this.entrySet()) {
+            if (uri.startsWith(entry.getValue())) {
+                return uri.replace(entry.getValue(), entry.getKey());
+            }
+        }
+        return uri;
+    }
+
+    public static Namespace create(Stargraph core, String dbId) {
+        Config kbConfig = core.getKBConfig(dbId);
         if (kbConfig.hasPath("triple-store.namespace.mapping")) {
             return new Namespace(kbConfig.getString("triple-store.namespace.mapping"));
         }

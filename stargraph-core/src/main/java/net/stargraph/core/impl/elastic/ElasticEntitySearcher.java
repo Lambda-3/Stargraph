@@ -61,7 +61,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         // Fetch initial candidates from the search engine
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
         // Re-Rank
-        return Rankers.apply(scores, rankParams, searchParams::getSearchTerm);
+        return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
     }
 
     @Override
@@ -85,7 +85,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         Searcher searcher = core.getSearcher(searchParams.getKbId());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
 
-        return Rankers.apply(scores, rankParams, searchParams::getSearchTerm);
+        return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
     }
 
     @Override
@@ -113,7 +113,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
                 .map(p -> new Score(p, 0))
                 .collect(Collectors.toList()));
 
-        return Rankers.apply(propScores, rankParams, searchParams::getSearchTerm);
+        return Rankers.apply(propScores, rankParams, searchParams.getSearchTerm());
     }
 
     private void configureDistributionalParams(KBId kbId, ModifiableIndraParams params) {

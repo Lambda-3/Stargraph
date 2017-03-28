@@ -60,7 +60,7 @@ public final class EntityIterator implements Iterator<Indexable> {
         this.kbId = Objects.requireNonNull(kbId);
         this.core = core;
         this.mainNamespaces = buildMainNamespaces();
-        this.namespace = Namespace.create(core, kbId);
+        this.namespace = Namespace.create(core, kbId.getId());
         this.iterator = createIterator();
     }
 

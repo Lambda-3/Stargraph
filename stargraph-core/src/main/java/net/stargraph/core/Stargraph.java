@@ -29,9 +29,11 @@ package net.stargraph.core;
 import com.typesafe.config.*;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
 import net.stargraph.core.impl.elastic.ElasticSearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
+import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.index.IndexerFactory;
 import net.stargraph.core.processors.Processors;
@@ -110,6 +112,10 @@ public final class Stargraph {
 
     public EntitySearcher createEntitySearcher() {
         return new ElasticEntitySearcher(this);
+    }
+
+    public GraphSearcher createGraphSearcher(String dbId) {
+        return new JenaGraphSearcher(getModel(dbId));
     }
 
     public Model getModel(String dbId) {

@@ -37,6 +37,10 @@ public final class Rankers {
     private static Logger logger = LoggerFactory.getLogger(Rankers.class);
     private static Marker marker = MarkerFactory.getMarker("rank");
 
+    public static Scores apply(Scores inputScores, ModifiableRankParams rankParams, String target) {
+        return apply(inputScores, rankParams, asRankable(target));
+    }
+
     public static Scores apply(Scores inputScores, ModifiableRankParams rankParams, Rankable target) {
         logger.info(marker, "Applying {}.", rankParams);
         Ranker ranker = createRanker(rankParams);
@@ -59,5 +63,19 @@ public final class Rankers {
                 return new IndraRanker((ModifiableIndraParams) params);
         }
         throw new StarGraphException("Unknown Ranker!");
+    }
+
+    private static Rankable asRankable(String term) {
+        return new Rankable() {
+            @Override
+            public String getValue() {
+                return term;
+            }
+
+            @Override
+            public String getId() {
+                return term;
+            }
+        };
     }
 }

@@ -1,6 +1,7 @@
 package net.stargraph.core.query;
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Namespace;
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.core.query.nli.QueryPlanPatterns;
 import net.stargraph.rank.Rankable;
@@ -14,6 +15,7 @@ public final class SPARQLQueryBuilder {
     private QueryPlanPatterns triplePatterns;
     private List<DataModelBinding> bindings;
     private Map<DataModelBinding, List<Rankable>> mappings;
+    private Namespace namespace;
 
     public SPARQLQueryBuilder(QueryType queryType, QueryPlanPatterns triplePatterns, List<DataModelBinding> bindings) {
         this.queryType = Objects.requireNonNull(queryType);
@@ -44,6 +46,10 @@ public final class SPARQLQueryBuilder {
                 .filter(b -> b.getPlaceHolder().equals(placeHolder))
                 .findFirst()
                 .orElseThrow(() -> new StarGraphException("Unbounded '" + placeHolder + "'"));
+    }
+
+    void setNS(Namespace ns) {
+        this.namespace = Objects.requireNonNull(ns);
     }
 
     boolean isResolved(DataModelBinding binding) {
@@ -115,7 +121,7 @@ public final class SPARQLQueryBuilder {
         if (mappings.isEmpty()) {
             return Collections.singletonList(getURI(binding));
         }
-        return mappings.stream().map(r -> String.format("<%s>", r.getId())).collect(Collectors.toList());
+        return mappings.stream().map(r -> String.format("<%s>", unmap(r.getId()))).collect(Collectors.toList());
     }
 
     private boolean isVar(String s) {
@@ -128,5 +134,9 @@ public final class SPARQLQueryBuilder {
 
     private String getURI(DataModelBinding binding) {
         return String.format(":%s", binding.getTerm().replaceAll("\\s", "_"));
+    }
+
+    private String unmap(String uri) {
+        return namespace != null ? namespace.unmap(uri) : uri;
     }
 }

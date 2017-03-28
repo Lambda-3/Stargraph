@@ -39,9 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -84,9 +82,9 @@ public abstract class ElasticScroller implements Iterable<Score> {
     }
 
     public Scores getScores() {
-        List<Score> entries = new ArrayList<>();
-        this.forEach(entries::add);
-        return new Scores(entries);
+        Scores scores = new Scores();
+        this.forEach(scores::add);
+        return scores;
     }
 
     protected abstract Score build(SearchHit hit);
