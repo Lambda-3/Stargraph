@@ -1,5 +1,6 @@
 package net.stargraph.core.query.nli;
 
+import net.stargraph.StarGraphException;
 import net.stargraph.core.query.annotator.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,21 +130,25 @@ public final class AnalysisStep {
     }
 
     private Replacement replace(Pattern pattern, String target, String replacementStr) {
-        String str = target.trim();
-        Matcher matcher = pattern.matcher(str);
-        if (matcher.matches()) {
-            logger.debug(marker, "{} on '{}' with '{}'", pattern, str, replacementStr);
-            // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
-            StringBuffer sb = new StringBuffer();
-            String capturedStr = matcher.group(1);
-            matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), replacementStr));
-            matcher.appendTail(sb);
-            return new Replacement(sb.toString(), capturedStr);
+        try {
+            String str = target.trim();
+            Matcher matcher = pattern.matcher(str);
+            if (matcher.matches()) {
+                logger.debug(marker, "{} on '{}' with '{}'", pattern, str, replacementStr);
+                // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
+                StringBuffer sb = new StringBuffer();
+                String capturedStr = matcher.group(1);
+                matcher.appendReplacement(sb, matcher.group(0).replaceFirst(Pattern.quote(capturedStr), replacementStr));
+                matcher.appendTail(sb);
+                return new Replacement(sb.toString(), capturedStr);
+            } else {
+                logger.warn(marker, "Nothing changed: {} on '{}' with '{}'", pattern, str, replacementStr);
+            }
+            return new Replacement(target, null);
         }
-        else {
-            logger.warn(marker, "Nothing changed: {} on '{}' with '{}'", pattern, str, replacementStr);
+        catch (Exception e) {
+            throw new StarGraphException("Fail to apply pattern '" + pattern + "'");
         }
-        return new Replacement(target, null);
     }
 
     private String createPlaceholder(String target, DataModelType modelType) {

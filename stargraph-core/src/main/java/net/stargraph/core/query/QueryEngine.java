@@ -49,7 +49,12 @@ public final class QueryEngine {
             }
             throw new StarGraphException("Input type not yet supported");
 
-        } finally {
+        }
+        catch (Exception e) {
+            logger.error(marker, "Query Error '{}'", query, e);
+            throw new StarGraphException(e);
+        }
+        finally {
             long millis = System.currentTimeMillis() - startTime;
             logger.info(marker, "Query Engine took {}s",  millis / 1000.0);
         }

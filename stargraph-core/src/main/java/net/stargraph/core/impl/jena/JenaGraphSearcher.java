@@ -35,7 +35,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
     }
 
     private Map<String, List<String>> doSparqlQuery(String sparqlQuery) {
-        logger.trace(marker, "Executing: {}", sparqlQuery);
+        logger.info(marker, "Executing: {}", sparqlQuery);
 
         long startTime = System.currentTimeMillis();
 

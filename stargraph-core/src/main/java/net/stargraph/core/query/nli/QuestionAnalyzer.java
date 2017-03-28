@@ -1,6 +1,7 @@
 package net.stargraph.core.query.nli;
 
 import net.stargraph.Language;
+import net.stargraph.StarGraphException;
 import net.stargraph.UnmappedQueryTypeException;
 import net.stargraph.core.query.QueryType;
 import net.stargraph.core.query.Rules;
@@ -35,14 +36,21 @@ public final class QuestionAnalyzer {
     }
 
     public QuestionAnalysis analyse(String question) {
-        long startTime = System.currentTimeMillis();
-        QuestionAnalysis analysis = new QuestionAnalysis(question, selectQueryType(question));
-        analysis.annotate(annotator.run(language, question));
-        analysis.resolveDataModelBindings(dataModelTypePatterns);
-        analysis.clean(stopPatterns);
-        analysis.resolveSPARQL(queryPlanPatterns);
-        logger.info(marker, "{}", getTimingReport(question, startTime));
-        return analysis;
+        QuestionAnalysis analysis = null;
+        try {
+            long startTime = System.currentTimeMillis();
+            analysis = new QuestionAnalysis(question, selectQueryType(question));
+            analysis.annotate(annotator.run(language, question));
+            analysis.resolveDataModelBindings(dataModelTypePatterns);
+            analysis.clean(stopPatterns);
+            analysis.resolveSPARQL(queryPlanPatterns);
+            logger.info(marker, "{}", getTimingReport(question, startTime));
+            return analysis;
+        }
+        catch (Exception e) {
+            logger.error(marker, "Analysis failure. Last step: {}", analysis);
+            throw new StarGraphException(e);
+        }
     }
 
     private QueryType selectQueryType(String question) {
