@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public final class Rules {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("qa");
+    private Marker marker = MarkerFactory.getMarker("query");
 
     private Map<Language, List<DataModelTypePattern>> dataModelTypePatterns;
     private Map<Language, List<QueryPlanPatterns>> queryPlanPatterns;
