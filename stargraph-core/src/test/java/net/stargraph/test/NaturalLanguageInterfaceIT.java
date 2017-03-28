@@ -1,7 +1,6 @@
 package net.stargraph.test;
 
 import com.typesafe.config.Config;
-import net.stargraph.Language;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.AnswerSet;
 import net.stargraph.core.query.QueryEngine;
@@ -26,7 +25,7 @@ public class NaturalLanguageInterfaceIT {
 
     @Test
     public void q0() {
-        AnswerSet answerSet = queryEngine.nliQuery("Who is the wife of Barack Obama?", Language.EN);
+        AnswerSet answerSet = (AnswerSet) queryEngine.query("Who is the wife of Barack Obama?");
         Assert.assertTrue(answerSet.getShortAnswer().contains("http://dbpedia.org/resource/Michelle_Obama"));
     }
 }

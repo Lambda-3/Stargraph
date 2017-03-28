@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public final class AnswerSet {
+public final class AnswerSet implements QueryResponse {
     private List<String> shortAnswer;
     private String userQuery;
     private QueryType queryType;

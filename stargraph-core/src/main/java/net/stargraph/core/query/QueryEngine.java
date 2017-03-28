@@ -29,6 +29,7 @@ public final class QueryEngine {
     private Analyzers analyzers;
     private GraphSearcher graphSearcher;
     private Namespace namespace;
+    private Language language;
 
     public QueryEngine(String dbId, Stargraph core) {
         this.dbId = Objects.requireNonNull(dbId);
@@ -36,9 +37,18 @@ public final class QueryEngine {
         this.analyzers = new Analyzers(core.getConfig());
         this.graphSearcher = core.createGraphSearcher(dbId);
         this.namespace = Namespace.create(core, dbId);
+        this.language = core.getLanguage(dbId);
     }
 
-    public AnswerSet nliQuery(String userQuery, Language language) {
+    public QueryResponse query(String query) {
+        switch (detectInteractionMode(query)) {
+            case NLI:
+                return nliQuery(query, language);
+        }
+        throw new StarGraphException("Input type not yet supported");
+    }
+
+    private AnswerSet nliQuery(String userQuery, Language language) {
         QuestionAnalyzer analyzer = this.analyzers.getQuestionAnalyzer(language);
         QuestionAnalysis analysis = analyzer.analyse(userQuery);
         SPARQLQueryBuilder queryBuilder = analysis.getSPARQLQueryBuilder();
@@ -60,6 +70,14 @@ public final class QueryEngine {
         answerSet.setSolutions(solutions);
 
         return answerSet;
+    }
+
+    private InteractionMode detectInteractionMode(String queryString) {
+        String q = queryString.trim();
+        if (q.endsWith("?")) {
+            return InteractionMode.NLI;
+        }
+        throw new StarGraphException("Input type not yet supported");
     }
 
 

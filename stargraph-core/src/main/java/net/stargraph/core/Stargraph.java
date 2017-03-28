@@ -27,6 +27,7 @@ package net.stargraph.core;
  */
 
 import com.typesafe.config.*;
+import net.stargraph.Language;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
@@ -140,6 +141,11 @@ public final class Stargraph {
 
     public Set<KBId> getKBs() {
         return indexers.keySet();
+    }
+
+    public Language getLanguage(String dbId) {
+        Config kbCfg = getKBConfig(dbId);
+        return Language.valueOf(kbCfg.getString("language").toUpperCase());
     }
 
     public Indexer getIndexer(KBId kbId) {
