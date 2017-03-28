@@ -14,19 +14,17 @@ public final class SPARQLQueryBuilder {
     private QueryPlanPatterns triplePatterns;
     private List<DataModelBinding> bindings;
     private Map<DataModelBinding, List<Rankable>> mappings;
-    private String sparqlQueryStr;
 
     public SPARQLQueryBuilder(QueryType queryType, QueryPlanPatterns triplePatterns, List<DataModelBinding> bindings) {
         this.queryType = Objects.requireNonNull(queryType);
         this.triplePatterns = Objects.requireNonNull(triplePatterns);
         this.bindings = Objects.requireNonNull(bindings);
         this.mappings = new ConcurrentHashMap<>();
-        this.sparqlQueryStr = build();
     }
 
     @Override
     public String toString() {
-        return sparqlQueryStr;
+        return build();
     }
 
     public QueryPlanPatterns getTriplePatterns() {
