@@ -65,17 +65,17 @@ public final class ElasticSearcher extends BaseSearcher {
         Class<Serializable> modelClass = core.getModelClass(modelName);
 
         ElasticScroller scroller = new ElasticScroller(esClient, holder) {
-                    @Override
-                    protected Score build(SearchHit hit) {
-                        try {
-                            Serializable entity = mapper.readValue(hit.source(), modelClass);
-                            return new Score(entity, hit.getScore());
-                        } catch (Exception e) {
-                            logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
-                        }
-                        return null;
-                    }
-                };
+            @Override
+            protected Score build(SearchHit hit) {
+                try {
+                    Serializable entity = mapper.readValue(hit.source(), modelClass);
+                    return new Score(entity, hit.getScore());
+                } catch (Exception e) {
+                    logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
+                }
+                return null;
+            }
+        };
 
         return scroller.getScores();
     }
