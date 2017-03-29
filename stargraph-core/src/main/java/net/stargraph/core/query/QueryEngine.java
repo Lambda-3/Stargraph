@@ -75,11 +75,13 @@ public final class QueryEngine {
         });
 
         String sparqlQueryStr = queryBuilder.build();
-        Map<String, List<String>> solutions = graphSearcher.select(sparqlQueryStr);
+
+        Map<String, List<String>> vars = graphSearcher.select(sparqlQueryStr);
 
         AnswerSet answerSet = new AnswerSet(userQuery, queryBuilder);
-        answerSet.setShortAnswer(solutions.get("VAR_1")); // convention, answer must be bound to the first var
-        answerSet.setSolutions(solutions);
+        answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
+        answerSet.setMappings(queryBuilder.getMappings());
+        answerSet.setSPARQLQuery(sparqlQueryStr);
 
         return answerSet;
     }
@@ -107,14 +109,14 @@ public final class QueryEngine {
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
-            builder.add(binding, scores.stream().map(Score::getRankableView).limit(3).collect(Collectors.toList()));
+            builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
         }
     }
 
     private InstanceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
-        List<Rankable> solutions = builder.getSolutions(binding);
-        if (!solutions.isEmpty()) {
-            return (InstanceEntity)solutions.get(0);
+        List<Score> mappings = builder.getMappings(binding);
+        if (!mappings.isEmpty()) {
+            return (InstanceEntity)mappings.get(0).getEntry();
         }
 
         if (binding.getModelType() == DataModelType.INSTANCE) {
@@ -123,7 +125,7 @@ public final class QueryEngine {
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
             Scores scores = searcher.instanceSearch(searchParams, rankParams);
             InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
-            builder.add(binding, Collections.singletonList(instance));
+            builder.add(binding, Collections.singletonList(scores.get(0)));
             return instance;
         }
         return null;

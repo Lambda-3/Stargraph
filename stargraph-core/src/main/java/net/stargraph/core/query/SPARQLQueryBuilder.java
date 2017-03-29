@@ -4,7 +4,8 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.core.query.nli.QueryPlanPatterns;
-import net.stargraph.rank.Rankable;
+import net.stargraph.rank.Score;
+import net.stargraph.rank.Scores;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +15,7 @@ public final class SPARQLQueryBuilder {
     private QueryType queryType;
     private QueryPlanPatterns triplePatterns;
     private List<DataModelBinding> bindings;
-    private Map<DataModelBinding, List<Rankable>> mappings;
+    private Map<DataModelBinding, List<Score>> mappings;
     private Namespace namespace;
 
     public SPARQLQueryBuilder(QueryType queryType, QueryPlanPatterns triplePatterns, List<DataModelBinding> bindings) {
@@ -56,15 +57,19 @@ public final class SPARQLQueryBuilder {
         return mappings.containsKey(binding);
     }
 
-    List<Rankable> getSolutions(DataModelBinding binding) {
+    List<Score> getMappings(DataModelBinding binding) {
         if (mappings.containsKey(binding)) {
             return mappings.get(binding);
         }
         return Collections.emptyList();
     }
 
-    void add(DataModelBinding binding, List<Rankable> entities) {
-        mappings.computeIfAbsent(binding, (b) -> new ArrayList<>()).addAll(entities);
+    Map<DataModelBinding, List<Score>> getMappings() {
+        return mappings;
+    }
+
+    void add(DataModelBinding binding, List<Score> scores) {
+        mappings.computeIfAbsent(binding, (b) -> new Scores()).addAll(scores);
     }
 
     String build() {
@@ -117,11 +122,13 @@ public final class SPARQLQueryBuilder {
         }
 
         DataModelBinding binding = getBinding(placeHolder);
-        List<Rankable> mappings = getSolutions(binding);
+        List<Score> mappings = getMappings(binding);
         if (mappings.isEmpty()) {
             return Collections.singletonList(getURI(binding));
         }
-        return mappings.stream().map(r -> String.format("<%s>", unmap(r.getId()))).collect(Collectors.toList());
+        return mappings.stream()
+                .map(Score::getRankableView)
+                .map(r -> String.format("<%s>", unmap(r.getId()))).collect(Collectors.toList());
     }
 
     private boolean isVar(String s) {
