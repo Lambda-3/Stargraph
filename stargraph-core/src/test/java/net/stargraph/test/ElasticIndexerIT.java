@@ -33,6 +33,7 @@ import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.KBId;
+import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.PropertyEntity;
 import net.stargraph.rank.*;
 import org.junit.Assert;
@@ -41,6 +42,8 @@ import org.testng.annotations.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
@@ -106,6 +109,13 @@ public final class ElasticIndexerIT {
 
         PropertyEntity expected = new PropertyEntity("dbp:education", "education");
         Assert.assertEquals(expected, scores.get(0).getEntry());
+    }
+
+    @Test
+    public void getEntitiesTest() {
+        EntitySearcher searcher = stargraph.createEntitySearcher();
+        List<LabeledEntity> res = searcher.getEntities("obama", "dbr:Barack_Obama");
+        Assert.assertEquals(Collections.singletonList(new InstanceEntity("dbr:Barack_Obama", "Barack Obama")), res);
     }
 
     @Test

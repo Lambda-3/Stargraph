@@ -29,14 +29,12 @@ package net.stargraph.core.impl.elastic;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
-import net.stargraph.model.BuiltInModel;
-import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.KBId;
+import net.stargraph.model.*;
 import net.stargraph.rank.*;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.QueryBuilder;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -48,6 +46,15 @@ public final class ElasticEntitySearcher implements EntitySearcher {
 
     public ElasticEntitySearcher(Stargraph core) {
         this.core = Objects.requireNonNull(core);
+    }
+
+    @Override
+    public List<LabeledEntity> getEntities(String dbId, String... ids) {
+        ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
+        QueryBuilder queryBuilder = termsQuery("id", ids);
+        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
+        return scores.stream().map(s -> (LabeledEntity)s.getEntry()).collect(Collectors.toList());
     }
 
     @Override

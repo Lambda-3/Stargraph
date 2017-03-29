@@ -27,11 +27,16 @@ package net.stargraph.core.search;
  */
 
 import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.LabeledEntity;
 import net.stargraph.rank.ModifiableRankParams;
 import net.stargraph.rank.ModifiableSearchParams;
 import net.stargraph.rank.Scores;
 
+import java.util.List;
+
 public interface EntitySearcher {
+
+    List<LabeledEntity> getEntities(String dbId, String... ids);
 
     Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams);
 
