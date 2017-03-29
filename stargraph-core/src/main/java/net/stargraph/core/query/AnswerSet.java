@@ -47,6 +47,10 @@ public final class AnswerSet implements QueryResponse {
         return mappings;
     }
 
+    public String getSparqlQuery() {
+        return sparqlQuery;
+    }
+
     @Override
     public String toString() {
         return "AnswerSet{" +
