@@ -30,14 +30,17 @@ public final class ValueEntity extends LabeledEntity {
     private String dataType;
     private String language;
 
-    public ValueEntity(String id, String value) {
-        this(id, value, null, null);
-    }
-
-    public ValueEntity(String id, String value, String dataType, String language) {
+    public ValueEntity(String id, String value, String dataType, String langTag) {
         super(id, value);
         this.dataType = dataType;
-        this.language = language;
+        this.language = langTag;
+    }
+
+    public ValueEntity(String value, String dataType, String langTag) {
+        super(dataType == null ?
+                (langTag == null ? value : "\"" + value + "\"@" + langTag) : String.format("\"%s\"^^<%s>", value, dataType), value);
+        this.dataType = dataType;
+        this.language = langTag;
     }
 
     public String getDataType() {

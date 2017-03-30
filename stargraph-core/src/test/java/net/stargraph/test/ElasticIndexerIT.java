@@ -43,7 +43,6 @@ import org.testng.annotations.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 
 import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
@@ -114,8 +113,8 @@ public final class ElasticIndexerIT {
     @Test
     public void getEntitiesTest() {
         EntitySearcher searcher = stargraph.createEntitySearcher();
-        List<LabeledEntity> res = searcher.getEntities("obama", "dbr:Barack_Obama");
-        Assert.assertEquals(Collections.singletonList(new InstanceEntity("dbr:Barack_Obama", "Barack Obama")), res);
+        LabeledEntity obama = searcher.getEntity("obama", "dbr:Barack_Obama");
+        Assert.assertEquals(Collections.singletonList(new InstanceEntity("dbr:Barack_Obama", "Barack Obama")), obama);
     }
 
     @Test

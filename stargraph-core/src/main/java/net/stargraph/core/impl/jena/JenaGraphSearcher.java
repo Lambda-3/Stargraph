@@ -1,11 +1,14 @@
 package net.stargraph.core.impl.jena;
 
+import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
+import net.stargraph.core.search.EntitySearcher;
+import net.stargraph.model.LabeledEntity;
+import net.stargraph.model.ValueEntity;
 import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
@@ -18,14 +21,16 @@ import java.util.*;
 public final class JenaGraphSearcher implements GraphSearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("jena");
-    private Model model;
+    private Stargraph core;
+    private String dbId;
 
-    public JenaGraphSearcher(Model model) {
-        this.model = Objects.requireNonNull(model);
+    public JenaGraphSearcher(String dbId, Stargraph core) {
+        this.core = Objects.requireNonNull(core);
+        this.dbId = Objects.requireNonNull(dbId);
     }
 
     @Override
-    public Map<String, List<String>> select(String sparqlQuery) {
+    public Map<String, List<LabeledEntity>> select(String sparqlQuery) {
         return doSparqlQuery(sparqlQuery);
     }
 
@@ -34,14 +39,15 @@ public final class JenaGraphSearcher implements GraphSearcher {
         return false;
     }
 
-    private Map<String, List<String>> doSparqlQuery(String sparqlQuery) {
+    private Map<String, List<LabeledEntity>> doSparqlQuery(String sparqlQuery) {
         logger.info(marker, "Executing: {}", sparqlQuery);
 
         long startTime = System.currentTimeMillis();
 
-        Map<String, List<String>> bindings = new LinkedHashMap<>();
+        Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
+        EntitySearcher entitySearcher = core.createEntitySearcher();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, model)) {
+        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getModel(dbId))) {
             ResultSet results = qexec.execSelect();
 
             while (results.hasNext()) {
@@ -49,25 +55,22 @@ public final class JenaGraphSearcher implements GraphSearcher {
                 Iterator<Var> vars = jBinding.vars();
                 while (vars.hasNext()) {
                     Var jVar = vars.next();
-                    List<String> entities = bindings.getOrDefault(jVar.getVarName(), new ArrayList<>());
-
-                    String id;
 
                     if (!jBinding.get(jVar).isLiteral()) {
-                        id = jBinding.get(jVar).getURI();
+                        String id = jBinding.get(jVar).getURI();
+                        result.computeIfAbsent(jVar.getVarName(),
+                                (v) -> new ArrayList<>()).add(entitySearcher.getEntity(dbId, id));
                     } else {
                         LiteralLabel lit = jBinding.get(jVar).getLiteral();
-                        id = lit.getLexicalForm();
+                        ValueEntity valueEntity = new ValueEntity(lit.getLexicalForm(), lit.getDatatype().getURI(), lit.language());
+                        result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>()).add(valueEntity);
                     }
-
-                    entities.add(id);
-                    bindings.put(jVar.getVarName(), entities);
                 }
             }
         }
 
         long millis = System.currentTimeMillis() - startTime;
         logger.info(marker, "SPARQL query took {}s", millis / 1000.0);
-        return bindings;
+        return result;
     }
 }

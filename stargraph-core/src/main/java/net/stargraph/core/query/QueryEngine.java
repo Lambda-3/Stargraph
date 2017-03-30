@@ -8,6 +8,7 @@ import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.query.nli.*;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.LabeledEntity;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public final class QueryEngine {
 
         String sparqlQueryStr = queryBuilder.build();
 
-        Map<String, List<String>> vars = graphSearcher.select(sparqlQueryStr);
+        Map<String, List<LabeledEntity>> vars = graphSearcher.select(sparqlQueryStr);
 
         AnswerSet answerSet = new AnswerSet(userQuery, queryBuilder);
         answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var

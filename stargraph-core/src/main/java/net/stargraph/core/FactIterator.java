@@ -54,16 +54,7 @@ final class FactIterator extends TripleIterator<Indexable> {
             String dataType = literal.getDatatypeURI();
             String langTag = literal.getLanguage();
             String value = literal.getLexicalForm();
-
-            String id;
-
-            if (dataType == null) {
-                id = langTag == null ? value : "\"" + value + "\"@" + langTag;
-            } else {
-                id = String.format("\"%s\"^^<%s>", value, dataType);
-            }
-
-            labeledEntity = new ValueEntity(id, value, dataType, langTag);
+            labeledEntity = new ValueEntity(value, dataType, langTag);
         }
 
 

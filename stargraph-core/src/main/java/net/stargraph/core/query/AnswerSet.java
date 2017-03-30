@@ -1,6 +1,7 @@
 package net.stargraph.core.query;
 
 import net.stargraph.core.query.nli.DataModelBinding;
+import net.stargraph.model.LabeledEntity;
 import net.stargraph.rank.Score;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class AnswerSet implements QueryResponse {
-    private List<String> shortAnswer;
+    private List<LabeledEntity> shortAnswer;
     private String sparqlQuery;
     private String userQuery;
     private QueryType queryType;
@@ -19,7 +20,7 @@ public final class AnswerSet implements QueryResponse {
         this.queryType = Objects.requireNonNull(sparqlQueryBuilder).getQueryType();
     }
 
-    void setShortAnswer(List<String> shortAnswer) {
+    void setShortAnswer(List<LabeledEntity> shortAnswer) {
         this.shortAnswer = Objects.requireNonNull(shortAnswer);
     }
 
@@ -31,7 +32,7 @@ public final class AnswerSet implements QueryResponse {
         this.sparqlQuery = Objects.requireNonNull(sparqlQuery);
     }
 
-    public List<String> getShortAnswer() {
+    public List<LabeledEntity> getShortAnswer() {
         return shortAnswer;
     }
 

@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.AnswerSet;
 import net.stargraph.core.query.QueryEngine;
+import net.stargraph.model.InstanceEntity;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -26,6 +27,6 @@ public class NaturalLanguageInterfaceIT {
     @Test
     public void q0() {
         AnswerSet answerSet = (AnswerSet) queryEngine.query("Who is the wife of Barack Obama?");
-        Assert.assertTrue(answerSet.getShortAnswer().contains("http://dbpedia.org/resource/Michelle_Obama"));
+        Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
     }
 }

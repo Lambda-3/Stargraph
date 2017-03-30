@@ -65,9 +65,11 @@ public final class Namespace extends HashMap<String, String> {
     }
 
     public String map(String uri) {
-        for (Map.Entry<String, String> entry : this.entrySet()) {
-            if (uri.startsWith(entry.getKey())) {
-                return uri.replace(entry.getKey(), entry.getValue());
+        if (uri.startsWith("http")) {
+            for (Map.Entry<String, String> entry : this.entrySet()) {
+                if (uri.startsWith(entry.getKey())) {
+                    return uri.replace(entry.getKey(), entry.getValue());
+                }
             }
         }
         return uri;

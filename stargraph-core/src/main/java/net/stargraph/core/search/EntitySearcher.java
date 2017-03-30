@@ -36,7 +36,9 @@ import java.util.List;
 
 public interface EntitySearcher {
 
-    List<LabeledEntity> getEntities(String dbId, String... ids);
+    LabeledEntity getEntity(String dbId, String id);
+
+    List<LabeledEntity> getEntities(String dbId, List<String> ids);
 
     Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams);
 

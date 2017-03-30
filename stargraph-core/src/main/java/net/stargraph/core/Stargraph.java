@@ -116,7 +116,7 @@ public final class Stargraph {
     }
 
     public GraphSearcher createGraphSearcher(String dbId) {
-        return new JenaGraphSearcher(getModel(dbId));
+        return new JenaGraphSearcher(dbId, this);
     }
 
     public Model getModel(String dbId) {
