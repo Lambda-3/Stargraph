@@ -59,7 +59,6 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Stargraph database core implementation.
@@ -69,8 +68,9 @@ public final class Stargraph {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
-    private ConcurrentMap<KBId, Indexer> indexers;
-    private ConcurrentMap<KBId, Searcher> searchers;
+    private Map<KBId, Indexer> indexers;
+    private Map<KBId, Searcher> searchers;
+    private Map<String, Namespace> namespaces;
     private IndexerFactory indexerFactory;
     private GraphModelFactory modelFactory;
 
@@ -89,6 +89,7 @@ public final class Stargraph {
                 Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
+        this.namespaces = new ConcurrentHashMap<>();
 
         setIndexerFactory(createIndexerFactory());
         setModelFactory(new HDTModelFactory(this));
@@ -109,6 +110,10 @@ public final class Stargraph {
         }
 
         throw new StarGraphException("No Class registered for model: '" + modelName + "'");
+    }
+
+    public Namespace getNamespace(String dbId) {
+        return namespaces.computeIfAbsent(dbId, (id) -> Namespace.create(this, dbId));
     }
 
     public EntitySearcher createEntitySearcher() {

@@ -37,7 +37,7 @@ public final class QueryEngine {
         this.core = Objects.requireNonNull(core);
         this.analyzers = new Analyzers(core.getConfig());
         this.graphSearcher = core.createGraphSearcher(dbId);
-        this.namespace = Namespace.create(core, dbId);
+        this.namespace = core.getNamespace(dbId);
         this.language = core.getLanguage(dbId);
     }
 

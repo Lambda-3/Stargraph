@@ -84,7 +84,7 @@ public final class Namespace extends HashMap<String, String> {
         return uri;
     }
 
-    public static Namespace create(Stargraph core, String dbId) {
+    static Namespace create(Stargraph core, String dbId) {
         Config kbConfig = core.getKBConfig(dbId);
         if (kbConfig.hasPath("triple-store.namespace.mapping")) {
             return new Namespace(kbConfig.getString("triple-store.namespace.mapping"));
