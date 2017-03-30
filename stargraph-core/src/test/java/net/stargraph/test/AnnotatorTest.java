@@ -3,7 +3,7 @@ package net.stargraph.test;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.core.query.annotator.Annotator;
 import net.stargraph.core.query.annotator.Word;
 import org.testng.Assert;

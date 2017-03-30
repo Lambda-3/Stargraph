@@ -1,4 +1,4 @@
-package net.stargraph.core.query;
+package net.stargraph.query;
 
 public enum InteractionMode {
     NLI,

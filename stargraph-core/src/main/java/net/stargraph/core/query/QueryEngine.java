@@ -1,6 +1,6 @@
 package net.stargraph.core.query;
 
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
@@ -9,6 +9,7 @@ import net.stargraph.core.query.nli.*;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.LabeledEntity;
+import net.stargraph.query.InteractionMode;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static net.stargraph.query.InteractionMode.NLI;
 
 public final class QueryEngine {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -79,7 +82,7 @@ public final class QueryEngine {
 
         Map<String, List<LabeledEntity>> vars = graphSearcher.select(sparqlQueryStr);
 
-        AnswerSet answerSet = new AnswerSet(userQuery, queryBuilder);
+        AnswerSet answerSet = new AnswerSet(NLI, userQuery, queryBuilder);
         answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
         answerSet.setMappings(queryBuilder.getMappings());
         answerSet.setSPARQLQuery(sparqlQueryStr);
@@ -90,7 +93,7 @@ public final class QueryEngine {
     private InteractionMode detectInteractionMode(String queryString) {
         String q = queryString.trim();
         if (q.endsWith("?")) {
-            return InteractionMode.NLI;
+            return NLI;
         }
         throw new StarGraphException("Input type not yet supported");
     }

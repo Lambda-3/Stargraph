@@ -1,4 +1,4 @@
-package net.stargraph;
+package net.stargraph.query;
 
 public enum Language {
 

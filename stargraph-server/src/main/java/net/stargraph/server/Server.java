@@ -33,6 +33,7 @@ import net.stargraph.core.Stargraph;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,10 @@ public final class Server {
             ResourceConfig rc = new ResourceConfig();
             rc.register(CORSFilters.class);
             rc.register(LoggingFilter.class);
+            rc.register(JacksonFeature.class);
+            rc.register(CatchAllExceptionMapper.class);
+            rc.register(SerializationExceptionMapper.class);
+            rc.register(WebAppExceptionMapper.class);
             rc.register(AdminResourceImpl.class);
             rc.register(new KBResourceImpl(core));
             rc.register(new QueryResourceImpl(core));

@@ -1,7 +1,7 @@
 package net.stargraph.core.query;
 
 import com.typesafe.config.Config;
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
 import net.stargraph.core.query.annotator.Annotator;
 import net.stargraph.core.query.nli.QuestionAnalyzer;

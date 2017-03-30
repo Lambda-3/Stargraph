@@ -20,7 +20,7 @@
         </triggeringPolicy>
 
         <encoder>
-            <pattern>%d{yyyyMMdd-HH:mm:ss.SSS} %-5level %logger{0} - %msg %n</pattern>
+            <pattern>%date{ISO8601} %-5level %logger{0} %marker %msg %n</pattern>
         </encoder>
     </appender>
 

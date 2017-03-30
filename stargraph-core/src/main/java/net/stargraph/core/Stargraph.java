@@ -27,7 +27,7 @@ package net.stargraph.core;
  */
 
 import com.typesafe.config.*;
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;

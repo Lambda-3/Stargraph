@@ -1,6 +1,6 @@
 package net.stargraph.core.query.nli;
 
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.StarGraphException;
 import net.stargraph.UnmappedQueryTypeException;
 import net.stargraph.core.query.QueryType;

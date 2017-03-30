@@ -1,6 +1,6 @@
 package net.stargraph.core.query.annotator;
 
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.StarGraphException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

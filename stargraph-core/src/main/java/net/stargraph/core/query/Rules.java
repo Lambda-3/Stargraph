@@ -3,7 +3,7 @@ package net.stargraph.core.query;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.query.nli.*;
 import org.slf4j.Logger;

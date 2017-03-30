@@ -1,7 +1,7 @@
 package net.stargraph.test;
 
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.Language;
+import net.stargraph.query.Language;
 import net.stargraph.core.query.Analyzers;
 import net.stargraph.core.query.SPARQLQueryBuilder;
 import net.stargraph.core.query.QueryType;

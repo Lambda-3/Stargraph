@@ -2,21 +2,21 @@ package net.stargraph.core.query;
 
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.model.LabeledEntity;
+import net.stargraph.query.InteractionMode;
 import net.stargraph.rank.Score;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public final class AnswerSet implements QueryResponse {
+public final class AnswerSet extends QueryResponse {
     private List<LabeledEntity> shortAnswer;
     private String sparqlQuery;
-    private String userQuery;
     private QueryType queryType;
     private Map<DataModelBinding, List<Score>> mappings;
 
-    AnswerSet(String userQuery, SPARQLQueryBuilder sparqlQueryBuilder) {
-        this.userQuery = Objects.requireNonNull(userQuery);
+    AnswerSet(InteractionMode mode, String userQuery, SPARQLQueryBuilder sparqlQueryBuilder) {
+        super(mode, userQuery);
         this.queryType = Objects.requireNonNull(sparqlQueryBuilder).getQueryType();
     }
 
@@ -36,10 +36,6 @@ public final class AnswerSet implements QueryResponse {
         return shortAnswer;
     }
 
-    public String getUserQuery() {
-        return userQuery;
-    }
-
     public QueryType getQueryType() {
         return queryType;
     }
@@ -56,7 +52,7 @@ public final class AnswerSet implements QueryResponse {
     public String toString() {
         return "AnswerSet{" +
                 "shortAnswer=" + shortAnswer +
-                ", userQuery='" + userQuery + '\'' +
+                ", userQuery='" + getUserQuery() + '\'' +
                 '}';
     }
 }
