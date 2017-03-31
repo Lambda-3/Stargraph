@@ -64,7 +64,6 @@ public abstract class BaseIndexer implements Indexer {
 
     public BaseIndexer(KBId kbId, Stargraph core) {
         logger.info(marker, "Initializing {}", kbId);
-        this.marker = MarkerFactory.getMarker(kbId.toString());
         this.core = Objects.requireNonNull(core);
         this.kbId = Objects.requireNonNull(kbId);
         this.loading = false;
