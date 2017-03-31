@@ -27,7 +27,6 @@ package net.stargraph.core.impl.elastic;
  */
 
 import com.typesafe.config.Config;
-import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.Version;
 import net.stargraph.model.KBId;
@@ -56,19 +55,18 @@ import org.slf4j.MarkerFactory;
 
 import java.net.InetAddress;
 import java.util.Collection;
+import java.util.List;
 
 public final class ElasticClient {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker;
+    private Marker marker = MarkerFactory.getMarker("elastic");
     private KBId kbId;
     private Client client;
     private Stargraph core;
     private String indexName;
 
     public ElasticClient(Stargraph core, KBId kbId) {
-        marker = MarkerFactory.getMarker(kbId.toString());
         logger.trace(marker, "Creating ES Client for {}", kbId);
-        this.marker = MarkerFactory.getMarker(kbId.toString());
         this.core = core;
         this.kbId = kbId;
         this.client = createClient();
@@ -154,14 +152,16 @@ public final class ElasticClient {
         Settings settings = Settings.builder().put("cluster.name", cfg.getString("elastic.cluster-name")).build();
         TransportClient client = new PreBuiltTransportClient(settings);
 
-        for (String addr : cfg.getStringList("elastic.servers")) {
+        List<String> servers = cfg.getStringList("elastic.servers");
+        logger.info(marker, "Elastic Servers: {}", servers);
+        for (String addr : servers) {
             try {
                 String[] a = addr.split(":");
                 String host = a[0];
                 int port = Integer.parseInt(a[1]);
                 client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
             } catch (Exception e) {
-                throw new StarGraphException("Fail to parse ES address: " + addr);
+                logger.error(marker, "Transport client creation failed for '{}'", addr, e);
             }
         }
 
