@@ -36,7 +36,7 @@ import static net.stargraph.ModelUtils.createProperty;
 final class PropertyIterator extends TripleIterator<Indexable> {
 
     PropertyIterator(Stargraph core, KBId kbId) {
-        super(kbId, core.getModel(kbId.getId()), Namespace.create(core, kbId.getId()));
+        super(kbId, core.getGraphModel(kbId.getId()), Namespace.create(core, kbId.getId()));
     }
 
     @Override

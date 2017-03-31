@@ -36,7 +36,8 @@ import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
 import org.rdfhdt.hdtjena.HDTGraph;
 
-import java.io.File;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,38 +49,77 @@ public final class HDTModelFactory extends GraphModelFactory {
 
     @Override
     protected Model createModel(String dbId) {
-        if (!hasTripleStore(dbId)) {
-            logger.warn(marker, "Can't create Graph Model from {}. No triple-store configured.", dbId);
-        } else {
-            try {
-                File hdtFile = getHDTPath(dbId).toFile();
-                if (hdtFile.exists()) {
-                    boolean hasIdx = hasIndex(dbId);
-                    logger.info(marker, "Using HDT index? {}", hasIdx);
-                    String hdtFilePathStr = hdtFile.getAbsolutePath();
-                    logger.trace(marker, "HDT: '{}'", hdtFilePathStr);
-                    HDT hdt = hasIdx ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
-                    HDTGraph graph = new HDTGraph(hdt);
-                    return ModelFactory.createModelForGraph(graph);
-                }
-                logger.error(marker, "HDT file not found: {}", hdtFile);
-            } catch (Exception e) {
-                throw new StarGraphException(e);
+        try {
+            File hdtFile = getHDTPath(dbId).toFile();
+            if (hdtFile.exists()) {
+                boolean useIdx = useIndex(dbId);
+                logger.info(marker, "Using HDT index? {}", useIdx);
+                String hdtFilePathStr = hdtFile.getAbsolutePath();
+                logger.trace(marker, "HDT: '{}'", hdtFilePathStr);
+                HDT hdt = useIdx ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
+                HDTGraph graph = new HDTGraph(hdt);
+                return ModelFactory.createModelForGraph(graph);
             }
-        }
 
-        return null;
+           throw new FileNotFoundException("HDT file not found: '" + hdtFile + "'");
+
+        } catch (Exception e) {
+            throw new StarGraphException(e);
+        }
     }
 
-    private boolean hasIndex(String id) {
+    private boolean useIndex(String id) {
         Config tripleStoreCfg = core.getKBConfig(id).getConfig("triple-store");
         return tripleStoreCfg.hasPath("hdt.use-index") && tripleStoreCfg.getBoolean("hdt.use-index");
     }
 
-    private Path getHDTPath(String dbId) {
+    private Path getHDTPath(String dbId) throws IOException {
+
         Config mainConfig = core.getConfig();
         String dataDir = mainConfig.getString("data.root-dir");
-        return Paths.get(dataDir, dbId, "facts", "triples.hdt");
+        Path defaultPath = Paths.get(dataDir, dbId, "facts", "triples.hdt");
+
+        final String cfgPath = "triple-store.hdt.file";
+        Config cfg = core.getKBConfig(dbId);
+
+        if (cfg.hasPath(cfgPath)) {
+            String hdtFileName = cfg.getString(cfgPath);
+            if (hdtFileName == null || hdtFileName.isEmpty()) {
+                throw new StarGraphException("Invalid configuration at '" + cfgPath + "'");
+            }
+
+            // It's an absolute path to file
+            if (Paths.get(hdtFileName).isAbsolute()) {
+                return Paths.get(hdtFileName);
+            }
+
+            // It's relative to the 'facts' dir
+            if (!hdtFileName.startsWith("http://")) {
+                return Paths.get(dataDir, dbId, "facts", hdtFileName);
+            }
+
+            // copy remote to default file location
+            download(hdtFileName, defaultPath.toFile());
+            return defaultPath;
+        }
+        else {
+            // default attempt when not explicit configured
+            return defaultPath;
+        }
+    }
+
+    private void download(String urlStr, File file) throws IOException {
+        logger.info(marker, "Downloading from: '{}'", urlStr);
+        URL url = new URL(urlStr);
+        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+            try (FileOutputStream fis = new FileOutputStream(file)) {
+                byte[] buffer = new byte[8192];
+                int count;
+                while ((count = bis.read(buffer, 0, 8192)) != -1) {
+                    fis.write(buffer, 0, count);
+                }
+            }
+        }
     }
 
 }

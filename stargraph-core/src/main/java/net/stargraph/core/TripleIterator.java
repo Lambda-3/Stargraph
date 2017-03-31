@@ -41,7 +41,7 @@ import java.util.Objects;
 
 abstract class TripleIterator<T> implements Iterator<T> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker;
+    protected Marker marker = MarkerFactory.getMarker("core");
     protected KBId kbId;
     protected Model model;
 
@@ -49,8 +49,7 @@ abstract class TripleIterator<T> implements Iterator<T> {
     private Statement currentStmt;
     private Namespace namespace;
 
-    public TripleIterator(KBId kbId, Model model, Namespace namespace) {
-        this.marker = MarkerFactory.getMarker(kbId.toString());
+    TripleIterator(KBId kbId, Model model, Namespace namespace) {
         this.innerIt = Objects.requireNonNull(model).listStatements();
         this.namespace = namespace;
         this.kbId = Objects.requireNonNull(kbId);

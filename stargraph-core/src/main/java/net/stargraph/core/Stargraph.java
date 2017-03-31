@@ -124,7 +124,7 @@ public final class Stargraph {
         return new JenaGraphSearcher(dbId, this);
     }
 
-    public Model getModel(String dbId) {
+    public Model getGraphModel(String dbId) {
         return modelFactory.getModel(dbId);
     }
 

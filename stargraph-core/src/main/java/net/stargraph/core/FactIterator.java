@@ -37,7 +37,7 @@ import static net.stargraph.ModelUtils.createProperty;
 final class FactIterator extends TripleIterator<Indexable> {
 
     FactIterator(Stargraph core, KBId kbId) {
-        super(kbId, core.getModel(kbId.getId()), Namespace.create(core, kbId.getId()));
+        super(kbId, core.getGraphModel(kbId.getId()), Namespace.create(core, kbId.getId()));
     }
 
     @Override

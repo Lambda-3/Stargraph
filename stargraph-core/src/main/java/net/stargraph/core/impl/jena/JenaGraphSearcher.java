@@ -47,7 +47,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
         Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
         EntitySearcher entitySearcher = core.createEntitySearcher();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getModel(dbId))) {
+        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getGraphModel(dbId))) {
             ResultSet results = qexec.execSelect();
 
             while (results.hasNext()) {

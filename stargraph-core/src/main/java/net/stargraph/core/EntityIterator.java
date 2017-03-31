@@ -123,7 +123,7 @@ public final class EntityIterator implements Iterator<Indexable> {
     }
 
     private Iterator<Node> createIterator() {
-        Model model = core.getModel(kbId.getId());
+        Model model = core.getGraphModel(kbId.getId());
         Graph g = model.getGraph();
         ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
         ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);

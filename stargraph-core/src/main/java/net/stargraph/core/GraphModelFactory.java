@@ -26,7 +26,6 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +48,8 @@ public abstract class GraphModelFactory {
         this.models = new ConcurrentHashMap<>();
     }
 
-    public Model getModel(String dbId) {
+    Model getModel(String dbId) {
         return models.computeIfAbsent(dbId, (id) -> createModel(dbId));
-    }
-
-    public final boolean hasTripleStore(String dbId) {
-        Config kbConfig = core.getKBConfig(dbId);
-        return kbConfig.hasPath("triple-store");
     }
 
     protected abstract Model createModel(String dbId);
