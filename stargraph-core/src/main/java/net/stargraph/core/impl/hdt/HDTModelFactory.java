@@ -84,8 +84,13 @@ public final class HDTModelFactory extends GraphModelFactory {
 
         if (cfg.hasPath(cfgPath)) {
             String hdtFileName = cfg.getString(cfgPath);
+
             if (hdtFileName == null || hdtFileName.isEmpty()) {
                 throw new StarGraphException("Invalid configuration at '" + cfgPath + "'");
+            }
+
+            if (hdtFileName.startsWith("http://") && defaultPath.toFile().exists()) {
+                return defaultPath;
             }
 
             // It's an absolute path to file
