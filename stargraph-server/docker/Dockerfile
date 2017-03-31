@@ -11,8 +11,8 @@ ADD http://opennlp.sourceforge.net/models-1.5/de-token.bin opennlp/
 ADD http://opennlp.sourceforge.net/models-1.5/en-token.bin opennlp/
 ADD http://opennlp.sourceforge.net/models-1.5/pt-token.bin opennlp/
 ADD http://opennlp.sourceforge.net/models-1.5/de-pos-maxent.bin opennlp/
-ADD http://opennlp.sourceforge.net/models-1.5/en-pos.maxent opennlp/
-ADD http://opennlp.sourceforge.net/models-1.5/pt-pos.maxent opennlp/
+ADD http://opennlp.sourceforge.net/models-1.5/en-pos-maxent.bin opennlp/
+ADD http://opennlp.sourceforge.net/models-1.5/pt-pos-maxent.bin opennlp/
 
 
 ADD stargraph-server-${project.version}-dist.tar.gz .
