@@ -34,6 +34,7 @@ import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.model.KBId;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -63,8 +64,12 @@ public final class ElasticSearcher extends BaseSearcher {
 
     @Override
     public long countDocuments() {
-        SearchResponse response = esClient.prepareSearch().setQuery(QueryBuilders.matchAllQuery()).setSize(1).get();
-        return response.getHits().getTotalHits();
+        IndicesExistsResponse indicesExistsResponse = esClient.prepareExists().get();
+        if (indicesExistsResponse.isExists()) {
+            SearchResponse response = esClient.prepareSearch().setQuery(QueryBuilders.matchAllQuery()).setSize(1).get();
+            return response.getHits().getTotalHits();
+        }
+        return 0L;
     }
 
     @Override
