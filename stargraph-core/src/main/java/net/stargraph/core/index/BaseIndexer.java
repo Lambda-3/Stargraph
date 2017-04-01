@@ -171,7 +171,7 @@ public abstract class BaseIndexer implements Indexer {
             }
 
             if (!holder.isSinkable()) {
-                Serializable data = holder.get();
+                final Serializable data = holder.get();
 
                 if (this.loading) {
                     if (loaderProgress.incIndexed() % 500000 == 0) {
@@ -182,7 +182,7 @@ public abstract class BaseIndexer implements Indexer {
                     logger.info(marker, "Indexing {}", data);
                 }
 
-                doIndex(holder.get(), kbId);
+                doIndex(data, kbId);
 
             } else {
                 sink(holder);
