@@ -56,7 +56,7 @@ public final class QueryEngine {
         }
         catch (Exception e) {
             logger.error(marker, "Query Error '{}'", query, e);
-            throw new StarGraphException(e);
+            throw new StarGraphException("Query Error", e);
         }
         finally {
             long millis = System.currentTimeMillis() - startTime;

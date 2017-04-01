@@ -30,12 +30,8 @@ import net.stargraph.StarGraphException;
 
 public class IndexingException extends StarGraphException {
 
-    public IndexingException(Throwable cause) {
-        super(cause);
-    }
-
-    public IndexingException(String message, Throwable cause) {
-        super(message, cause);
+    public IndexingException(Exception cause) {
+        super("Indexing Error", cause);
     }
 
     public IndexingException(String message) {

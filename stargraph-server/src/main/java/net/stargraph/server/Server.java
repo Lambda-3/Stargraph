@@ -69,7 +69,6 @@ public final class Server {
             rc.register(JacksonFeature.class);
             rc.register(CatchAllExceptionMapper.class);
             rc.register(SerializationExceptionMapper.class);
-            rc.register(WebAppExceptionMapper.class);
             rc.register(AdminResourceImpl.class);
             rc.register(new KBResourceImpl(core));
             rc.register(new QueryResourceImpl(core));

@@ -119,7 +119,7 @@ public class ModelUtils {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             return digest.digest(b.toByteArray());
         } catch (Exception e) {
-            throw new StarGraphException(e);
+            throw new StarGraphException("Fail to create new hash id.", e);
         }
     }
 

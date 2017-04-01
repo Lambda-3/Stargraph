@@ -26,6 +26,8 @@ package net.stargraph.server;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
+
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 
@@ -40,4 +42,9 @@ public class ResourceUtils {
         }}).build();
     }
 
+    public static Response createAckResponse(StarGraphException e) {
+        return Response.status(Response.Status.OK).entity(new HashMap<String, String>() {{
+            put("msg", e.getMessage());
+        }}).build();
+    }
 }

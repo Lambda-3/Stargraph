@@ -99,7 +99,7 @@ public final class Namespace extends HashMap<String, String> {
             BufferedInputStream input = new BufferedInputStream(is);
             return new BufferedReader(new InputStreamReader(input));
         } catch (Exception e) {
-            throw new StarGraphException(e);
+            throw new StarGraphException("Fail reading from '" + resource + "'", e);
         }
     }
 }

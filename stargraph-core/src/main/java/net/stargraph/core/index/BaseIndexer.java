@@ -73,7 +73,7 @@ public abstract class BaseIndexer implements Indexer {
     @Override
     public synchronized final void start() {
         if (dataProvider != null) {
-            throw new IllegalStateException("Already started!");
+            throw new StarGraphException("Already started!");
         }
         this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
         onStart();
@@ -91,7 +91,7 @@ public abstract class BaseIndexer implements Indexer {
     @Override
     public final void index(Indexable data) throws InterruptedException {
         if (loading) {
-            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
+            throw new StarGraphException("Loader in progress. Incremental update is forbidden.");
         }
 
         work(data);
@@ -104,11 +104,7 @@ public abstract class BaseIndexer implements Indexer {
 
     @Override
     public final void load(boolean reset, int limit) {
-        try {
-            doLoad(reset, limit);
-        } catch (Exception e) {
-            throw new StarGraphException(e);
-        }
+        doLoad(reset, limit);
     }
 
     @Override
@@ -121,7 +117,7 @@ public abstract class BaseIndexer implements Indexer {
             throws InterruptedException, TimeoutException, ExecutionException {
 
         if (!loading && loaderFutureTask == null) {
-            throw new IllegalStateException("Loader was not called.");
+            throw new StarGraphException("Loader was not called.");
         }
 
         logger.info(marker, "Awaiting Loader finalization..");
@@ -200,7 +196,7 @@ public abstract class BaseIndexer implements Indexer {
 
     private synchronized void doLoad(boolean reset, long limit) {
         if (loading) {
-            throw new IllegalStateException("Loader is already in progress. ");
+            throw new StarGraphException("Loader is already in progress. ");
         }
 
         logger.info(marker, "Loading {}, [reset={}, limit={}]", kbId, reset, limit);

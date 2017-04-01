@@ -31,7 +31,7 @@ package net.stargraph;
  */
 public class StarGraphException extends RuntimeException {
 
-    public StarGraphException(Throwable cause) {
+    public StarGraphException(Exception cause) {
         super(cause);
     }
 
