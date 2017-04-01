@@ -7,6 +7,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.inject.Singleton;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -19,10 +20,15 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Exception>
 
     @Override
     public Response toResponse(Exception exception) {
-        logger.error(marker, "Oops!", exception);
         if (exception instanceof StarGraphException) {
             return ResourceUtils.createAckResponse((StarGraphException) exception);
         }
+
+        if (exception instanceof WebApplicationException) {
+            return ((WebApplicationException) exception).getResponse();
+        }
+
+        logger.error(marker, "Oops!", exception);
         return Response.status(500).build();
     }
 }
