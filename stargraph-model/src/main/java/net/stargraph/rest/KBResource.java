@@ -46,4 +46,8 @@ public interface KBResource {
     Response load(@PathParam("id") String id, @PathParam("type") String type,
                   @DefaultValue("true") @QueryParam("reset") boolean reset,
                   @DefaultValue("-1") @QueryParam("limit") int limit);
+
+    @POST
+    @Path("{id}/_load")
+    Response loadAll(@PathParam("id") String id);
 }

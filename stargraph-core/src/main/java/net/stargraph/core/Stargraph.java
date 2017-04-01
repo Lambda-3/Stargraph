@@ -59,6 +59,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The Stargraph database core implementation.
@@ -68,6 +69,7 @@ public final class Stargraph {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
+    private Map<String, KBLoader> kbLoaders;
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
     private Map<String, Namespace> namespaces;
@@ -90,6 +92,7 @@ public final class Stargraph {
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
         this.namespaces = new ConcurrentHashMap<>();
+        this.kbLoaders = new ConcurrentHashMap<>();
 
         setIndexerFactory(createIndexerFactory());
         setModelFactory(new HDTModelFactory(this));
@@ -142,6 +145,15 @@ public final class Stargraph {
 
     public Config getTypeConfig(KBId kbId) {
         return mainConfig.getConfig(kbId.getTypePath());
+    }
+
+    public KBLoader getKBLoader(String dbId) {
+        return kbLoaders.computeIfAbsent(dbId, (id) -> new KBLoader(this, id));
+    }
+
+    public List<KBId> getKBIdsOf(String dbId) {
+        return searchers.keySet().stream()
+                .filter(kbId -> kbId.getId().equals(Objects.requireNonNull(dbId))).collect(Collectors.toList());
     }
 
     public Set<KBId> getKBs() {

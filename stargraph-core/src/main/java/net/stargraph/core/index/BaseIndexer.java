@@ -148,14 +148,14 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     private void doBeforeLoad(boolean reset) {
-        logger.info(marker, "Before loading..");
+        logger.debug(marker, "Before loading..");
         dataProvider = core.createDataProvider(kbId);
         this.processorChain = core.createProcessorChain(kbId);
         beforeLoad(reset);
     }
 
     private void doAfterLoad() throws InterruptedException {
-        logger.info(marker, ".. after loading.");
+        logger.debug(marker, ".. after loading.");
         afterLoad();
     }
 
@@ -245,6 +245,7 @@ public abstract class BaseIndexer implements Indexer {
                 logger.error(marker, "Loader failure.", e);
                 throw e;
             } finally {
+                logger.info(marker, "Loader is finishing..");
                 try {
                     doAfterLoad();
                     loaderProgress.stop();

@@ -60,4 +60,10 @@ final class KBResourceImpl implements KBResource {
         indexer.load(reset, limit);
         return ResourceUtils.createAckResponse(true);
     }
+
+    @Override
+    public Response loadAll(String id) {
+        core.getKBLoader(id).loadAll();
+        return ResourceUtils.createAckResponse(true);
+    }
 }
