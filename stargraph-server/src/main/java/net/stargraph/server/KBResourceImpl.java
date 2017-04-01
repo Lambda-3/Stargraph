@@ -62,8 +62,8 @@ final class KBResourceImpl implements KBResource {
     }
 
     @Override
-    public Response loadAll(String id) {
-        core.getKBLoader(id).loadAll();
+    public Response loadAll(String id, String resetKey) {
+        core.getKBLoader(id).loadAll(resetKey);
         return ResourceUtils.createAckResponse(true);
     }
 }

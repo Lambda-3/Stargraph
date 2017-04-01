@@ -35,4 +35,6 @@ public interface Searcher {
 
     Scores search(SearchQueryHolder holder);
 
+    long countDocuments();
+
 }

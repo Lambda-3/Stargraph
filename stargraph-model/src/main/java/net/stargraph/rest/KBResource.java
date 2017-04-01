@@ -49,5 +49,5 @@ public interface KBResource {
 
     @POST
     @Path("{id}/_load")
-    Response loadAll(@PathParam("id") String id);
+    Response loadAll(@PathParam("id") String id, @QueryParam("resetKey") String resetKey);
 }

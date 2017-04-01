@@ -2,6 +2,7 @@ package net.stargraph.core;
 
 import net.stargraph.StarGraphException;
 import net.stargraph.core.index.Indexer;
+import net.stargraph.core.search.Searcher;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.MarkerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,16 +26,40 @@ public final class KBLoader {
     private String dbId;
     private Stargraph core;
     private boolean loading;
+    private String lastResetKey;
 
     KBLoader(Stargraph core, String dbId) {
         this.core = Objects.requireNonNull(core);
         this.dbId = Objects.requireNonNull(dbId);
         this.executor = Executors.newSingleThreadExecutor();
+        this.lastResetKey = null;
     }
 
-    public synchronized void loadAll() {
+    public synchronized void loadAll(String resetKey) {
         if (loading) {
             throw new StarGraphException("Loaders are in progress...");
+        }
+
+        boolean hasSomeData = core.getKBIdsOf(dbId).parallelStream().anyMatch(this::containsData);
+
+        if (hasSomeData) {
+            if (lastResetKey == null) {
+                lastResetKey = UUID.randomUUID().toString();
+                String msg = String.format("This KB (%s) is not empty. " +
+                        "This operation WILL OVERWRITE EVERYTHING. " +
+                        "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.", dbId, lastResetKey);
+                throw new StarGraphException(msg);
+            }
+            else {
+                if (!lastResetKey.equals(resetKey)) {
+                    logger.warn(marker, "Wrong reset key='{}'", resetKey);
+                    String msg = String.format("Wrong RESET KEY for KB (%s). " +
+                            "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.", dbId, lastResetKey);
+                    throw new StarGraphException(msg);
+                }
+
+                lastResetKey = null;
+            }
         }
 
         executor.submit(() -> {
@@ -73,4 +99,8 @@ public final class KBLoader {
         }
     }
 
+    private boolean containsData(KBId kbId) {
+        Searcher searcher = core.getSearcher(kbId);
+        return searcher.countDocuments() > 0;
+    }
 }
