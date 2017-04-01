@@ -65,7 +65,6 @@ public final class Server {
             Config config = core.getConfig();
             String urlStr = config.getString("networking.rest-url");
             ResourceConfig rc = new ResourceConfig();
-            rc.register(CORSFilters.class);
             rc.register(LoggingFilter.class);
             rc.register(JacksonFeature.class);
             rc.register(CatchAllExceptionMapper.class);
