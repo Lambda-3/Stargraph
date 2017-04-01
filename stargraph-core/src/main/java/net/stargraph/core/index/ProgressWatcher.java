@@ -85,12 +85,9 @@ final class ProgressWatcher {
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
             executor.shutdownNow();
-        } else {
-            throw new IllegalStateException();
+            logStats();
+            logger.info(marker, "{}", getReportMsg());
         }
-
-        logStats();
-        logger.info(marker, "{}", getReportMsg());
     }
 
     synchronized void start(boolean reset) {

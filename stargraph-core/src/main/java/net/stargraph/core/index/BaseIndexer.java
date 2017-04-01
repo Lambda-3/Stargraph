@@ -259,9 +259,10 @@ public abstract class BaseIndexer implements Indexer {
                     Thread.currentThread().interrupt();
                     logger.warn(marker, "Thread was interrupted.", e);
                 }
-
-                this.loading = false;
-                logger.info(marker, "Loader is done.");
+                finally {
+                    this.loading = false;
+                    logger.info(marker, "Loader is done.");
+                }
             }
         });
     }

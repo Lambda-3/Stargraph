@@ -1,5 +1,6 @@
 package net.stargraph.core.query.annotator;
 
+import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.query.Language;
 import net.stargraph.StarGraphException;
 import org.slf4j.Logger;
@@ -19,6 +20,9 @@ public abstract class Annotator {
         logger.debug(marker, "Annotating '{}', language: '{}'", sentence, language);
         try {
             return doRun(language, sentence);
+        }
+        catch (UnsupportedLanguageException e) {
+            throw e;
         }
         catch (Exception e) {
             logger.error(marker, "Erro caught during annotation of '{}' ({})", sentence, language);
