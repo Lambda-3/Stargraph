@@ -33,35 +33,26 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public final class Namespace extends HashMap<String, String> {
+public final class Namespace extends TreeMap<String, String> {
     private static Logger logger = LoggerFactory.getLogger(Namespace.class);
     private static Marker marker = MarkerFactory.getMarker("core");
 
+    private Set<String> mainNamespaces;
+
+    private Namespace(String dbId, Stargraph core) {
+        super((s1, s2) -> s1.length() == s2.length() ? s1.compareTo(s2) : s2.length() - s1.length()); // reverse order
+        this.readMainNamespaces(core, dbId);
+        this.readMappings(core, dbId);
+    }
+
     private Namespace(String resource) {
-        String classPathResource = String.format("%s-namespace.txt", Objects.requireNonNull(resource));
-        logger.info(marker, "Namespace resource: {}", classPathResource);
-
-        try (BufferedReader buf = getReader(classPathResource)) {
-            buf.lines().forEach(line -> {
-                try {
-                    String[] s = line.split(" ");
-                    put(s[1], s[0] + ":");
-                } catch (Exception e) {
-                    logger.error(marker, "Error reading {}", line, e);
-                }
-            });
-
-        } catch (Exception e) {
-            throw new StarGraphException("Can't initialize Namespace map", e);
-        }
+        putAll(readNamespaceResource(resource));
     }
 
     public String map(String uri) {
@@ -88,22 +79,59 @@ public final class Namespace extends HashMap<String, String> {
         return new Namespace("default");
     }
 
-    static Namespace create(Stargraph core, String dbId) {
-        Config kbConfig = core.getKBConfig(dbId);
-        if (kbConfig.hasPath("triple-store.namespace.mapping")) {
-            return new Namespace(kbConfig.getString("triple-store.namespace.mapping"));
-        }
-        logger.warn(marker, "No Namespace mapping defined.");
-        return null;
+    public boolean isFromMainNS(String uri) {
+        String[] mapped = map(uri).split(":");
+        return mainNamespaces.contains(mapped[0]);
     }
 
-    private BufferedReader getReader(String resource) {
+    static Namespace create(Stargraph core, String dbId) {
+        return new Namespace(dbId, core);
+    }
+
+    private static BufferedReader getReader(String resource) {
         try {
             InputStream is = ClassLoader.getSystemResourceAsStream(resource);
-            BufferedInputStream input = new BufferedInputStream(is);
-            return new BufferedReader(new InputStreamReader(input));
+            return new BufferedReader(new InputStreamReader(is));
         } catch (Exception e) {
             throw new StarGraphException("Fail reading from '" + resource + "'", e);
         }
+    }
+
+    private void readMainNamespaces(Stargraph core, String dbId) {
+        mainNamespaces = new LinkedHashSet<>();
+        Config kbConfig = core.getKBConfig(dbId);
+        if (kbConfig.hasPath("namespaces")) {
+            Config nsConfig = core.getKBConfig(dbId).getConfig("namespaces");
+            mainNamespaces.addAll(nsConfig.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+            logger.info(marker, "Main Namespaces: {}", mainNamespaces);
+        }
+    }
+
+    private void readMappings(Stargraph core, String dbId) {
+        Config kbConfig = core.getKBConfig(Objects.requireNonNull(dbId));
+        String resource = kbConfig.getString("triple-store.namespace.mapping");
+        putAll(readNamespaceResource(resource));
+    }
+
+    private static Map<String, String> readNamespaceResource(String resource) {
+        Map<String, String> all = new HashMap<>();
+        String classPathResource = String.format("%s-namespace.txt", Objects.requireNonNull(resource));
+        logger.info(marker, "Namespace resource: {}", classPathResource);
+
+        try (BufferedReader buf = getReader(classPathResource)) {
+            buf.lines().forEach(line -> {
+                try {
+                    String[] s = line.split(" ");
+                    all.put(s[1], s[0] + ":");
+                } catch (Exception e) {
+                    logger.error(marker, "Error reading {}", line, e);
+                }
+            });
+
+        } catch (Exception e) {
+            throw new StarGraphException("Can't initialize Namespace map", e);
+        }
+
+        return all;
     }
 }

@@ -27,8 +27,6 @@ package net.stargraph.core;
  */
 
 import com.google.common.collect.Iterators;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigValue;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
 import org.apache.jena.graph.Graph;
@@ -36,22 +34,16 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.util.iterator.ExtendedIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static net.stargraph.ModelUtils.createInstance;
 
 public final class EntityIterator implements Iterator<Indexable> {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("core");
-
     private KBId kbId;
     private Stargraph core;
-    private Set<String> mainNamespaces;
     private Namespace namespace;
     private Iterator<Node> iterator;
     private Node currentNode;
@@ -59,7 +51,6 @@ public final class EntityIterator implements Iterator<Indexable> {
     public EntityIterator(Stargraph core, KBId kbId) {
         this.kbId = Objects.requireNonNull(kbId);
         this.core = core;
-        this.mainNamespaces = buildMainNamespaces();
         this.namespace = Namespace.create(core, kbId.getId());
         this.iterator = createIterator();
     }
@@ -74,7 +65,7 @@ public final class EntityIterator implements Iterator<Indexable> {
         while (iterator.hasNext()) {
             currentNode = iterator.next();
             //skipping literals and blank nodes.
-            if ((!currentNode.isBlank() && !currentNode.isLiteral() && isFromMainNS())) {
+            if ((!currentNode.isBlank() && !currentNode.isLiteral() && namespace.isFromMainNS(currentNode.getURI()))) {
                 return true;
             }
         }
@@ -100,26 +91,6 @@ public final class EntityIterator implements Iterator<Indexable> {
             return namespace.map(uri);
         }
         return uri;
-    }
-
-    private boolean isFromMainNS() {
-        return mainNamespaces.parallelStream().anyMatch(ns -> currentNode.getURI().startsWith(ns));
-    }
-
-    private Set<String> buildMainNamespaces() {
-        Config kbConfig = core.getKBConfig(kbId.getId());
-        if (kbConfig.hasPath("namespaces")) {
-            Config nsConfig = core.getKBConfig(kbId.getId()).getConfig("namespaces");
-            Set<String> nsSet = new LinkedHashSet<>();
-            for (Map.Entry<String, ConfigValue> e : nsConfig.entrySet()) {
-                nsSet.add(e.getKey());
-                nsSet.add((String) e.getValue().unwrapped());
-            }
-            logger.info(marker, "Main Namespaces: {}", nsSet);
-            return nsSet;
-        }
-
-        return null;
     }
 
     private Iterator<Node> createIterator() {
