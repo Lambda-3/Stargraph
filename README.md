@@ -1,3 +1,5 @@
+![](stargraph_logo2_black.png)
+
 # StarGraph
 
 An Open Source graph database to query large Knowledge Graphs. StarGraph support natural language queries facilitating the interaction between domain experts and data.
