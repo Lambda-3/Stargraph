@@ -26,6 +26,8 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import net.stargraph.ModelUtils;
+import net.stargraph.core.Namespace;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -72,6 +74,13 @@ public final class LabelExtractionTest {
     @Test
     public void shortLabel2Test() {
         Assert.assertEquals(extractLabel("co:xYz", true), "x Yz");
+    }
+
+    @Test
+    public void mapAndLabelExtractionTest() {
+        Namespace ns = Namespace.createDefault();
+        String uri = ns.map("http://dbpedia.org/resource/Template:Editnotices/Page/Barack_Obama");
+        Assert.assertEquals(ModelUtils.extractLabel(uri), "Editnotices/Page/Barack_Obama");
     }
 
 

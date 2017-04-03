@@ -40,11 +40,14 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utilities used within the sys core.
  */
 public class ModelUtils {
+    private static final Pattern pathFragmentPattern = Pattern.compile("^(\\w+:)(\\w+/)+(\\w+)$");
     private static final String RE_CAMELCASE_OR_UNDERSCORE = "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|_";
 
     public static String toStr(Config cfg) {
@@ -84,9 +87,20 @@ public class ModelUtils {
 
         //Replacements based on http://wiki.dbpedia.org/uri-encoding
         //Also tests against the dump to verify the correct mappings
-        //given that the above web page seems a little contradictory.
 
-        String remaining = uriStr.replace(namespace, "");
+
+        String remaining;
+
+        // This is to handle with resource having a path as value Like in dbt:Editnotices/Page/Barack_Obama.
+        // The extracted label is not Barack_Obama but the whole path.
+        // SplitIRI.namespace is failing in this case detecting  dbt:Editnotices/Page/ as the NS
+        Matcher matcher = pathFragmentPattern.matcher(uriStr);
+        if (matcher.matches()) {
+            return uriStr.replace(matcher.group(1), "");
+        }
+        else {
+            remaining = uriStr.replace(namespace, "");
+        }
 
         // What is that? <http://dbpedia.org/property/_>
         if (remaining.length() == 1) {
