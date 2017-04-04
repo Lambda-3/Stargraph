@@ -27,7 +27,6 @@ package net.stargraph.core;
  */
 
 import com.typesafe.config.*;
-import net.stargraph.query.Language;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
@@ -48,13 +47,13 @@ import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
+import net.stargraph.query.Language;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -80,11 +79,11 @@ public final class Stargraph {
         this(ConfigFactory.load().getConfig("stargraph"), true);
     }
 
-    public Stargraph(File appConfigFile) {
-        this(readConfiguration(appConfigFile), true);
-    }
-
     public Stargraph(Config cfg, boolean initialize) {
+        if (System.getProperty("config.file") == null) {
+            logger.warn(marker, "No configuration found at '-Dconfig.file'. Using defaults.");
+        }
+
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
         logger.info(marker, "{}, {} ({})",
@@ -292,10 +291,4 @@ public final class Stargraph {
         }
     }
 
-    public static Config readConfiguration(File file) {
-        Config fromFile = ConfigFactory.parseFile(Objects.requireNonNull(file));
-        Config ref = ConfigFactory.defaultReference();
-        Config sys = ConfigFactory.defaultOverrides();
-        return sys.withFallback(fromFile).withFallback(ref).resolve().getConfig("stargraph");
-    }
 }

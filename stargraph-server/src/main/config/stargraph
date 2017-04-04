@@ -14,7 +14,8 @@ cmd="java -jar -server ${STARGRAPH_JAVA_OPTS} \
 -Djava.net.preferIPv4Stack=true \
 -Dfile.encoding=UTF-8 \
 -Dlogback.configurationFile=${CONFDIR}/logback.xml \
-${LIBDIR}/${project.artifactId}-${project.version}.jar ${CONFDIR}/stargraph.conf"
+-Dconfig.file=${CONFDIR}/stargraph.conf \
+${LIBDIR}/${project.artifactId}-${project.version}.jar"
 
 
 exec ${cmd}

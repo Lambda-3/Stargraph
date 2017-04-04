@@ -42,7 +42,7 @@ public abstract class BaseSearcher implements Searcher {
     protected KBId kbId;
 
     public BaseSearcher(KBId kbId, Stargraph core) {
-        logger.info(marker, "Initializing {}", kbId);
+        logger.info(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
         this.core = Objects.requireNonNull(core);
         this.kbId = Objects.requireNonNull(kbId);
     }

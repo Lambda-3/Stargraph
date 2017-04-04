@@ -42,7 +42,6 @@ import org.slf4j.MarkerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.URI;
-import java.nio.file.Paths;
 
 public final class Server {
     static {
@@ -94,11 +93,7 @@ public final class Server {
      * Application launcher. Exposing REST API.
      */
     public static void main(String args[]) {
-        if (args.length == 0) {
-            throw new StarGraphException("Missing home directory as argument!");
-        }
-
-        final Stargraph core = new Stargraph(Paths.get(args[0]).toFile());
+        final Stargraph core = new Stargraph();
         final Server server = new Server(core);
         server.start();
 
