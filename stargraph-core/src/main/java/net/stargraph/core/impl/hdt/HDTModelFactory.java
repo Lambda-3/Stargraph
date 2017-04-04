@@ -55,9 +55,8 @@ public final class HDTModelFactory extends GraphModelFactory {
             File hdtFile = getHDTPath(dbId).toFile();
             if (hdtFile.exists()) {
                 boolean useIdx = useIndex(dbId);
-                logger.trace(marker, "Using HDT index? {}", useIdx);
                 String hdtFilePathStr = hdtFile.getAbsolutePath();
-                logger.info(marker, "Loading '{}'", hdtFilePathStr);
+                logger.info(marker, "Loading '{}', useIndex={}", hdtFilePathStr, useIdx);
                 HDT hdt = useIdx ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
                 HDTGraph graph = new HDTGraph(hdt);
                 return ModelFactory.createModelForGraph(graph);
