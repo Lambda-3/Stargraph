@@ -86,8 +86,6 @@ public final class Stargraph {
 
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
-        logger.info(marker, "{}, {} ({})",
-                Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
         this.namespaces = new ConcurrentHashMap<>();
@@ -232,8 +230,10 @@ public final class Stargraph {
     }
 
     public final void initialize() {
-        logger.info(marker, "Indexer factory : '{}'", indexerFactory.getClass());
         this.initializeKB();
+        logger.info(marker, "Indexer: '{}'", mainConfig.getString("indexer.factory.class"));
+        logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
+        logger.info(marker, "{}, {} ({})", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
     }
 
     public final void terminate() {
