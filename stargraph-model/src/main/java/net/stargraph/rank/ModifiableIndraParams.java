@@ -80,4 +80,15 @@ public final class ModifiableIndraParams extends ModifiableRankParams {
     public ScoreFunction getScoreFunction() {
         return scoreFunction;
     }
+
+    @Override
+    public String toString() {
+        return "ModifiableIndraParams{" +
+                "url='" + url + '\'' +
+                ", corpus='" + corpus + '\'' +
+                ", language='" + language + '\'' +
+                ", scoreFunction='" + scoreFunction + '\'' +
+                ", threshold=" + this.getThreshold() +
+                '}';
+    }
 }
