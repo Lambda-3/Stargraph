@@ -38,8 +38,10 @@ import org.rdfhdt.hdtjena.HDTGraph;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 public final class HDTModelFactory extends GraphModelFactory {
 
@@ -115,6 +117,7 @@ public final class HDTModelFactory extends GraphModelFactory {
 
     private void download(String urlStr, File file) throws IOException {
         logger.info(marker, "Downloading from: '{}'", urlStr);
+        Files.createDirectories(Objects.requireNonNull(file).toPath().getParent());
         URL url = new URL(urlStr);
         try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
             try (FileOutputStream fis = new FileOutputStream(file)) {
