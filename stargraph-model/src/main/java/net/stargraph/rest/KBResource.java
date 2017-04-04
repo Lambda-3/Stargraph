@@ -29,7 +29,7 @@ package net.stargraph.rest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Related to operations on the configured Knowledge Bases.
@@ -39,7 +39,7 @@ import java.util.Set;
 public interface KBResource {
 
     @GET
-    Set<String> getKBs();
+    List<String> getKBs();
 
     @POST
     @Path("{id}/_load/{type}")

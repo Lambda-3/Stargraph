@@ -33,7 +33,7 @@ import net.stargraph.model.KBId;
 import net.stargraph.rest.KBResource;
 
 import javax.ws.rs.core.Response;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 final class KBResourceImpl implements KBResource {
@@ -46,11 +46,12 @@ final class KBResourceImpl implements KBResource {
     }
 
     @Override
-    public Set<String> getKBs() {
+    public List<String> getKBs() {
         return core.getKBs()
                 .stream()
                 .map(kbId -> String.format("%s/%s", kbId.getId(), kbId.getType()))
-                .collect(Collectors.toSet());
+                .sorted(String::compareTo)
+                .collect(Collectors.toList());
     }
 
     @Override
