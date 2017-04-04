@@ -90,7 +90,7 @@ public final class QueryEngine {
         }
     }
 
-    private AnswerSet nliQuery(String userQuery, Language language) {
+    private QueryResponse nliQuery(String userQuery, Language language) {
         QuestionAnalyzer analyzer = this.analyzers.getQuestionAnalyzer(language);
         QuestionAnalysis analysis = analyzer.analyse(userQuery);
         SPARQLQueryBuilder queryBuilder = analysis.getSPARQLQueryBuilder();
@@ -108,12 +108,16 @@ public final class QueryEngine {
 
         Map<String, List<LabeledEntity>> vars = graphSearcher.select(sparqlQueryStr);
 
-        AnswerSet answerSet = new AnswerSet(NLI, userQuery, queryBuilder);
-        answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
-        answerSet.setMappings(queryBuilder.getMappings());
-        answerSet.setSPARQLQuery(sparqlQueryStr);
+        if (!vars.isEmpty()) {
+            AnswerSet answerSet = new AnswerSet(NLI, userQuery, queryBuilder);
+            answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
+            answerSet.setMappings(queryBuilder.getMappings());
+            answerSet.setSPARQLQuery(sparqlQueryStr);
+            return answerSet;
+        }
 
-        return answerSet;
+        logger.warn(marker, "No Answer for '{}'", userQuery);
+        return new NoAnswer(NLI, userQuery);
     }
 
     private InteractionMode detectInteractionMode(String queryString) {

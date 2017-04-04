@@ -66,7 +66,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
     }
 
     private Map<String, List<LabeledEntity>> doSparqlQuery(String sparqlQuery) {
-        logger.info(marker, "Executing: {}", sparqlQuery);
+        logger.debug(marker, "Executing: {}", sparqlQuery);
 
         long startTime = System.currentTimeMillis();
 
@@ -96,7 +96,14 @@ public final class JenaGraphSearcher implements GraphSearcher {
         }
 
         long millis = System.currentTimeMillis() - startTime;
-        logger.info(marker, "SPARQL query took {}s", millis / 1000.0);
+
+        if (!result.isEmpty()) {
+            logger.info(marker, "SPARQL {} query took {}s", sparqlQuery, millis / 1000.0);
+        }
+        else {
+            logger.warn(marker, "No matches for {}", sparqlQuery);
+        }
+
         return result;
     }
 }
