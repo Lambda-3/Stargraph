@@ -83,7 +83,7 @@ public final class ModifiableIndraParams extends ModifiableRankParams {
 
     @Override
     public String toString() {
-        return "ModifiableIndraParams{" +
+        return "IndraParams{" +
                 "url='" + url + '\'' +
                 ", corpus='" + corpus + '\'' +
                 ", language='" + language + '\'' +
