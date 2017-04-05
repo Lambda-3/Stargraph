@@ -26,8 +26,9 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
+import net.stargraph.core.query.Analyzers;
 import net.stargraph.core.query.annotator.Annotator;
 import net.stargraph.core.query.annotator.Word;
 import net.stargraph.query.Language;
@@ -44,7 +45,8 @@ public final class EnglishPOSTest {
 
     @BeforeClass
     public void beforeClass() {
-        annotator = new OpenNLPAnnotator(ConfigFactory.load().getConfig("stargraph"));
+        Config config = ConfigFactory.load().getConfig("stargraph");
+        annotator = Analyzers.createAnnotatorFactory(config).create();
     }
 
     @Test
@@ -110,19 +112,19 @@ public final class EnglishPOSTest {
     @Test
     public void s10() {
         Assert.assertEquals(annotate("In which programming language is GIMP written?"),
-                "In/IN which/WDT programming/NNP language/NN is/VBZ GIMP/NNP written/VBN ?/.");
+                "In/IN which/WDT programming/NN language/NN is/VBZ GIMP/NNP written/VBN ?/.");
     }
 
     @Test
     public void s11() {
         Assert.assertEquals(annotate("What is the mean temperature in Jupiter?"),
-                "What/WP is/VBZ the/DT mean/JJ temperature/NN in/IN Jupiter/NNP ?/.");
+                "What/WP is/VBZ the/DT mean/NN temperature/NN in/IN Jupiter/NNP ?/.");
     }
 
     @Test
     public void s12() {
         Assert.assertEquals(annotate("Which ingredients do I need for carrot cake?"),
-                "Which/WDT ingredients/NN do/VBP I/PRP need/VB for/IN carrot/NN cake/NN ?/.");
+                "Which/WDT ingredients/NNS do/VBP I/PRP need/VB for/IN carrot/NN cake/NN ?/.");
     }
 
     @Test
@@ -134,19 +136,19 @@ public final class EnglishPOSTest {
     @Test
     public void s14() {
         Assert.assertEquals(annotate("Which bridges cross the River Seine?"),
-                "Which/WDT bridges/NN cross/VBP the/DT River/NNP Seine/NNP ?/.");
+                "Which/WDT bridges/NNS cross/VBP the/DT River/NN Seine/NNP ?/.");
     }
 
     @Test
     public void s15() {
         Assert.assertEquals(annotate("What is the cost of Boeing 777?"),
-                "What/WP is/VBZ the/DT cost/NN of/IN Boeing/NNP 777/NNP ?/.");
+                "What/WP is/VBZ the/DT cost/NN of/IN Boeing/NNP 777/CD ?/.");
     }
 
     @Test
     public void s16() {
         Assert.assertEquals(annotate("Which awards did Douglas Hofstadter win?"),
-                "Which/WDT awards/NN did/VBD Douglas/NNP Hofstadter/NNP win/VB ?/.");
+                "Which/WDT awards/NNS did/VBD Douglas/NNP Hofstadter/NNP win/VB ?/.");
     }
 
     private String annotate(String sentence) {

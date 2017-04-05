@@ -27,11 +27,13 @@ package net.stargraph.core.query;
  */
 
 import com.typesafe.config.Config;
-import net.stargraph.query.Language;
-import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
+import net.stargraph.StarGraphException;
 import net.stargraph.core.query.annotator.Annotator;
+import net.stargraph.core.query.annotator.AnnotatorFactory;
 import net.stargraph.core.query.nli.QuestionAnalyzer;
+import net.stargraph.query.Language;
 
+import java.lang.reflect.Constructor;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Analyzers {
@@ -41,12 +43,24 @@ public final class Analyzers {
 
     public Analyzers(Config config) {
         this.rules = new Rules(config);
-        this.annotator = new OpenNLPAnnotator(config); // future decoupling point
+        AnnotatorFactory factory = createAnnotatorFactory(config);
+        this.annotator = factory.create();
         this.questionAnalyzers = new ConcurrentHashMap<>();
     }
 
     public QuestionAnalyzer getQuestionAnalyzer(Language language) {
         return questionAnalyzers.computeIfAbsent(language, lang -> new QuestionAnalyzer(lang, annotator, rules));
+    }
+
+    public static AnnotatorFactory createAnnotatorFactory(Config config) {
+        try {
+            String className = config.getString("annotator.factory.class");
+            Class<?> providerClazz = Class.forName(className);
+            Constructor<?> constructor = providerClazz.getConstructors()[0];
+            return (AnnotatorFactory) constructor.newInstance(config);
+        } catch (Exception e) {
+            throw new StarGraphException("Can't initialize indexers.", e);
+        }
     }
 
 }
