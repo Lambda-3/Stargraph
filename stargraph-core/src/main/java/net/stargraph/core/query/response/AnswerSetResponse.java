@@ -1,4 +1,4 @@
-package net.stargraph.core.query;
+package net.stargraph.core.query.response;
 
 /*-
  * ==========================License-Start=============================
@@ -26,6 +26,9 @@ package net.stargraph.core.query;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.query.QueryResponse;
+import net.stargraph.core.query.QueryType;
+import net.stargraph.core.query.SPARQLQueryBuilder;
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.query.InteractionMode;
@@ -35,26 +38,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public final class AnswerSet extends QueryResponse {
+public final class AnswerSetResponse extends QueryResponse {
     private List<LabeledEntity> shortAnswer;
     private String sparqlQuery;
     private QueryType queryType;
     private Map<DataModelBinding, List<Score>> mappings;
 
-    AnswerSet(InteractionMode mode, String userQuery, SPARQLQueryBuilder sparqlQueryBuilder) {
+    public AnswerSetResponse(InteractionMode mode, String userQuery, SPARQLQueryBuilder sparqlQueryBuilder) {
         super(mode, userQuery);
         this.queryType = Objects.requireNonNull(sparqlQueryBuilder).getQueryType();
     }
 
-    void setShortAnswer(List<LabeledEntity> shortAnswer) {
+    public void setShortAnswer(List<LabeledEntity> shortAnswer) {
         this.shortAnswer = Objects.requireNonNull(shortAnswer);
     }
 
-    void setMappings(Map<DataModelBinding, List<Score>> mappings) {
+    public void setMappings(Map<DataModelBinding, List<Score>> mappings) {
         this.mappings = Objects.requireNonNull(mappings);
     }
 
-    void setSPARQLQuery(String sparqlQuery) {
+    public void setSPARQLQuery(String sparqlQuery) {
         this.sparqlQuery = Objects.requireNonNull(sparqlQuery);
     }
 

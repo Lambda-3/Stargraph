@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 /**
  * Utilities used within the sys core.
  */
-public class ModelUtils {
+public final class ModelUtils {
     private static final Pattern pathFragmentPattern = Pattern.compile("^(\\w+:)(\\w+/)+(\\w+)$");
     private static final String RE_CAMELCASE_OR_UNDERSCORE = "(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])|_";
 

@@ -27,7 +27,7 @@ package net.stargraph.server;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.query.AnswerSet;
+import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.core.query.QueryResponse;
 import net.stargraph.rest.QueryResource;
@@ -71,8 +71,8 @@ public final class QueryResourceImpl implements QueryResource {
 
     public UserResponse buildUserResponse(QueryResponse queryResponse) {
 
-        if (queryResponse instanceof AnswerSet) {
-            AnswerSet answerSet = (AnswerSet) queryResponse;
+        if (queryResponse instanceof AnswerSetResponse) {
+            AnswerSetResponse answerSet = (AnswerSetResponse) queryResponse;
             UserResponse response =
                     new UserResponse(answerSet.getUserQuery(), answerSet.getSparqlQuery(), answerSet.getInteractionMode());
 

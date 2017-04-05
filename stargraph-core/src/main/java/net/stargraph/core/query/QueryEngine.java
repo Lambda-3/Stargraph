@@ -26,16 +26,18 @@ package net.stargraph.core.query;
  * ==========================License-End===============================
  */
 
-import net.stargraph.query.Language;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.query.nli.*;
+import net.stargraph.core.query.response.AnswerSetResponse;
+import net.stargraph.core.query.response.NoResponse;
+import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.LabeledEntity;
-import net.stargraph.query.InteractionMode;
+import net.stargraph.query.Language;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static net.stargraph.query.InteractionMode.NLI;
+import static net.stargraph.query.InteractionMode.SPARQL;
 
 public final class QueryEngine {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -58,6 +61,7 @@ public final class QueryEngine {
     private Stargraph core;
     private Analyzers analyzers;
     private GraphSearcher graphSearcher;
+    private InterationModeSelector modeSelector;
     private Namespace namespace;
     private Language language;
 
@@ -68,16 +72,25 @@ public final class QueryEngine {
         this.graphSearcher = core.createGraphSearcher(dbId);
         this.namespace = core.getNamespace(dbId);
         this.language = core.getLanguage(dbId);
+        this.modeSelector = new InterationModeSelector(core.getConfig(), language);
     }
 
     public QueryResponse query(String query) {
+        QueryResponse response = null;
         long startTime = System.currentTimeMillis();
         try {
-            switch (detectInteractionMode(query)) {
+            switch (modeSelector.detect(query)) {
                 case NLI:
-                    return nliQuery(query, language);
+                    response = nliQuery(query, language);
+                    break;
+                case SPARQL:
+                    response = sparqlQuery(query);
+                    break;
+                default:
+                    throw new StarGraphException("Input type not yet supported");
             }
-            throw new StarGraphException("Input type not yet supported");
+
+            return response;
 
         }
         catch (Exception e) {
@@ -86,8 +99,16 @@ public final class QueryEngine {
         }
         finally {
             long millis = System.currentTimeMillis() - startTime;
-            logger.info(marker, "Query Engine took {}s",  millis / 1000.0);
+            logger.info(marker, "Query Engine took {}s\n Response: {}",  millis / 1000.0, response);
         }
+    }
+
+    private QueryResponse sparqlQuery(String userQuery) {
+        Map<String, List<LabeledEntity>> vars = graphSearcher.select(userQuery);
+        if (!vars.isEmpty()) {
+            return new SPARQLSelectResponse(SPARQL, userQuery, vars);
+        }
+        return new NoResponse(SPARQL, userQuery);
     }
 
     private QueryResponse nliQuery(String userQuery, Language language) {
@@ -109,38 +130,15 @@ public final class QueryEngine {
         Map<String, List<LabeledEntity>> vars = graphSearcher.select(sparqlQueryStr);
 
         if (!vars.isEmpty()) {
-            AnswerSet answerSet = new AnswerSet(NLI, userQuery, queryBuilder);
+            AnswerSetResponse answerSet = new AnswerSetResponse(NLI, userQuery, queryBuilder);
             answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
             answerSet.setMappings(queryBuilder.getMappings());
             answerSet.setSPARQLQuery(sparqlQueryStr);
-            logger.debug(marker, "Response: {}", answerSet);
             return answerSet;
         }
 
-        logger.warn(marker, "No Answer for '{}'", userQuery);
-        return new NoAnswer(NLI, userQuery);
+        return new NoResponse(NLI, userQuery);
     }
-
-    private InteractionMode detectInteractionMode(String queryString) {
-        InteractionMode mode = NLI;
-
-        if (queryString.contains("SELECT") || queryString.contains("ASK") || queryString.contains("CONSTRUCT")) {
-            if (queryString.contains("PREFIX ") || queryString.contains("http:")) {
-                mode = InteractionMode.SPARQL;
-            } else {
-                mode = InteractionMode.SA_SPARQL;
-            }
-        } else {
-            if (queryString.contains("http:")) {
-                mode = InteractionMode.SIMPLE_SPARQL;
-            } else if (queryString.contains(":")) {
-                mode = InteractionMode.SA_SIMPLE_SPARQL;
-            }
-        }
-
-        return mode;
-    }
-
 
     private void resolve(Triple triple, SPARQLQueryBuilder builder) {
         if (triple.p.getModelType() != DataModelType.TYPE) {

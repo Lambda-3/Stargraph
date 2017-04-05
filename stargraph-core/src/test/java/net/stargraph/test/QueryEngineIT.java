@@ -27,15 +27,16 @@ package net.stargraph.test;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.query.AnswerSet;
+import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.QueryEngine;
+import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.ValueEntity;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class NaturalLanguageInterfaceIT {
+public class QueryEngineIT {
     QueryEngine queryEngine;
 
     @BeforeClass
@@ -44,20 +45,28 @@ public class NaturalLanguageInterfaceIT {
     }
 
     @Test
-    public void q0() {
-        AnswerSet answerSet = (AnswerSet) queryEngine.query("Who is the wife of Barack Obama?");
-        Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
+    public void nli0Test() {
+        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Who is the wife of Barack Obama?");
+        Assert.assertTrue(response.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
     }
 
     @Test
-    public void q1() {
-        AnswerSet answerSet = (AnswerSet) queryEngine.query("How tall is Michael Jordan?");
-        Assert.assertTrue(answerSet.getShortAnswer().contains(new ValueEntity("6", "http://www.w3.org/2001/XMLSchema#integer", null)));
+    public void nli1Test() {
+        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("How tall is Michael Jordan?");
+        Assert.assertTrue(response.getShortAnswer().contains(new ValueEntity("6", "http://www.w3.org/2001/XMLSchema#integer", null)));
     }
 
     @Test(enabled = false)
-    public void q2() {
-        AnswerSet answerSet = (AnswerSet) queryEngine.query("Give me all movies directed by Francis Ford Copolla.");
+    public void nli2Test() {
+        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Give me all movies directed by Francis Ford Copolla.");
         //Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
+    }
+
+    @Test
+    public void sparql0Test() {
+        SPARQLSelectResponse response  = (SPARQLSelectResponse) queryEngine.query("SELECT ?o WHERE " +
+                "{ <http://dbpedia.org/resource/Barack_Obama> <http://xmlns.com/foaf/0.1/depiction> ?o }");
+        Assert.assertEquals("http://commons.wikimedia.org/wiki/Special:FilePath/President_Barack_Obama.jpg",
+                response.getBindings().get("o").get(0).getId());
     }
 }

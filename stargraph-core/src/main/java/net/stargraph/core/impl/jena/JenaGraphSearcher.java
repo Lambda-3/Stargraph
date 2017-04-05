@@ -26,6 +26,8 @@ package net.stargraph.core.impl.jena;
  * ==========================License-End===============================
  */
 
+import net.stargraph.ModelUtils;
+import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.search.EntitySearcher;
@@ -47,12 +49,14 @@ import java.util.*;
 public final class JenaGraphSearcher implements GraphSearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("jena");
+    private Namespace ns;
     private Stargraph core;
     private String dbId;
 
     public JenaGraphSearcher(String dbId, Stargraph core) {
         this.core = Objects.requireNonNull(core);
         this.dbId = Objects.requireNonNull(dbId);
+        this.ns = core.getNamespace(dbId);
     }
 
     @Override
@@ -84,8 +88,9 @@ public final class JenaGraphSearcher implements GraphSearcher {
 
                     if (!jBinding.get(jVar).isLiteral()) {
                         String id = jBinding.get(jVar).getURI();
-                        result.computeIfAbsent(jVar.getVarName(),
-                                (v) -> new ArrayList<>()).add(entitySearcher.getEntity(dbId, id));
+                        List<LabeledEntity> entities = result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>());
+                        LabeledEntity labeledEntity = ns.isFromMainNS(id) ? entitySearcher.getEntity(dbId, id) : ModelUtils.createInstance(id);
+                        entities.add(labeledEntity);
                     } else {
                         LiteralLabel lit = jBinding.get(jVar).getLiteral();
                         ValueEntity valueEntity = new ValueEntity(lit.getLexicalForm(), lit.getDatatype().getURI(), lit.language());
