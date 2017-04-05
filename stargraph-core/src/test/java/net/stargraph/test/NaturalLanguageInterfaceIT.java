@@ -30,6 +30,7 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.AnswerSet;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ValueEntity;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -46,5 +47,17 @@ public class NaturalLanguageInterfaceIT {
     public void q0() {
         AnswerSet answerSet = (AnswerSet) queryEngine.query("Who is the wife of Barack Obama?");
         Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
+    }
+
+    @Test
+    public void q1() {
+        AnswerSet answerSet = (AnswerSet) queryEngine.query("How tall is Michael Jordan?");
+        Assert.assertTrue(answerSet.getShortAnswer().contains(new ValueEntity("6", "http://www.w3.org/2001/XMLSchema#integer", null)));
+    }
+
+    @Test(enabled = false)
+    public void q2() {
+        AnswerSet answerSet = (AnswerSet) queryEngine.query("Give me all movies directed by Francis Ford Copolla.");
+        //Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
     }
 }

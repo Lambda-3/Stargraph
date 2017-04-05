@@ -40,6 +40,8 @@ public interface EntitySearcher {
 
     List<LabeledEntity> getEntities(String dbId, List<String> ids);
 
+    Scores classSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams);
+
     Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams);
 
     Scores propertySearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams);

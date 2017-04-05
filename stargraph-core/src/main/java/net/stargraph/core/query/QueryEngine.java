@@ -113,6 +113,7 @@ public final class QueryEngine {
             answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
             answerSet.setMappings(queryBuilder.getMappings());
             answerSet.setSPARQLQuery(sparqlQueryStr);
+            logger.debug(marker, "Response: {}", answerSet);
             return answerSet;
         }
 
@@ -121,18 +122,48 @@ public final class QueryEngine {
     }
 
     private InteractionMode detectInteractionMode(String queryString) {
-        String q = queryString.trim();
-        if (q.endsWith("?")) {
-            return NLI;
+        InteractionMode mode = NLI;
+
+        if (queryString.contains("SELECT") || queryString.contains("ASK") || queryString.contains("CONSTRUCT")) {
+            if (queryString.contains("PREFIX ") || queryString.contains("http:")) {
+                mode = InteractionMode.SPARQL;
+            } else {
+                mode = InteractionMode.SA_SPARQL;
+            }
+        } else {
+            if (queryString.contains("http:")) {
+                mode = InteractionMode.SIMPLE_SPARQL;
+            } else if (queryString.contains(":")) {
+                mode = InteractionMode.SA_SIMPLE_SPARQL;
+            }
         }
-        throw new StarGraphException("Input type not yet supported");
+
+        return mode;
     }
 
 
     private void resolve(Triple triple, SPARQLQueryBuilder builder) {
-        InstanceEntity pivot = resolvePivot(triple.s, builder);
-        pivot = pivot != null ? pivot : resolvePivot(triple.o, builder);
-        resolvePredicate(pivot, triple.p, builder);
+        if (triple.p.getModelType() != DataModelType.TYPE) {
+            // if predicate is not a type assume: I (C|P) V pattern
+            InstanceEntity pivot = resolvePivot(triple.s, builder);
+            pivot = pivot != null ? pivot : resolvePivot(triple.o, builder);
+            resolvePredicate(pivot, triple.p, builder);
+        }
+        else {
+            // Problably is: V T C
+            DataModelBinding binding = triple.s.getModelType() == DataModelType.VARIABLE ? triple.o : triple.s;
+            resolveClass(binding, builder);
+        }
+    }
+
+    private void resolveClass(DataModelBinding binding, SPARQLQueryBuilder builder) {
+        if (binding.getModelType() == DataModelType.CLASS) {
+            EntitySearcher searcher = core.createEntitySearcher();
+            ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
+            ModifiableRankParams rankParams = ParamsBuilder.word2vec();
+            Scores scores = searcher.classSearch(searchParams, rankParams);
+            builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
+        }
     }
 
     private void resolvePredicate(InstanceEntity pivot, DataModelBinding binding, SPARQLQueryBuilder builder) {

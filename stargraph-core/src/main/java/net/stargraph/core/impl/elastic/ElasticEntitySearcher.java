@@ -78,6 +78,27 @@ public final class ElasticEntitySearcher implements EntitySearcher {
     }
 
     @Override
+    public Scores classSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
+
+        searchParams.model(BuiltInModel.FACT);
+
+        if (rankParams instanceof ModifiableIndraParams) {
+            configureDistributionalParams(searchParams.getKbId(), (ModifiableIndraParams) rankParams);
+        }
+
+        QueryBuilder queryBuilder = boolQuery()
+                .must(nestedQuery("p",
+                        termQuery("p.id", "is-a"),  ScoreMode.Max))
+                .should(nestedQuery("o",
+                        matchQuery("o.value", searchParams.getSearchTerm()),  ScoreMode.Max))
+                .minimumShouldMatch("1");
+
+        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
+        return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
+    }
+
+    @Override
     public Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
         // Coupling point: the query tied with our backend ..
         QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm());
