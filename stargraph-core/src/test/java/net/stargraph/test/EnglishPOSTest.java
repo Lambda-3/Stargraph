@@ -27,40 +27,40 @@ package net.stargraph.test;
  */
 
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.UnsupportedLanguageException;
 import net.stargraph.core.impl.opennlp.OpenNLPAnnotator;
-import net.stargraph.query.Language;
 import net.stargraph.core.query.annotator.Annotator;
 import net.stargraph.core.query.annotator.Word;
+import net.stargraph.query.Language;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static net.stargraph.core.query.annotator.EnglishPOSSet.*;
+public final class EnglishPOSTest {
 
-public final class AnnotatorTest {
+    private Annotator annotator;
 
-    @Test
-    public void englishTest() {
-        Annotator annotator = new OpenNLPAnnotator(ConfigFactory.load().getConfig("stargraph"));
-        List<Word> annotatedWords = annotator.run(Language.EN, "Of course this can work seamless!");
-        List<Word> expected = Arrays.asList(
-                new Word(IN, "Of"),
-                new Word(NN, "course"),
-                new Word(DT, "this"),
-                new Word(MD, "can"),
-                new Word(VB, "work"),
-                new Word(RB, "seamless"),
-                new Word(PUNCT, "!"));
-
-        Assert.assertEquals(annotatedWords, expected);
+    @BeforeClass
+    public void beforeClass() {
+        annotator = new OpenNLPAnnotator(ConfigFactory.load().getConfig("stargraph"));
     }
 
-    @Test(expectedExceptions = UnsupportedLanguageException.class)
-    public void germanTest() {
-        Annotator annotator = new OpenNLPAnnotator(ConfigFactory.load().getConfig("stargraph"));
-        annotator.run(Language.DE, "Wir haben zusammen noch keine Schweine gehütet!");
+    @Test
+    public void s0() {
+        Assert.assertEquals(annotate("Who is the wife of Barack Obama?"),
+                "Who/WP is/VBZ the/DT wife/NN of/IN Barack/NNP Obama/NNP ?/.");
+    }
+
+    @Test
+    public void s1() {
+        Assert.assertEquals(annotate("Which river does the Brooklyn Bridge cross?"),
+                "Which/WDT river/NN does/VBZ the/DT Brooklyn/NNP Bridge/NNP cross/VB ?/.");
+    }
+
+    private String annotate(String sentence) {
+        List<Word> words = annotator.run(Language.EN, sentence);
+        return words.stream().map(Word::toString).collect(Collectors.joining(" "));
     }
 }
