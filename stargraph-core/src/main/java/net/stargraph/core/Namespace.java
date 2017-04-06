@@ -52,6 +52,7 @@ public final class Namespace extends TreeMap<String, String> {
     }
 
     private Namespace(String resource) {
+        super((s1, s2) -> s1.length() == s2.length() ? s1.compareTo(s2) : s2.length() - s1.length()); // reverse order
         putAll(readNamespaceResource(resource));
     }
 
