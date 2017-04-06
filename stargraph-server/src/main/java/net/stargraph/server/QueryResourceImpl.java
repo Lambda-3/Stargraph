@@ -86,7 +86,7 @@ public final class QueryResourceImpl implements QueryResource {
 
             response.setAnswers(answers);
 
-            Map<String, List<UserResponse.EntityEntry>> mappings = new HashMap<>();
+            final Map<String, List<UserResponse.EntityEntry>> mappings = new HashMap<>();
             answerSet.getMappings().forEach((modelBinding, scoreList) -> {
                 List<UserResponse.EntityEntry> entries = scoreList.stream()
                         .map(s -> new UserResponse.EntityEntry(s.getRankableView().getId(),
