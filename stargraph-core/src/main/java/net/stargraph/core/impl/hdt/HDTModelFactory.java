@@ -51,6 +51,7 @@ public final class HDTModelFactory extends GraphModelFactory {
 
     @Override
     protected Model createModel(String dbId) {
+        Model model = null;
         try {
             File hdtFile = getHDTPath(dbId).toFile();
             if (hdtFile.exists()) {
@@ -59,13 +60,19 @@ public final class HDTModelFactory extends GraphModelFactory {
                 logger.info(marker, "Loading '{}', useIndex={}", hdtFilePathStr, useIdx);
                 HDT hdt = useIdx ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
                 HDTGraph graph = new HDTGraph(hdt);
-                return ModelFactory.createModelForGraph(graph);
+                model = ModelFactory.createModelForGraph(graph);
+                return model;
             }
 
            throw new FileNotFoundException("HDT file not found: '" + hdtFile + "'");
 
         } catch (Exception e) {
             throw new StarGraphException(e);
+        }
+        finally {
+            if (model == null) {
+                logger.error(marker, "No Graph Model instantiated for {}", dbId);
+            }
         }
     }
 

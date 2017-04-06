@@ -33,4 +33,9 @@ public final class NoResponse extends QueryResponse {
     public NoResponse(InteractionMode interactionMode, String userQuery) {
         super(interactionMode, userQuery);
     }
+
+    @Override
+    public String toString() {
+        return String.format("NoResponse{'%s', mode='%s'}", getUserQuery(), getInteractionMode());
+    }
 }

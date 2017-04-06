@@ -27,11 +27,13 @@ package net.stargraph.server;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.core.query.QueryResponse;
-import net.stargraph.rest.QueryResource;
-import net.stargraph.rest.UserResponse;
+import net.stargraph.core.query.response.AnswerSetResponse;
+import net.stargraph.core.query.response.NoResponse;
+import net.stargraph.core.query.response.SPARQLSelectResponse;
+import net.stargraph.model.LabeledEntity;
+import net.stargraph.rest.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -71,10 +73,13 @@ public final class QueryResourceImpl implements QueryResource {
 
     public UserResponse buildUserResponse(QueryResponse queryResponse) {
 
-        if (queryResponse instanceof AnswerSetResponse) {
+        if (queryResponse instanceof NoResponse) {
+            return new NoUserResponse(queryResponse.getUserQuery(), queryResponse.getInteractionMode());
+        }
+        else if (queryResponse instanceof AnswerSetResponse) {
             AnswerSetResponse answerSet = (AnswerSetResponse) queryResponse;
-            UserResponse response =
-                    new UserResponse(answerSet.getUserQuery(), answerSet.getSparqlQuery(), answerSet.getInteractionMode());
+            SchemaAgnosticUserResponse response =
+                    new SchemaAgnosticUserResponse(answerSet.getUserQuery(), answerSet.getInteractionMode(), answerSet.getSparqlQuery());
 
             List<UserResponse.EntityEntry> answers = answerSet.getShortAnswer().stream()
                     .map(a -> new UserResponse.EntityEntry(a.getId(), a.getValue())).collect(Collectors.toList());
@@ -91,10 +96,23 @@ public final class QueryResourceImpl implements QueryResource {
             });
 
             response.setMappings(mappings);
+            return response;
+        }
+        else if (queryResponse instanceof SPARQLSelectResponse) {
+            SPARQLSelectResponse selectResponse = (SPARQLSelectResponse)queryResponse;
+            final Map<String, List<String>> bindings = new LinkedHashMap<>();
+            selectResponse.getBindings().entrySet().forEach(e -> {
+                List<String> entityEntryList = e.getValue().stream().map(LabeledEntity::getId).collect(Collectors.toList());
+                bindings.put(e.getKey(), entityEntryList);
+            });
 
+            SPARQLSelectUserResponse response =
+                    new SPARQLSelectUserResponse(selectResponse.getUserQuery(), selectResponse.getInteractionMode());
+
+            response.setBindings(bindings);
             return response;
         }
 
-        return null;
+        throw new UnsupportedOperationException("Can't create REST response");
     }
 }

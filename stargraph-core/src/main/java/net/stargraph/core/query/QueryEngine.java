@@ -37,6 +37,7 @@ import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.LabeledEntity;
+import net.stargraph.query.InteractionMode;
 import net.stargraph.query.Language;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
@@ -76,10 +77,12 @@ public final class QueryEngine {
     }
 
     public QueryResponse query(String query) {
-        QueryResponse response = null;
+        final InteractionMode mode = modeSelector.detect(query);
+        QueryResponse response = new NoResponse(mode, query);
+
         long startTime = System.currentTimeMillis();
         try {
-            switch (modeSelector.detect(query)) {
+            switch (mode) {
                 case NLI:
                     response = nliQuery(query, language);
                     break;
@@ -99,7 +102,7 @@ public final class QueryEngine {
         }
         finally {
             long millis = System.currentTimeMillis() - startTime;
-            logger.info(marker, "Query Engine took {}s\n Response: {}",  millis / 1000.0, response);
+            logger.info(marker, "Query Engine took {}s Response: {}",  millis / 1000.0, response);
         }
     }
 
