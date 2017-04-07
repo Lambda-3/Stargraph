@@ -27,46 +27,68 @@ package net.stargraph.test;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.QueryEngine;
+import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.ValueEntity;
+import net.stargraph.model.LabeledEntity;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import javax.json.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class QueryEngineIT {
-    QueryEngine queryEngine;
+    private static String dbId = "dbpedia-2016";
+    private QueryEngine queryEngine;
 
     @BeforeClass
     public void beforeClass() {
-        queryEngine = new QueryEngine("dbpedia-2016", new Stargraph());
+        queryEngine = new QueryEngine(dbId, new Stargraph());
     }
 
     @Test
-    public void nli0Test() {
+    public void whoIsTheWifeOfBarackObamaTest() {
         AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Who is the wife of Barack Obama?");
         Assert.assertTrue(response.getShortAnswer().contains(new InstanceEntity("http://dbpedia.org/resource/Michelle_Obama", "Michelle Obama")));
     }
 
     @Test
-    public void nli1Test() {
-        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("How tall is Michael Jordan?");
-        Assert.assertTrue(response.getShortAnswer().contains(new ValueEntity("6", "http://www.w3.org/2001/XMLSchema#integer", null)));
-    }
-
-    @Test(enabled = false)
-    public void nli2Test() {
-        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Give me all movies directed by Francis Ford Copolla.");
-        //Assert.assertTrue(answerSet.getShortAnswer().contains(new InstanceEntity("dbr:Michelle_Obama", "Michelle Obama")));
-    }
-
-    @Test
-    public void sparql0Test() {
+    public void sparqlSelectTest() {
         SPARQLSelectResponse response  = (SPARQLSelectResponse) queryEngine.query("SELECT ?o WHERE " +
                 "{ <http://dbpedia.org/resource/Barack_Obama> <http://xmlns.com/foaf/0.1/depiction> ?o }");
         Assert.assertEquals("http://commons.wikimedia.org/wiki/Special:FilePath/President_Barack_Obama.jpg",
                 response.getBindings().get("o").get(0).getId());
+    }
+
+    @Test(dataProvider = "nlQueries", dataProviderClass = QueryEngineIT.class)
+    public void test(String q, List<String> answers) {
+        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query(q);
+        List<String> answerIds = response.getShortAnswer().stream().map(LabeledEntity::getId).collect(Collectors.toList());
+        if (!answers.stream().anyMatch(answerIds::contains)) {
+            Assert.fail("Test fail for query '" + q + "'. Accepted Answer Set: " + answers);
+        }
+    }
+
+    @DataProvider(name = "nlQueries")
+    public static Iterator<Object[]> createTestSet() throws Exception {
+        List<Object[]> data = new ArrayList<>();
+        try (InputStream is = ClassLoader.getSystemResourceAsStream(dbId + "-test-queries.json")) {
+            JsonReader reader = Json.createReader(is);
+            JsonArray arr = reader.readArray();
+            arr.getValuesAs(JsonObject.class).forEach(entry -> {
+                JsonArray acceptedArr = entry.getJsonArray("accepted");
+                List<String> l = acceptedArr.getValuesAs(JsonString.class)
+                        .stream().map(JsonString::getString).collect(Collectors.toList());
+                data.add(new Object[] { entry.getString("query"), l});
+            });
+            return data.iterator();
+        }
     }
 }
