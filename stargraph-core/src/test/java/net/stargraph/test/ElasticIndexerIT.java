@@ -31,10 +31,7 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.EntitySearcher;
-import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.KBId;
-import net.stargraph.model.LabeledEntity;
-import net.stargraph.model.PropertyEntity;
+import net.stargraph.model.*;
 import net.stargraph.rank.*;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
@@ -64,9 +61,21 @@ public final class ElasticIndexerIT {
         System.setProperty("stargraph.data.root-dir", root.toString());
         ConfigFactory.invalidateCaches();
         stargraph = new Stargraph();
+
+        //TODO: replace with KBLoader#loadAll()
         loadProperties(stargraph);
         loadEntities(stargraph);
         loadFacts(stargraph);
+    }
+
+    @Test
+    public void classSearchTest() {
+        EntitySearcher searcher = stargraph.createEntitySearcher();
+        ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("president");
+        ModifiableRankParams rankParams = ParamsBuilder.levenshtein();
+        Scores scores = searcher.classSearch(searchParams, rankParams);
+        ClassEntity expected = new ClassEntity("dbc:Presidents_of_the_United_States", "Presidents of the United States", true);
+        Assert.assertEquals(expected, scores.get(0).getEntry());
     }
 
     @Test

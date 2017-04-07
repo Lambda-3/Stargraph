@@ -95,7 +95,11 @@ public final class ElasticEntitySearcher implements EntitySearcher {
 
         Searcher searcher = core.getSearcher(searchParams.getKbId());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
-        return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
+
+        List<Score> classes2Score = scores.stream()
+                .map(s -> new Score(((Fact)s.getEntry()).getObject(), s.getValue())).collect(Collectors.toList());
+
+        return Rankers.apply(new Scores(classes2Score), rankParams, searchParams.getSearchTerm());
     }
 
     @Override
