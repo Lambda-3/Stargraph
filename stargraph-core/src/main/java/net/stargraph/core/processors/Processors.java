@@ -47,6 +47,7 @@ public final class Processors {
             put(WordNetProcessor.name, WordNetProcessor.class);
             put(RegExFilterProcessor.name, RegExFilterProcessor.class);
             put(StopPropertyFilterProcessor.name, StopPropertyFilterProcessor.class);
+            put(LengthFilterProcessor.name, LengthFilterProcessor.class);
         }};
     }
 
