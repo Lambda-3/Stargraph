@@ -42,7 +42,7 @@ public final class Rankers {
     }
 
     public static Scores apply(Scores inputScores, ModifiableRankParams rankParams, Rankable target) {
-        logger.info(marker, "Applying {}.", rankParams);
+        logger.info(marker, "Applying {} on {} entries.", rankParams, inputScores.size());
         Ranker ranker = createRanker(rankParams);
         Scores rescores = ranker.score(inputScores, target);
         return ThresholdFilter.filter(rescores, rankParams.getThreshold());

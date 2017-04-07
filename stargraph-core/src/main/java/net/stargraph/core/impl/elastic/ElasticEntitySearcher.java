@@ -69,7 +69,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
     public List<LabeledEntity> getEntities(String dbId, List<String> ids) {
         logger.info(marker, "Fetching ids={}", ids);
         Namespace ns = core.getNamespace(dbId);
-        List idList = ids.stream().map(ns::map).collect(Collectors.toList());
+        List idList = ids.stream().map(ns::shrinkURI).collect(Collectors.toList());
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
         QueryBuilder queryBuilder = termsQuery("id", idList);
         Searcher searcher = core.getSearcher(searchParams.getKbId());

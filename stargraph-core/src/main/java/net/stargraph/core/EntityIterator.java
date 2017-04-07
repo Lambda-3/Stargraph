@@ -88,7 +88,7 @@ public final class EntityIterator implements Iterator<Indexable> {
 
     private String applyNS(String uri) {
         if (namespace != null) {
-            return namespace.map(uri);
+            return namespace.shrinkURI(uri);
         }
         return uri;
     }

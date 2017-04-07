@@ -79,7 +79,7 @@ public final class LabelExtractionTest {
     @Test
     public void mapAndLabelExtractionTest() {
         Namespace ns = Namespace.createDefault();
-        String uri = ns.map("http://dbpedia.org/resource/Template:Editnotices/Page/Barack_Obama");
+        String uri = ns.shrinkURI("http://dbpedia.org/resource/Template:Editnotices/Page/Barack_Obama");
         Assert.assertEquals(ModelUtils.extractLabel(uri), "Editnotices/Page/Barack_Obama");
     }
 

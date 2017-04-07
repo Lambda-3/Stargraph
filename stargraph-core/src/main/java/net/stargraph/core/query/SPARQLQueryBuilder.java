@@ -30,9 +30,6 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.query.nli.DataModelBinding;
 import net.stargraph.core.query.nli.QueryPlanPatterns;
-import net.stargraph.model.ClassEntity;
-import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.PropertyEntity;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
 
@@ -100,28 +97,7 @@ public final class SPARQLQueryBuilder {
     void add(DataModelBinding binding, List<Score> scores) {
         final Scores newScores = new Scores(scores.size());
         // Expanding the Namespace for all entities
-        scores.parallelStream().forEach(s -> {
-            if (s.getEntry() instanceof InstanceEntity) {
-                InstanceEntity e = (InstanceEntity)s.getEntry();
-                InstanceEntity newEntity = new InstanceEntity(unmap(e.getId()), e.getValue(), e.getOtherValues());
-                newScores.add(new Score(newEntity, s.getValue()));
-            }
-            else if (s.getEntry() instanceof ClassEntity) {
-                ClassEntity e = (ClassEntity)s.getEntry();
-                ClassEntity newEntity = new ClassEntity(unmap(e.getId()), e.getValue(), e.isComplex());
-                newScores.add(new Score(newEntity, s.getValue()));
-            }
-            else if (s.getEntry() instanceof PropertyEntity) {
-                PropertyEntity e = (PropertyEntity)s.getEntry();
-                PropertyEntity newEntity = new PropertyEntity(unmap(e.getId()),
-                        e.getValue(), e.getHypernyms(), e.getHyponyms(), e.getSynonyms());
-                newScores.add(new Score(newEntity, s.getValue()));
-            }
-            else {
-                throw new IllegalStateException(); // For QA analysis we're expecting only those types
-            }
-        });
-
+        scores.forEach(s -> newScores.add(new Score(namespace.expand(s.getEntry()), s.getValue())));
         mappings.computeIfAbsent(binding, (b) -> new Scores()).addAll(newScores);
     }
 
@@ -197,6 +173,6 @@ public final class SPARQLQueryBuilder {
     }
 
     private String unmap(String uri) {
-        return namespace != null ? namespace.unmap(uri) : uri;
+        return namespace != null ? namespace.expandURI(uri) : uri;
     }
 }

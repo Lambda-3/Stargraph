@@ -1,0 +1,517 @@
+[
+  {
+    "query": "Who is the wife of Barack Obama?",
+    "accepted": [
+      "http://dbpedia.org/resource/Michelle_Obama"
+    ]
+  },
+  {
+    "query": "What is the language spoke in Brazil?",
+    "accepted": [
+      "http://dbpedia.org/resource/Portuguese_language",
+      "http://dbpedia.org/resource/Cocama_language",
+      "http://dbpedia.org/resource/Arikapú_language",
+      "http://dbpedia.org/resource/Aurá_language",
+      "http://dbpedia.org/resource/Língua_Geral_of_São_Paulo",
+      "http://dbpedia.org/resource/Wari’_language",
+      "http://dbpedia.org/resource/Avá-Canoeiro_language",
+      "http://dbpedia.org/resource/Mekéns_language",
+      "http://dbpedia.org/resource/Kanoê_language",
+      "http://dbpedia.org/resource/Kuruáya_language",
+      "http://dbpedia.org/resource/Terêna_language"
+    ]
+  },
+  {
+    "query": "Give me all members of Prodigy",
+    "accepted": [
+      "http://dbpedia.org/resource/Liam_Howlett",
+      "http://dbpedia.org/resource/Keith_Flint",
+      "http://dbpedia.org/resource/Maxim_(musician)"
+    ]
+  },
+  {
+    "query": "How tall is Michael Jordan?",
+    "accepted": [
+      "\"1.9812\"^^<http://www.w3.org/2001/XMLSchema#double>"
+    ]
+  },
+  {
+    "query": "What is the capital of Canada?",
+    "accepted": [
+      "http://dbpedia.org/resource/Ottawa"
+    ]
+  },
+  {
+    "query": "Who is the governor of Wyoming?",
+    "accepted": [
+      "http://dbpedia.org/resource/Matt_Mead"
+    ]
+  },
+  {
+    "query": "What is the birth name of Angela Merkel?",
+    "accepted": [
+      "\"Angela Dorothea Kasner\"@en"
+    ]
+  },
+  {
+    "query": "Who developed Minecraft?",
+    "accepted": [
+      "http://dbpedia.org/resource/Mojang"
+    ]
+  },
+  {
+    "query": "Who founded Intel?",
+    "accepted": [
+      "http://dbpedia.org/resource/Gordon_Moore",
+      "http://dbpedia.org/resource/Robert_Noyce"
+    ]
+  },
+  {
+    "query": "Who is the husband of Amanda Palmer?",
+    "accepted": [
+      "http://dbpedia.org/resource/Neil_Gaiman"
+    ]
+  },
+  {
+    "query": "Which cities does the Weser flow through?",
+    "accepted": [
+      "http://dbpedia.org/resource/North_Sea",
+      "http://dbpedia.org/resource/Wadden_Sea"
+    ]
+  },
+  {
+    "query": "Who created Goofy?",
+    "accepted": [
+      "\"Walt Disney, Frank Webb\"@en"
+    ]
+  },
+  {
+    "query": "Give me the albedo of Jupiter",
+    "accepted": [
+      "\"0.343\"^^<http://www.w3.org/2001/XMLSchema#double>"
+    ]
+  },
+  {
+    "query": "What are the nicknames of San Francisco?",
+    "accepted": [
+      "\"The City by the Bay; Fog City; San Fran; Frisco ; The City that Knows How ; Baghdad by the Bay ; The Paris of the West\"@en"
+    ]
+  },
+  {
+    "query": "In which country is the Limerick Lake?",
+    "accepted": [
+      "http://dbpedia.org/resource/Canada"
+    ]
+  },
+  {
+    "query": "Which awards did Douglas Hofstadter win?",
+    "accepted": [
+      "http://dbpedia.org/resource/Pulitzer_Prize",
+      "http://dbpedia.org/resource/National_Book_Award"
+    ]
+  },
+  {
+    "query": "What is the currency of the Czech Republic?",
+    "accepted": [
+      "http://dbpedia.org/resource/Czech_koruna"
+    ]
+  },
+  {
+    "query": "What is the official language of Suriname?",
+    "accepted": [
+      "http://dbpedia.org/resource/Dutch_language"
+    ]
+  },
+  {
+    "query": "Who designed the Brooklyn Bridge?",
+    "accepted": [
+      "http://dbpedia.org/resource/John_A._Roebling"
+    ]
+  },
+  {
+    "query": "What did Bruce Carver die from?",
+    "accepted": [
+      "http://dbpedia.org/resource/Cancer"
+    ]
+  },
+  {
+    "query": "Who developed the video game World of Warcraft?",
+    "accepted": [
+      "http://dbpedia.org/resource/Blizzard_Entertainment"
+    ]
+  },
+  {
+    "query": "Give me all actors starring in Last Action Hero",
+    "accepted": [
+      "http://dbpedia.org/resource/Robert_Prosky",
+      "http://dbpedia.org/resource/Bridgette_Wilson",
+      "http://dbpedia.org/resource/Anthony_Quinn",
+      "http://dbpedia.org/resource/F._Murray_Abraham",
+      "http://dbpedia.org/resource/Tom_Noonan",
+      "http://dbpedia.org/resource/Charles_Dance",
+      "http://dbpedia.org/resource/Arnold_Schwarzenegger",
+      "http://dbpedia.org/resource/Art_Carney",
+      "http://dbpedia.org/resource/Austin_O'Brien"
+    ]
+  },
+  {
+    "query": "Through which countries does the Yenisei River flow?",
+    "accepted": [
+      "http://dbpedia.org/resource/Mongolia",
+      "http://dbpedia.org/resource/Russia"
+    ]
+  },
+  {
+    "query": "When did Michael Jackson die?",
+    "accepted": [
+      "\"2009\"^^<http://www.w3.org/2001/XMLSchema#gYear>",
+      "\"2009-06-25\"^^<http://www.w3.org/2001/XMLSchema#date>"
+    ]
+  },
+  {
+    "query": "List the children of Margaret Thatcher",
+    "accepted": [
+      "http://dbpedia.org/resource/Mark_Thatcher",
+      "http://dbpedia.org/resource/Carol_Thatcher"
+    ]
+  },
+  {
+    "query": "Where is Mona Lisa located?",
+    "accepted": [
+      "\"Paris\"@en",
+      "http://dbpedia.org/resource/Paris"
+    ]
+  },
+  {
+    "query": "How many students does the Free University in Amsterdam have?",
+    "accepted": [
+      "\"23656\"^^<http://www.w3.org/2001/XMLSchema#integer>"
+    ]
+  },
+  {
+    "query": "Which languages are spoken in Turkmenistan?",
+    "accepted": [
+      "http://dbpedia.org/resource/Uzbek_language",
+      "http://dbpedia.org/resource/Lezgian_language",
+      "http://dbpedia.org/resource/Dungan_language",
+      "http://dbpedia.org/resource/Sistani_dialect",
+      "http://dbpedia.org/resource/Kazakh_language",
+      "http://dbpedia.org/resource/Turkmen_language"
+    ]
+  },
+  {
+    "query": "How often did Jane Fonda marry?",
+    "accepted": [
+      "http://dbpedia.org/resource/Henry_Fonda"
+    ]
+  },
+  {
+    "query": "How tall is Claudia Schiffer?",
+    "accepted": [
+      "\"181.0\"^^<http://dbpedia.org/datatype/centimetre>"
+    ]
+  },
+  {
+    "query": "How many children did Benjamin Franklin have?",
+    "accepted": [
+      "http://dbpedia.org/resource/Sarah_Franklin_Bache",
+      "http://dbpedia.org/resource/Francis_Folger_Franklin",
+      "http://dbpedia.org/resource/William_Franklin"
+    ]
+  },
+  {
+    "query": "Give me all video games published by Mean Hamster Software",
+    "accepted": [
+      "http://dbpedia.org/resource/Crossbow_(video_game)",
+      "http://dbpedia.org/resource/Riven"
+    ]
+  },
+  {
+    "query": "Which films did Leonardo DiCaprio star in?",
+    "accepted": [
+      "http://dbpedia.org/resource/Catch_Me_If_You_Can",
+      "http://dbpedia.org/resource/J._Edgar"
+    ]
+  },
+  {
+    "query": "Show me the book that Muhammad Ali wrote",
+    "accepted": [
+      "http://dbpedia.org/resource/The_Greatest_(1977_film)"
+    ]
+  },
+  {
+    "query": "How much did Pulp Fiction cost?",
+    "accepted": [
+      "\"8.0\"^^<http://dbpedia.org/datatype/usDollar>"
+    ]
+  },
+  {
+    "query": "Who is the father of Napoleon?",
+    "accepted": [
+      "http://dbpedia.org/resource/Carlo_Buonaparte"
+    ]
+  },
+  {
+    "query": "When was the last Eruption of the Mount Etna?",
+    "accepted": [
+      "\"--12-03\"^^<http://www.w3.org/2001/XMLSchema#gMonthDay>"
+    ]
+  },
+  {
+    "query": "Where is the source of the Amazon River?",
+    "accepted": [
+      "\"Andes\"@en"
+    ]
+  },
+  {
+    "query": "What is the programming language of GNU Emacs?",
+    "accepted": [
+      "http://dbpedia.org/resource/C_(programming_language)"
+    ]
+  },
+  {
+    "query": "Who are the members of Metallica?",
+    "accepted": [
+      "http://dbpedia.org/resource/James_Hetfield",
+      "http://dbpedia.org/resource/Robert_Trujillo",
+      "http://dbpedia.org/resource/Lars_Ulrich",
+      "http://dbpedia.org/resource/Kirk_Hammett"
+    ]
+  },
+  {
+    "query": "How many students does the Vrje Universitet Amsterdam have?",
+    "accepted": [
+      "\"23656\"^^<http://www.w3.org/2001/XMLSchema#integer>"
+    ]
+  },
+  {
+    "query": "How many pages does Sevastopol Sketches have?",
+    "accepted": [
+      "\"240\"^^<http://www.w3.org/2001/XMLSchema#integer>"
+    ]
+  },
+  {
+    "query": "How many inhabitants does Munich have?",
+    "accepted": [
+      "\"1517868\"^^<http://www.w3.org/2001/XMLSchema#integer>"
+    ]
+  },
+  {
+    "query": "What is the family of the Sperm Whale?",
+    "accepted": [
+      "http://dbpedia.org/resource/Physeteroidea"
+    ]
+  },
+  {
+    "query": "Who is the manufacturer of the AC Cobra?",
+    "accepted": [
+      "http://dbpedia.org/resource/AC_Cars"
+    ]
+  },
+  {
+    "query": "What is the capital of Bavaria?",
+    "accepted": [
+      "\"Munich\"@en"
+    ]
+  },
+  {
+    "query": "What is the capital of Prussia?",
+    "accepted": [
+      "http://dbpedia.org/resource/Berlin",
+      "http://dbpedia.org/resource/Königsberg"
+    ]
+  },
+  {
+    "query": "Who is like Albert Einstein?",
+    "accepted": [
+      "http://dbpedia.org/resource/Niels_Bohr",
+      "http://dbpedia.org/resource/Leo_Szilard",
+      "http://dbpedia.org/resource/Felix_Bloch",
+      "http://dbpedia.org/resource/James_Franck",
+      "http://dbpedia.org/resource/John_von_Neumann",
+      "http://dbpedia.org/resource/Richard_Feynman",
+      "http://dbpedia.org/resource/Eugene_Wigner",
+      "http://dbpedia.org/resource/Ahmed_Zewail",
+      "http://dbpedia.org/resource/Erwin_Schrödinger"
+    ]
+  },
+  {
+    "query": "Who is like Steven Spielberg?",
+    "accepted": [
+      "http://dbpedia.org/resource/Martin_Scorsese",
+      "http://dbpedia.org/resource/Roman_Polanski",
+      "http://dbpedia.org/resource/Paul_Newman",
+      "http://dbpedia.org/resource/Robert_Redford",
+      "http://dbpedia.org/resource/James_Franco",
+      "http://dbpedia.org/resource/Dustin_Hoffman",
+      "http://dbpedia.org/resource/Michael_Douglas",
+      "http://dbpedia.org/resource/Cecil_B._DeMille",
+      "http://dbpedia.org/resource/Aaron_Sorkin"
+    ]
+  },
+  {
+    "query": "What is the bioavailability of Paclitaxel?",
+    "accepted": [
+      "\"6.5\"^^<http://dbpedia.org/datatype/perCent>"
+    ]
+  },
+  {
+    "query": "Who is like Alan Turing?",
+    "accepted": [
+      "http://dbpedia.org/resource/Robin_Gandy",
+      "http://dbpedia.org/resource/Leslie_Valiant",
+      "http://dbpedia.org/resource/S._Barry_Cooper",
+      "http://dbpedia.org/resource/Tom_Kilburn",
+      "http://dbpedia.org/resource/Maurice_Wilkes",
+      "http://dbpedia.org/resource/Michael_O._Rabin",
+      "http://dbpedia.org/resource/Alan_Bundy",
+      "http://dbpedia.org/resource/John_Alan_Robinson",
+      "http://dbpedia.org/resource/Alonzo_Church",
+      "http://dbpedia.org/resource/Judea_Pearl"
+    ]
+  },
+  {
+    "query": "What is the latin name of Brodmann Area 44?",
+    "accepted": [
+      "\"Area opercularis\"@en"
+    ]
+  },
+  {
+    "query": "Which are the ingredients of Feijoada?",
+    "accepted": [
+      "http://dbpedia.org/resource/Pork"
+    ]
+  },
+  {
+    "query": "Which are the ingredients of Lebkuchen?",
+    "accepted": [
+      "http://dbpedia.org/resource/Hazelnut"
+    ]
+  },
+  {
+    "query": "Proteins similar to Tubulin",
+    "accepted": [
+      "http://dbpedia.org/resource/Gelsolin",
+      "http://dbpedia.org/resource/TAF11",
+      "http://dbpedia.org/resource/DNA_methyltransferase",
+      "http://dbpedia.org/resource/S-adenosyl-L-homocysteine_hydrolase",
+      "http://dbpedia.org/resource/Electron-transferring_flavoprotein",
+      "http://dbpedia.org/resource/NHL_repeat",
+      "http://dbpedia.org/resource/Nudix_family",
+      "http://dbpedia.org/resource/APOA2",
+      "http://dbpedia.org/resource/ATP5J",
+      "http://dbpedia.org/resource/GJA1"
+    ]
+  },
+  {
+    "query": "Companies similar to Halliburton",
+    "accepted": [
+      "http://dbpedia.org/resource/EOG_Resources",
+      "http://dbpedia.org/resource/Phillips_66",
+      "http://dbpedia.org/resource/Devon_Energy",
+      "http://dbpedia.org/resource/Williams_Companies",
+      "http://dbpedia.org/resource/Baker_Hughes",
+      "http://dbpedia.org/resource/Tesoro",
+      "http://dbpedia.org/resource/Citgo",
+      "http://dbpedia.org/resource/Spectra_Energy"
+    ]
+  },
+  {
+    "query": "What is the programming language of GNU Emacs?",
+    "accepted": [
+      "http://dbpedia.org/resource/C_(programming_language)"
+    ]
+  },
+  {
+    "query": "Who is the father of Napoleon?",
+    "accepted": [
+      "http://dbpedia.org/resource/Carlo_Buonaparte"
+    ]
+  },
+  {
+    "query": "Give me liquid metal reactors.",
+    "accepted": [
+      "http://dbpedia.org/resource/BM-40A_reactor"
+    ]
+  },
+  {
+    "query": "Who played Agent Smith?",
+    "accepted": [
+      "http://dbpedia.org/resource/Hugo_Weaving"
+    ]
+  },
+  {
+    "query": "Which bridges cross the Danube?",
+    "accepted": [
+      "http://dbpedia.org/resource/Ostrovul_Mare_Bridge",
+      "http://dbpedia.org/resource/New_Europe_Bridge",
+      "http://dbpedia.org/resource/Danube_Bridge",
+      "http://dbpedia.org/resource/New_Europe_Bridge",
+      "http://dbpedia.org/resource/Chain_Bridge_(Budapest)",
+      "http://dbpedia.org/resource/Most_SNP",
+      "http://dbpedia.org/resource/Constantine's_Bridge_(Danube)",
+      "http://dbpedia.org/resource/Reichsbr%C3%BCcke"
+    ]
+  },
+  {
+    "query": "2015 The Nature of the Beast is one of the Armand Gamache mysteries by this author with a coinage name.",
+    "accepted": [
+      "http://dbpedia.org/resource/Louise_Penny"
+    ]
+  },
+  {
+    "query": "The Atlantia & the Pacifica were 2 of the other Battlestars on this TV show bearing another spaceship's name.",
+    "accepted": [
+      "http://dbpedia.org/resource/List_of_spacecraft_in_Battlestar_Galactica_(2004_TV_series)"
+    ]
+  },
+  {
+    "query": "In this 1979 film, the mining ship Nostromo lands on a distant planet to investigate a suspected S.O.S.",
+    "accepted": [
+      "http://dbpedia.org/resource/Alien_(film)"
+    ]
+  },
+  {
+    "query": "The Discovery is the spaceship sent to investigate a mysterious monolith's signal in this film.",
+    "accepted": [
+      "http://dbpedia.org/resource/2010:_Odyssey_Two"
+    ]
+  },
+  {
+    "query": "This association of British insurance underwriters began in 1688.",
+    "accepted": [
+      "http://dbpedia.org/resource/Lloyd's_of_London"
+    ]
+  },
+  {
+    "query": "The Robinson family traveled aboard the Jupiter II, trying to find a way back to Earth on this show.",
+    "accepted": [
+      "http://dbpedia.org/resource/Lost_in_Space_(film)"
+    ]
+  },
+  {
+    "query": "Give me all American submarine movies.",
+    "accepted": [
+      "http://dbpedia.org/resource/Mega_Shark_Versus_Giant_Octopus",
+      "http://dbpedia.org/resource/Mega_Shark_Versus_Mecha_Shark"
+    ]
+  },
+  {
+    "query": "Give me all microtubule inhibitor medicines.",
+    "accepted": [
+      "http://dbpedia.org/resource/Paclitaxel"
+    ]
+  },
+  {
+    "query": "What is the manufacturer of Boeing 777?",
+    "accepted": [
+      "http://dbpedia.org/resource/Boeing_Commercial_Airplanes"
+    ]
+  },
+  {
+    "query": "Give me all still life painters from Germany.",
+    "accepted": [
+      "http://dbpedia.org/resource/Daniel_Siegert"
+    ]
+  }
+]

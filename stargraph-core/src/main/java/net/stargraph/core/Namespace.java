@@ -28,6 +28,10 @@ package net.stargraph.core;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
+import net.stargraph.model.ClassEntity;
+import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.PropertyEntity;
+import net.stargraph.model.ValueEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -36,6 +40,7 @@ import org.slf4j.MarkerFactory;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,7 +61,7 @@ public final class Namespace extends TreeMap<String, String> {
         putAll(readNamespaceResource(resource));
     }
 
-    public String map(String uri) {
+    public String shrinkURI(String uri) {
         if (uri.startsWith("http")) {
             for (Map.Entry<String, String> entry : this.entrySet()) {
                 if (uri.startsWith(entry.getKey())) {
@@ -67,7 +72,7 @@ public final class Namespace extends TreeMap<String, String> {
         return uri;
     }
 
-    public String unmap(String uri) {
+    public String expandURI(String uri) {
         for (Map.Entry<String, String> entry : this.entrySet()) {
             if (uri.startsWith(entry.getValue())) {
                 return uri.replace(entry.getValue(), entry.getKey());
@@ -81,8 +86,30 @@ public final class Namespace extends TreeMap<String, String> {
     }
 
     public boolean isFromMainNS(String uri) {
-        String[] mapped = map(uri).split(":");
+        String[] mapped = shrinkURI(uri).split(":");
         return mainNamespaces.contains(mapped[0]);
+    }
+
+    @SuppressWarnings("unchecked")
+    public  <S extends Serializable> S expand(S entry) {
+        if (entry == null) {
+            throw new IllegalArgumentException("Entry can't be null");
+        }
+
+        if (entry instanceof ValueEntity) {
+            return entry;
+        } else if (entry instanceof InstanceEntity) {
+            InstanceEntity e = (InstanceEntity) entry;
+            return (S) new InstanceEntity(expandURI(e.getId()), e.getValue(), e.getOtherValues());
+        } else if (entry instanceof ClassEntity) {
+            ClassEntity e = (ClassEntity) entry;
+            return (S) new ClassEntity(expandURI(e.getId()), e.getValue(), e.isComplex());
+        } else if (entry instanceof PropertyEntity) {
+            PropertyEntity e = (PropertyEntity) entry;
+            return (S) new PropertyEntity(expandURI(e.getId()), e.getValue(), e.getHypernyms(), e.getHyponyms(), e.getSynonyms());
+        } else {
+            throw new IllegalArgumentException("Unknown type instance to expand namespace: " + entry.getClass());
+        }
     }
 
     static Namespace create(Stargraph core, String dbId) {

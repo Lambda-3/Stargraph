@@ -134,7 +134,11 @@ public final class QueryEngine {
 
         if (!vars.isEmpty()) {
             AnswerSetResponse answerSet = new AnswerSetResponse(NLI, userQuery, queryBuilder);
-            answerSet.setShortAnswer(vars.get("VAR_1")); // convention, answer must be bound to the first var
+
+            List<LabeledEntity> expanded = vars.get("VAR_1").stream()
+                    .map(e -> namespace.expand(e)).collect(Collectors.toList());
+
+            answerSet.setShortAnswer(expanded); // convention, answer must be bound to the first var
             answerSet.setMappings(queryBuilder.getMappings());
             answerSet.setSPARQLQuery(sparqlQueryStr);
             return answerSet;

@@ -92,7 +92,7 @@ abstract class TripleIterator<T> implements Iterator<T> {
 
     String applyNS(String uri) {
         if (namespace != null) {
-            return namespace.map(uri);
+            return namespace.shrinkURI(uri);
         }
         return uri;
     }
