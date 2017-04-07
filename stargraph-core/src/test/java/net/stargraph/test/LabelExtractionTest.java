@@ -83,6 +83,19 @@ public final class LabelExtractionTest {
         Assert.assertEquals(ModelUtils.extractLabel(uri), "Editnotices/Page/Barack_Obama");
     }
 
+    @Test
+    public void pathOnLabelExtractionTest() {
+        Namespace ns = Namespace.createDefault();
+        String uri = ns.shrinkURI("http://dbpedia.org/resource/Mount_Wellington,_BC/Canada");
+        Assert.assertEquals(ModelUtils.extractLabel(uri), "Mount Wellington, BC/Canada");
+    }
+
+    @Test
+    public void labelWithParenthesisExtractionTest() {
+        Namespace ns = Namespace.createDefault();
+        String uri = ns.shrinkURI("http://dbpedia.org/resource/Project_Agreements_(Project_Labor_Agreements_–_Canada)");
+        Assert.assertEquals(ModelUtils.extractLabel(uri), "Project Agreements (Project Labor Agreements – Canada)");
+    }
 
     @Test
     public void doubleSlashTest() {

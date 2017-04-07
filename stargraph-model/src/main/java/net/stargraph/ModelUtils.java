@@ -55,11 +55,11 @@ public final class ModelUtils {
     }
 
     public static String extractLabel(String uriStr) {
-        return extractLabel(SplitIRI.namespace(uriStr), uriStr, false);
+        return extractLabel(getNamespace(uriStr), uriStr, false);
     }
 
     public static String extractLabel(String uriStr, boolean splitOnCaseChange) {
-        return extractLabel(SplitIRI.namespace(uriStr), uriStr, splitOnCaseChange);
+        return extractLabel(getNamespace(uriStr), uriStr, splitOnCaseChange);
     }
 
     public static String extractLabel(String namespace, String uriStr) {
@@ -157,6 +157,15 @@ public final class ModelUtils {
     public static Holder createWrappedProperty(KBId kbId, String p) {
         PropertyEntity propertyEntity = ModelUtils.createProperty(p);
         return new Indexable(propertyEntity, kbId);
+    }
+
+    private static String getNamespace(String uriStr) {
+        if (uriStr.startsWith("http://")) {
+            return SplitIRI.namespace(uriStr);
+        }
+        else {
+            return uriStr.split(":")[0] + ':'; //NS already resolved.
+        }
     }
 
     private static String split(String s) {

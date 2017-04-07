@@ -48,6 +48,7 @@ final class FactIterator extends TripleIterator<Indexable> {
         LabeledEntity labeledEntity;
 
         if (!statement.getObject().isLiteral()) {
+            //Is created as an instance but can be changed to a class down on the workflow in EntityClassifierProcessor.
             labeledEntity = createInstance(applyNS(statement.getObject().asResource().getURI()));
         } else {
             Literal literal = statement.getObject().asLiteral();
