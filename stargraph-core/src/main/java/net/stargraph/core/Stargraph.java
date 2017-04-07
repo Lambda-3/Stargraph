@@ -82,7 +82,7 @@ public final class Stargraph {
 
     public Stargraph(Config cfg, boolean initialize) {
         if (System.getProperty("config.file") == null) {
-            logger.warn(marker, "No configuration found at '-Dconfig.file'. Using defaults.");
+            logger.warn(marker, "No configuration found at '-Dconfig.file'.");
         }
 
         this.mainConfig = Objects.requireNonNull(cfg);
@@ -238,7 +238,7 @@ public final class Stargraph {
         this.initializeKB();
         logger.info(marker, "Indexer: '{}'", mainConfig.getString("indexer.factory.class"));
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
-        logger.info(marker, "{}, {} ({})", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
+        logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;
     }
 

@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
 public interface AdminResource {
 
     @GET
-    @Path("info")
+    @Path("_info")
     Response getInfo();
 
 }
