@@ -44,12 +44,25 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public final class RegExFilterProcessorTest {
 
+    KBId kbId = KBId.of("obama", "facts");
+
+    @Test
+    public void defaultFilterTest() {
+        Config defaultCfg = ConfigFactory.load().getConfig("processor").withOnlyPath("regex-filter");
+        System.out.println(ModelUtils.toStr(defaultCfg));
+        Processor processor = Processors.create(defaultCfg);
+
+        Holder fact1 = ModelUtils.createWrappedFact(kbId,
+                "dbr:President_of_the_United_States", "rdfs:seeAlso", "dbr:Barack_Obama");
+
+        processor.run(fact1);
+        Assert.assertTrue(fact1.isSinkable());
+    }
+
     @Test
     public void noFilterTest() {
         Config cfg = buildConfig(null, null, null);
         Processor processor = Processors.create(cfg);
-
-        KBId kbId = KBId.of("obama", "facts");
 
         Holder fact1 = ModelUtils.createWrappedFact(kbId,
                 "http://dbpedia.org/resource/President_of_the_United_States",
@@ -64,8 +77,6 @@ public final class RegExFilterProcessorTest {
 
     @Test
     public void filterAllTest() {
-        KBId kbId = KBId.of("obama", "facts");
-
         Holder fact1 = ModelUtils.createWrappedFact(kbId,
                 "http://dbpedia.org/resource/President_of_the_United_States",
                 "http://dbpedia.org/property/incumbent",
@@ -95,8 +106,6 @@ public final class RegExFilterProcessorTest {
 
     @Test
     public void filterTest() {
-        KBId kbId = KBId.of("obama", "facts");
-
         Holder fact1 = ModelUtils.createWrappedFact(kbId,
                 "http://dbpedia.org/resource/President_of_the_United_States",
                 "http://dbpedia.org/property/incumbent",

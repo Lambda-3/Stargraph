@@ -71,22 +71,23 @@ public class RegExFilterProcessor extends BaseProcessor {
     @Override
     public void doRun(Holder<Serializable> holder) throws ProcessorException {
         Fact fact = (Fact) holder.get();
+        boolean excluded = false;
         if (subjExclusions != null) {
             InstanceEntity subj = (InstanceEntity) fact.getSubject();
-            holder.setSink(isExcluded(subjExclusions, subj.getId()));
-            return;
+            excluded = isExcluded(subjExclusions, subj.getId());
         }
 
-        if (predExclusions != null) {
+        if (predExclusions != null && !excluded) {
             PropertyEntity pred = fact.getPredicate();
-            holder.setSink(isExcluded(predExclusions, pred.getId()));
-            return;
+            excluded = isExcluded(predExclusions, pred.getId());
         }
 
-        if (objExclusions != null) {
+        if (objExclusions != null && !excluded) {
             LabeledEntity obj = fact.getObject();
-            holder.setSink(isExcluded(objExclusions, obj.getId()));
+            excluded = isExcluded(objExclusions, obj.getId());
         }
+
+        holder.setSink(excluded);
     }
 
     @Override
