@@ -74,6 +74,7 @@ public final class Stargraph {
     private Map<String, Namespace> namespaces;
     private IndexerFactory indexerFactory;
     private GraphModelFactory modelFactory;
+    private boolean initialized;
 
     public Stargraph() {
         this(ConfigFactory.load().getConfig("stargraph"), true);
@@ -229,15 +230,24 @@ public final class Stargraph {
         }
     }
 
-    public final void initialize() {
+    public synchronized final void initialize() {
+        if (initialized) {
+            throw new IllegalStateException("Core already initialized.");
+        }
+
         this.initializeKB();
         logger.info(marker, "Indexer: '{}'", mainConfig.getString("indexer.factory.class"));
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "{}, {} ({})", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
+        initialized = true;
     }
 
-    public final void terminate() {
-        //todo: shutdown procedure
+    public synchronized final void terminate() {
+        if (!initialized) {
+            throw new IllegalStateException("Not initialized");
+        }
+        initialized = false;
+        // future shutdown procedure if needed.
     }
 
     private void initializeKB() {
