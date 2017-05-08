@@ -63,7 +63,7 @@ public abstract class BaseIndexer implements Indexer {
     private ProcessorChain processorChain;
 
     public BaseIndexer(KBId kbId, Stargraph core) {
-        logger.info(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
+        logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
         this.core = Objects.requireNonNull(core);
         this.kbId = Objects.requireNonNull(kbId);
         this.loading = false;

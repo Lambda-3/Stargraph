@@ -34,6 +34,10 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -42,6 +46,8 @@ import java.util.Objects;
 import static net.stargraph.ModelUtils.createInstance;
 
 public final class EntityIterator implements Iterator<Indexable> {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Marker marker = MarkerFactory.getMarker("core");
     private KBId kbId;
     private Stargraph core;
     private Namespace namespace;
@@ -65,8 +71,13 @@ public final class EntityIterator implements Iterator<Indexable> {
         while (iterator.hasNext()) {
             currentNode = iterator.next();
             //skipping literals and blank nodes.
-            if ((!currentNode.isBlank() && !currentNode.isLiteral() && namespace.isFromMainNS(currentNode.getURI()))) {
-                return true;
+            if ((!currentNode.isBlank() && !currentNode.isLiteral())) {
+                 if (namespace.isFromMainNS(currentNode.getURI())) {
+                     return true;
+                 }
+                 else {
+                     logger.trace(marker, "Discarded. NOT from main NS: [{}]", currentNode.getURI());
+                 }
             }
         }
 
@@ -98,7 +109,8 @@ public final class EntityIterator implements Iterator<Indexable> {
         Graph g = model.getGraph();
         ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
         ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);
-        ExtendedIterator<Node> predIt = exIt.mapWith(Triple::getObject);
-        return Iterators.concat(subjIt, predIt);
+        exIt = g.find(null, null, Node.ANY);
+        ExtendedIterator<Node> objIt = exIt.mapWith(Triple::getObject);
+        return Iterators.concat(subjIt, objIt);
     }
 }

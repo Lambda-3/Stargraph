@@ -1,3 +1,5 @@
+<http://dbpedia.org/resource/SomeEntity> <http://dbpedia.org/property/someProperty> <http://dbpedia.org/resource/AnotherEntity> .
+<http://dbpedia.org/resource/Mount_Wellington,_BC/Canada> <http://dbpedia.org/property/testing> <http://dbpedia.org/resource/Canada> .
 <http://dbpedia.org/resource/First_Lady_of_the_United_States> <http://dbpedia.org/property/incumbent> <http://dbpedia.org/resource/Michelle_Obama> .
 <http://dbpedia.org/resource/John_Lynch_(New_Hampshire)> <http://dbpedia.org/property/caption> "Lynch campaigning for Barack Obama"@en .
 <http://dbpedia.org/resource/James_L._Jones> <http://dbpedia.org/property/president> <http://dbpedia.org/resource/Barack_Obama> .

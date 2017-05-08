@@ -262,6 +262,7 @@ public final class Stargraph {
             ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbEntry.getKey()));
             for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
                 KBId kbId = KBId.of(kbEntry.getKey(), typeEntry.getKey());
+                logger.info(marker, "Initializing {}", kbId);
                 Indexer indexer = this.indexerFactory.create(kbId, this);
                 indexer.start();
                 indexers.put(kbId, indexer);

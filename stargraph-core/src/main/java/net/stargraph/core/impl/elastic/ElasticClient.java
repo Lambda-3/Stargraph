@@ -153,7 +153,7 @@ public final class ElasticClient {
         TransportClient client = new PreBuiltTransportClient(settings);
 
         List<String> servers = cfg.getStringList("elastic.servers");
-        logger.info(marker, "Elastic Servers: {}", servers);
+        logger.debug(marker, "Elastic Servers: {}", servers);
         for (String addr : servers) {
             try {
                 String[] a = addr.split(":");
