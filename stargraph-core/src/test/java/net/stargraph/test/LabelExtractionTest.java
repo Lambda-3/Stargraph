@@ -41,6 +41,8 @@ import static net.stargraph.ModelUtils.extractLabel;
  */
 public final class LabelExtractionTest {
 
+    private Namespace ns = Namespace.createDefault();
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void namespaceFailTest() {
         extractLabel("http://r.co", "http://dbpedia.com/AnyLabel");
@@ -78,21 +80,18 @@ public final class LabelExtractionTest {
 
     @Test
     public void mapAndLabelExtractionTest() {
-        Namespace ns = Namespace.createDefault();
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Template:Editnotices/Page/Barack_Obama");
         Assert.assertEquals(ModelUtils.extractLabel(uri), "Editnotices/Page/Barack_Obama");
     }
 
     @Test
     public void pathOnLabelExtractionTest() {
-        Namespace ns = Namespace.createDefault();
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Mount_Wellington,_BC/Canada");
         Assert.assertEquals(ModelUtils.extractLabel(uri), "Mount Wellington, BC/Canada");
     }
 
     @Test
     public void labelWithParenthesisExtractionTest() {
-        Namespace ns = Namespace.createDefault();
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Project_Agreements_(Project_Labor_Agreements_–_Canada)");
         Assert.assertEquals(ModelUtils.extractLabel(uri), "Project Agreements (Project Labor Agreements – Canada)");
     }
