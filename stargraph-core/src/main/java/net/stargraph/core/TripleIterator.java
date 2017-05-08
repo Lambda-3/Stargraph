@@ -49,10 +49,11 @@ abstract class TripleIterator<T> implements Iterator<T> {
     private Statement currentStmt;
     private Namespace namespace;
 
-    TripleIterator(KBId kbId, Model model, Namespace namespace) {
-        this.innerIt = Objects.requireNonNull(model).listStatements();
-        this.namespace = namespace;
+    TripleIterator(Stargraph core, KBId kbId) {
+        this.model = core.getGraphModel(kbId.getId());
+        this.namespace = Namespace.create(core, kbId.getId());
         this.kbId = Objects.requireNonNull(kbId);
+        this.innerIt = Objects.requireNonNull(model).listStatements();
     }
 
     @Override
