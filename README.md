@@ -20,8 +20,8 @@ To give you a more hands-on experience we've prepared a docker based deployment 
 
 These are our recommendations and does not mean that Stargraph will not work on other tools and platforms. We appreciate feedbacks as well.
 
- * Docker and Docker Compose: Our test environments are using version 1.17 and 1.11 respectively.
- * Linux OS: We adopted Ubuntu LTS Server. Probably from ubuntu trusty onwards you're safe.
+* Docker and Docker Compose: Our test environments are using version 1.17 and 1.11 respectively.
+* Linux OS: We adopted Ubuntu LTS Server. Probably from ubuntu trusty onwards you're safe.
 
 ## Hardware Requirements
 
