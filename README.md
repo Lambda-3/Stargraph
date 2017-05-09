@@ -1,5 +1,18 @@
 ![](stargraph_logo2_black.png)
 
+Table of Contents
+=================
+
+   * [StarGraph](#stargraph)
+   * [Features](#features)
+   * [Demo: Querying The Wikipedia Knowledge Graph](#demo-querying-the-wikipedia-knowledge-graph)
+      * [Software Requirements](#software-requirements)
+      * [Hardware Requirements](#hardware-requirements)
+      * [Installation](#installation)
+         * [Starting Up](#starting-up)
+         * [Load DBpedia-2016 data](#load-dbpedia-2016-data)
+      * [Querying DBpedia](#querying-dbpedia)
+
 # StarGraph
 
 An Open Source graph database to query large Knowledge Graphs. StarGraph support natural language queries facilitating the interaction between domain experts and data.
