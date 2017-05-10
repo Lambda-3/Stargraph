@@ -98,12 +98,16 @@ public final class AnalysisStep {
 
         if (matches(rulePattern)) {
             String newQuestionStr;
-            String newPosTagStr = posTagStr;
+            String newPosTagStr;
 
             if (rule.isLexical()) {
                 String placeHolder = createPlaceholder(questionStr, modelType);
                 Replacement replacement = replace(rulePattern, questionStr, placeHolder);
                 newQuestionStr = replacement.value;
+
+                String subPosStr = findSubPosStr(replacement);
+                Replacement posTagReplacement = replace(subPosStr, posTagStr, placeHolder);
+                newPosTagStr = posTagReplacement.value;
             }
             else {
                 String placeHolder = createPlaceholder(posTagStr, modelType);
@@ -143,6 +147,24 @@ public final class AnalysisStep {
         }
 
         return subStr;
+    }
+
+    private String findSubPosStr(Replacement replacement) {
+        String[] capture = Objects.requireNonNull(replacement).capture.split("\\s");
+        int startIdx = 0;
+        String subPosStr = null;
+        for (Word w : annotated) {
+            if (w.getText().equals(capture[0])) {
+                subPosStr = annotated.stream()
+                        .skip(startIdx)
+                        .limit(capture.length)
+                        .map(word -> word.getPosTag().getTag()).collect(Collectors.joining(" "));
+                break;
+            }
+            startIdx++;
+        }
+
+        return subPosStr;
     }
 
     private boolean matches(Pattern pattern) {

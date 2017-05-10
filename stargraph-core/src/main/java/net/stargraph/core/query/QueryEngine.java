@@ -176,7 +176,7 @@ public final class QueryEngine {
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
-            builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
+            builder.add(binding, scores.stream().limit(6).collect(Collectors.toList()));
         }
     }
 
