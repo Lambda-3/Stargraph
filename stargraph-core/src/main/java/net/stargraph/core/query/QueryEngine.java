@@ -45,10 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.stargraph.query.InteractionMode.NLI;
@@ -135,10 +132,10 @@ public final class QueryEngine {
         if (!vars.isEmpty()) {
             AnswerSetResponse answerSet = new AnswerSetResponse(NLI, userQuery, queryBuilder);
 
-            List<LabeledEntity> expanded = vars.get("VAR_1").stream()
-                    .map(e -> namespace.expand(e)).collect(Collectors.toList());
+            Set<LabeledEntity> expanded = vars.get("VAR_1").stream()
+                    .map(e -> namespace.expand(e)).collect(Collectors.toSet());
 
-            answerSet.setShortAnswer(expanded); // convention, answer must be bound to the first var
+            answerSet.setShortAnswer(new ArrayList<>(expanded)); // convention, answer must be bound to the first var
             answerSet.setMappings(queryBuilder.getMappings());
             answerSet.setSPARQLQuery(sparqlQueryStr);
             return answerSet;

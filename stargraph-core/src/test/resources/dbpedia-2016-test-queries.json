@@ -50,7 +50,8 @@
   {
     "query": "What is the birth name of Angela Merkel?",
     "accepted": [
-      "\"Angela Dorothea Kasner\"@en"
+      "\"Angela Dorothea Kasner\"@en",
+      "\"Angela Dorothea Kasner\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>"
     ]
   },
   {
@@ -82,7 +83,8 @@
   {
     "query": "Who created Goofy?",
     "accepted": [
-      "\"Walt Disney, Frank Webb\"@en"
+      "\"Walt Disney, Frank Webb\"@en",
+      "\"Walt Disney, Frank Webb\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>"
     ]
   },
   {
@@ -94,7 +96,8 @@
   {
     "query": "What are the nicknames of San Francisco?",
     "accepted": [
-      "\"The City by the Bay; Fog City; San Fran; Frisco ; The City that Knows How ; Baghdad by the Bay ; The Paris of the West\"@en"
+      "\"The City by the Bay; Fog City; San Fran; Frisco ; The City that Knows How ; Baghdad by the Bay ; The Paris of the West\"@en",
+      "\"The City by the Bay; Fog City; San Fran; Frisco ; The City that Knows How ; Baghdad by the Bay ; The Paris of the West\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>"
     ]
   },
   {
@@ -260,7 +263,9 @@
   {
     "query": "Where is the source of the Amazon River?",
     "accepted": [
-      "\"Andes\"@en"
+      "\"Andes\"@en",
+      "\"Andes\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>",
+      "http://dbpedia.org/resource/Andes"
     ]
   },
   {
@@ -311,7 +316,9 @@
   {
     "query": "What is the capital of Bavaria?",
     "accepted": [
-      "\"Munich\"@en"
+      "\"Munich\"@en",
+      "\"Munich\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>",
+      "http://dbpedia.org/resource/Munich"
     ]
   },
   {
@@ -373,7 +380,8 @@
   {
     "query": "What is the latin name of Brodmann Area 44?",
     "accepted": [
-      "\"Area opercularis\"@en"
+      "\"Area opercularis\"@en",
+      "\"Area opercularis\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>"
     ]
   },
   {
