@@ -182,3 +182,9 @@ And the output is a JSON response.
   }
 }
 ```
+
+## Contributors (alphabetical order)
+- Andre Freitas
+- Bernhard Bermeitinger
+- Leonardo Souza
+- Siegfried Handschuh
