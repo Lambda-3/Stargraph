@@ -26,28 +26,28 @@ package net.stargraph.core.serializer;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import net.stargraph.model.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import net.stargraph.model.Document;
+import net.stargraph.model.Fact;
+import net.stargraph.model.KBId;
 
-/**
- * The standard Serializer
- */
-public final class ObjectSerializer {
+import java.io.IOException;
 
-    public static ObjectMapper createMapper(KBId kbId) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Fact.class, new FactSerializer(kbId));
-        module.addDeserializer(Fact.class, new FactDeSerializer(kbId));
-        module.addSerializer(PropertyEntity.class, new PropertySerializer(kbId));
-        module.addDeserializer(PropertyEntity.class, new PropertyDeserializer(kbId));
-        module.addSerializer(InstanceEntity.class, new InstanceSerializer(kbId));
-        module.addDeserializer(InstanceEntity.class, new InstanceDeserializer(kbId));
-        module.addSerializer(ClassEntity.class, new ClassSerializer(kbId));
-        module.addSerializer(Document.class, new DocumentSerializer(kbId));
-        module.addDeserializer(Document.class, new DocumentDeserializer(kbId));
-        mapper.registerModule(module);
-        return mapper;
+class DocumentSerializer extends AbstractSerializer<Document> {
+
+    DocumentSerializer(KBId kbId) {
+        super(kbId, Document.class);
+    }
+
+    @Override
+    public void serialize(Document value, JsonGenerator g, SerializerProvider provider) throws IOException {
+        g.writeStartObject();
+        g.writeObjectField("title", value.getTitle());
+        g.writeObjectField("text", value.getText());
+        if (value.getPassages() != null && !value.getPassages().isEmpty()) {
+            g.writeObjectField("passages", value.getPassages());
+        }
+        g.writeEndObject();
     }
 }
