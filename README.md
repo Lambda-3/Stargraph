@@ -62,7 +62,23 @@ _Docker Compose_ will assemble all software components and ease the setup of thi
 version: '2'
 
 services:
- 
+
+  coreference:
+    depends_on:
+      - corenlp
+    image: "lambdacube/pycobalt:v1.1.1"
+    environment:
+      - PYCOBALT_CORENLP=http://corenlp:9000
+    expose:
+      - "5128"
+    ports:
+      - "5128:5128"
+
+  corenlp:
+    image: "lambdacube/corenlp:3.7.0"
+    expose:
+      - "9000"
+
   elastic:
     image: elasticsearch:5.1.1
     container_name: elastic
@@ -85,8 +101,8 @@ services:
       - "ES_JAVA_OPTS=-Xms7g -Xmx7g"
 
   stargraph:
-    image: lambdacube/stargraph:latest
-    container_name: stargraphv2
+    image: lambdacube/stargraph:2.0.0-SNAPSHOT-1.0
+    container_name: stargraph_matthias
     ports:
       - 8917:8917
     volumes:
@@ -94,7 +110,7 @@ services:
       - ./data:/usr/share/stargraph/data
     mem_limit: 8g
     environment:
-      - "STARGRAPH_JAVA_OPTS=-Xms7g -Xmx7g"
+      - "STARGRAPH_JAVA_OPTS=-Xms7g -Xmx7g"
  ```
       
 .. now run the following command in your favorite terminal:
