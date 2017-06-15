@@ -48,6 +48,7 @@ public final class Processors {
             put(RegExFilterProcessor.name, RegExFilterProcessor.class);
             put(StopPropertyFilterProcessor.name, StopPropertyFilterProcessor.class);
             put(LengthFilterProcessor.name, LengthFilterProcessor.class);
+            put(CoreferenceResolutionProcessor.name, CoreferenceResolutionProcessor.class);
         }};
     }
 
