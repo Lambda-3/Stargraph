@@ -191,7 +191,7 @@ public final class Stargraph {
         List<? extends Config> processorsCfg = getProcessorsCfg(kbId);
         if (processorsCfg != null && processorsCfg.size() != 0) {
             List<Processor> processors = new ArrayList<>();
-            processorsCfg.forEach(config -> processors.add(Processors.create(config)));
+            processorsCfg.forEach(config -> processors.add(Processors.create(this, config)));
             ProcessorChain chain = new ProcessorChain(processors);
             logger.info(marker, "processors = {}", chain);
             return chain;
