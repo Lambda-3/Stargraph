@@ -1,8 +1,8 @@
-package net.stargraph.core.serializer;
+package net.stargraph.model;
 
 /*-
  * ==========================License-Start=============================
- * stargraph-core
+ * stargraph-model
  * --------------------------------------------------------------------
  * Copyright (C) 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package net.stargraph.core.serializer;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,28 +26,25 @@ package net.stargraph.core.serializer;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import net.stargraph.model.*;
+import java.util.List;
 
 /**
- * The standard Serializer
+ * Represents a passage that can be digested by the StarGraph database.
  */
-public final class ObjectSerializer {
+public class Passage {
+	private String text;
+	private List<LabeledEntity> entities;
 
-    public static ObjectMapper createMapper(KBId kbId) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Fact.class, new FactSerializer(kbId));
-        module.addDeserializer(Fact.class, new FactDeSerializer(kbId));
-        module.addSerializer(PropertyEntity.class, new PropertySerializer(kbId));
-        module.addDeserializer(PropertyEntity.class, new PropertyDeserializer(kbId));
-        module.addSerializer(InstanceEntity.class, new InstanceSerializer(kbId));
-        module.addDeserializer(InstanceEntity.class, new InstanceDeserializer(kbId));
-        module.addSerializer(ClassEntity.class, new ClassSerializer(kbId));
-        module.addSerializer(Document.class, new DocumentSerializer(kbId));
-        module.addDeserializer(Document.class, new DocumentDeserializer(kbId));
-        mapper.registerModule(module);
-        return mapper;
-    }
+	public Passage(String text, List<LabeledEntity> entities) {
+		this.text = text;
+		this.entities = entities;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public List<LabeledEntity> getEntities() {
+		return entities;
+	}
 }

@@ -1,4 +1,4 @@
-package net.stargraph.core.serializer;
+package net.stargraph.core;
 
 /*-
  * ==========================License-Start=============================
@@ -26,28 +26,38 @@ package net.stargraph.core.serializer;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import net.stargraph.data.Indexable;
 import net.stargraph.model.*;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Statement;
 
-/**
- * The standard Serializer
- */
-public final class ObjectSerializer {
+import javax.print.Doc;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-    public static ObjectMapper createMapper(KBId kbId) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Fact.class, new FactSerializer(kbId));
-        module.addDeserializer(Fact.class, new FactDeSerializer(kbId));
-        module.addSerializer(PropertyEntity.class, new PropertySerializer(kbId));
-        module.addDeserializer(PropertyEntity.class, new PropertyDeserializer(kbId));
-        module.addSerializer(InstanceEntity.class, new InstanceSerializer(kbId));
-        module.addDeserializer(InstanceEntity.class, new InstanceDeserializer(kbId));
-        module.addSerializer(ClassEntity.class, new ClassSerializer(kbId));
-        module.addSerializer(Document.class, new DocumentSerializer(kbId));
-        module.addDeserializer(Document.class, new DocumentDeserializer(kbId));
-        mapper.registerModule(module);
-        return mapper;
+import static net.stargraph.ModelUtils.createInstance;
+import static net.stargraph.ModelUtils.createProperty;
+
+final class DocumentIterator implements Iterator<Indexable> {
+    private KBId kbId;
+    private Iterator<Document> innerIt;
+
+    DocumentIterator(KBId kbId, List<Document> documents) {
+        this.kbId = kbId;
+
+        this.innerIt = documents.iterator();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return innerIt.hasNext();
+    }
+
+    @Override
+    public Indexable next() {
+        Document document = innerIt.next();
+
+        return new Indexable(document, kbId);
     }
 }

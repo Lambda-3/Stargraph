@@ -1,4 +1,4 @@
-package net.stargraph.core.serializer;
+package net.stargraph.core.processors;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.serializer;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,28 +26,44 @@ package net.stargraph.core.serializer;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.typesafe.config.Config;
+import net.stargraph.data.processor.BaseProcessor;
+import net.stargraph.data.processor.Holder;
+import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.*;
+import org.lambda3.graphene.core.Graphene;
+import org.lambda3.graphene.core.coreference.model.CoreferenceContent;
+
+import java.io.Serializable;
 
 /**
- * The standard Serializer
+ * Can be placed in the workflow to resolve coreferences.
  */
-public final class ObjectSerializer {
+public final class CoreferenceResolutionProcessor extends BaseProcessor {
+    public static String name = "coref-processor";
 
-    public static ObjectMapper createMapper(KBId kbId) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Fact.class, new FactSerializer(kbId));
-        module.addDeserializer(Fact.class, new FactDeSerializer(kbId));
-        module.addSerializer(PropertyEntity.class, new PropertySerializer(kbId));
-        module.addDeserializer(PropertyEntity.class, new PropertyDeserializer(kbId));
-        module.addSerializer(InstanceEntity.class, new InstanceSerializer(kbId));
-        module.addDeserializer(InstanceEntity.class, new InstanceDeserializer(kbId));
-        module.addSerializer(ClassEntity.class, new ClassSerializer(kbId));
-        module.addSerializer(Document.class, new DocumentSerializer(kbId));
-        module.addDeserializer(Document.class, new DocumentDeserializer(kbId));
-        mapper.registerModule(module);
-        return mapper;
+    private static final Graphene GRAPHENE = new Graphene();
+
+    public CoreferenceResolutionProcessor(Config config) {
+        super(config);
+    }
+
+    @Override
+    public void doRun(Holder<Serializable> holder) throws ProcessorException {
+        Serializable entry = holder.get();
+
+        if (entry instanceof Document) {
+            Document document = (Document)entry;
+
+            CoreferenceContent cc = GRAPHENE.doCoreference(document.getText());
+            String resolved = cc.getSubstitutedText();
+
+            holder.set(new Document(document.getTitle(), resolved));
+        }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }
