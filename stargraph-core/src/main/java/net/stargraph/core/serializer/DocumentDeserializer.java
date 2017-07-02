@@ -26,28 +26,28 @@ package net.stargraph.core.serializer;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import net.stargraph.model.*;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import net.stargraph.model.Document;
+import net.stargraph.model.KBId;
+import net.stargraph.model.PropertyEntity;
 
-/**
- * The standard Serializer
- */
-public final class ObjectSerializer {
+import java.io.IOException;
 
-    public static ObjectMapper createMapper(KBId kbId) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(Fact.class, new FactSerializer(kbId));
-        module.addDeserializer(Fact.class, new FactDeSerializer(kbId));
-        module.addSerializer(PropertyEntity.class, new PropertySerializer(kbId));
-        module.addDeserializer(PropertyEntity.class, new PropertyDeserializer(kbId));
-        module.addSerializer(InstanceEntity.class, new InstanceSerializer(kbId));
-        module.addDeserializer(InstanceEntity.class, new InstanceDeserializer(kbId));
-        module.addSerializer(ClassEntity.class, new ClassSerializer(kbId));
-        module.addSerializer(Document.class, new DocumentSerializer(kbId));
-        module.addDeserializer(Document.class, new DocumentDeserializer(kbId));
-        mapper.registerModule(module);
-        return mapper;
+class DocumentDeserializer extends AbstractDeserializer<Document> {
+
+    DocumentDeserializer(KBId kbId) {
+        super(kbId, PropertyEntity.class);
     }
+
+    @Override
+    public Document deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        JsonNode node = p.getCodec().readTree(p);
+        String title = node.get("title").asText();
+        String text = node.get("text").asText();
+        return new Document(title, text);
+    }
+
+
 }
