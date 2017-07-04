@@ -144,7 +144,9 @@ public class NERSearcher {
                     tryLink(namedEntity);
                 }
                 else {
-                    namedEntity.link(reference.get().getEntity(), reference.get().getScore());
+                    if (reference.get().getEntity() != null) {
+                        namedEntity.link(reference.get().getEntity(), reference.get().getScore());
+                    }
                 }
 
                 allNamedEntities.add(namedEntity);
