@@ -68,9 +68,10 @@ public final class Document implements Hashable, Serializable {
 
     @Override
     public String toString() {
+        String abbrevText = (text.length() > 30)? text.substring(0, 30-3) + "..." : text;
         return "Document{" +
                 "title='" + title + '\'' +
-                ", text='" + text + '\'' +
+                ", text='" + abbrevText + '\'' +
                 ", passages=" + passages +
                 '}';
     }

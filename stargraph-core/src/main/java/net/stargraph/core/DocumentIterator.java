@@ -26,38 +26,113 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import net.stargraph.StarGraphException;
+import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.*;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-import javax.print.Doc;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import static net.stargraph.ModelUtils.createInstance;
-import static net.stargraph.ModelUtils.createProperty;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 final class DocumentIterator implements Iterator<Indexable> {
-    private KBId kbId;
-    private Iterator<Document> innerIt;
+    private static Logger logger = LoggerFactory.getLogger(DocumentIterator.class);
+    private static Marker marker = MarkerFactory.getMarker("core");
 
-    DocumentIterator(KBId kbId, List<Document> documents) {
+    private static Config config = ConfigFactory.load().getConfig("stargraph");
+
+    private KBId kbId;
+    private Iterator<File> fileIt;
+
+    DocumentIterator(KBId kbId) {
         this.kbId = kbId;
 
-        this.innerIt = documents.iterator();
+        Path dataDirectory = getDataDirectory(kbId.getId());
+        File dir = dataDirectory.toFile();
+        if (!dir.exists()) {
+            logger.warn(marker, "Did not find any documents.");
+            fileIt = Collections.emptyIterator();
+        } else {
+            fileIt = FileUtils.iterateFiles(dir, new String[]{"json"}, false);
+        }
+    }
+
+    private static Path getDataDirectory(String  dbId) {
+        String dataDir = config.getString("data.root-dir");
+        Path dataDirectory = Paths.get(dataDir, dbId, "documents");
+
+        return dataDirectory;
+    }
+
+    public static void clearDocuments(KBId kbId) {
+        Path dataDirectory = getDataDirectory(kbId.getId());
+        File dir = dataDirectory.toFile();
+        if (dir.exists() && dir.isDirectory()) {
+
+            // delete files
+            int n = 0;
+            for(File file: dir.listFiles()) {
+                if (!file.isDirectory()) {
+                    if (!file.delete()) {
+                        logger.error(marker, "Could not delete file {}.", file);
+                    } else {
+                        ++n;
+                    }
+                }
+            }
+
+            logger.info(marker, "Deleted {} documents", n);
+        }
+    }
+
+    public static void storeDocument(KBId kbId, Document document) {
+        Path dataDirectory = getDataDirectory(kbId.getId());
+        File dir = dataDirectory.toFile();
+
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+        String fileName = document.getTitle() + "-" + timeStamp + ".json";
+        File file = new File(dir, fileName);
+
+        ObjectMapper mapper = ObjectSerializer.createMapper(kbId);
+        try {
+            Files.createDirectories(Objects.requireNonNull(file).toPath().getParent());
+            mapper.writeValue(file, document);
+            logger.info(marker, "Stored document {}", document.toString());
+        } catch (IOException e) {
+            logger.error(marker, "Failed to store document {}", document.toString());
+            throw new StarGraphException(e);
+        }
     }
 
     @Override
     public boolean hasNext() {
-        return innerIt.hasNext();
+        return fileIt.hasNext();
     }
 
     @Override
     public Indexable next() {
-        Document document = innerIt.next();
+        ObjectMapper mapper = ObjectSerializer.createMapper(kbId);
 
-        return new Indexable(document, kbId);
+        File file = fileIt.next();
+        try {
+            Document document = mapper.readValue(file, Document.class);
+
+            return new Indexable(document, kbId);
+        } catch (IOException e) {
+            logger.error(marker, "Failed to load document from file {}.", file);
+            throw new StarGraphException(e);
+        }
     }
 }

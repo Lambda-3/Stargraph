@@ -26,113 +26,31 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import net.stargraph.StarGraphException;
-import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.Document;
 import net.stargraph.model.KBId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Encapsulates the logic to provide a stream of documents.
  */
 public final class DocumentProviderFactory extends BaseDataProviderFactory {
-    private static final Logger logger = LoggerFactory.getLogger(DocumentProviderFactory.class);
-    protected static Marker marker = MarkerFactory.getMarker("core");
-
-    private static Config config = ConfigFactory.load().getConfig("stargraph");
-
 
     public DocumentProviderFactory(Stargraph core) {
         super(core);
     }
 
-    private static Path getDataFilePath(String  dbId) {
-        String dataDir = config.getString("data.root-dir");
-        Path defaultPath = Paths.get(dataDir, dbId, "documents", "documents.data");
-
-        return defaultPath;
-    }
-
     public static void clearDocuments(KBId kbId) {
-        Path dataFilePath = getDataFilePath(kbId.getId());
-        File file = dataFilePath.toFile();
-        if (file.exists()) {
-            if (!file.delete()) {
-                logger.error(marker, "Could not delete documents.");
-            } else {
-                logger.info(marker, "Deleted documents.");
-            }
-        }
+        DocumentIterator.clearDocuments(kbId);
     }
 
     public static void storeDocument(KBId kbId, Document document) {
-        Path dataFilePath = getDataFilePath(kbId.getId());
-
-        List<Document> documents = new ArrayList<>();
-        documents.addAll(loadDocuments(kbId));
-        documents.add(document);
-
-        try {
-            File file = dataFilePath.toFile();
-            Files.createDirectories(Objects.requireNonNull(file).toPath().getParent());
-
-            ObjectMapper mapper = ObjectSerializer.createMapper(kbId);
-            mapper.writeValue(file, documents);
-
-            logger.info(marker, "Stored document {}", document.toString());
-        } catch (IOException e) {
-            logger.error(marker, "Failed to store document {}", document.toString());
-            throw new StarGraphException(e);
-        }
-    }
-
-    private static List<Document> loadDocuments(KBId kbId) {
-        Path dataFilePath = getDataFilePath(kbId.getId());
-
-        File file = dataFilePath.toFile();
-        if (!file.exists()) {
-            logger.warn(marker, "Did not find any documents.");
-            return Collections.unmodifiableList(Collections.emptyList());
-        }
-
-        try {
-            ObjectMapper mapper = ObjectSerializer.createMapper(kbId);
-            List<Document> documents = mapper.readValue(file, new TypeReference<List<Document>>() {});
-
-            logger.info(marker, "loaded documents:");
-            documents.forEach(d -> logger.info(marker, d.toString()));
-
-            return documents;
-        } catch (IOException e) {
-            logger.error(marker, "Failed to load documents.");
-            throw new StarGraphException(e);
-        }
+        DocumentIterator.storeDocument(kbId, document);
     }
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-
-        List<Document> documents = loadDocuments(kbId);
-
-        return new DataProvider<>(new DocumentIterator(kbId, documents));
+        return new DataProvider<>(new DocumentIterator(kbId));
     }
 
 }
