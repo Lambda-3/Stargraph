@@ -32,6 +32,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name="org.lambda3.graphene" level="INFO" additivity="true"/>
     <logger name="org.elasticsearch" level="INFO" additivity="true"/>
     <logger name="org.apache" level="WARN" additivity="true"/>
     <logger name="org.glassfish" level="WARN" additivity="true"/>

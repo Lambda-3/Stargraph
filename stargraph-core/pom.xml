@@ -15,6 +15,7 @@
     <properties>
         <es.version>5.1.1</es.version>
         <corenlp.version>3.7.0</corenlp.version>
+        <graphene.version>2.0.0-SNAPSHOT</graphene.version>
     </properties>
 
     <build>
@@ -56,6 +57,13 @@
             <groupId>net.stargraph</groupId>
             <artifactId>stargraph-model</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- Graphene-Core -->
+        <dependency>
+            <groupId>org.lambda3.graphene</groupId>
+            <artifactId>graphene-core</artifactId>
+            <version>${graphene.version}</version>
         </dependency>
 
         <dependency>
