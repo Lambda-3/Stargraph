@@ -1,4 +1,4 @@
-package net.stargraph.core.processors.ner;
+package net.stargraph.core.ner;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;

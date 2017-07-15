@@ -1,4 +1,4 @@
-package net.stargraph.core.processors.ner;
+package net.stargraph.core.ner;
 
 import net.stargraph.model.LabeledEntity;
 

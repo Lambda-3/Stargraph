@@ -1,4 +1,4 @@
-package net.stargraph.core.processors.ner;
+package net.stargraph.core.ner;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;

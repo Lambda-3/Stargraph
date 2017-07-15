@@ -28,8 +28,8 @@ package net.stargraph.core.processors;
 
 import com.typesafe.config.Config;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.processors.ner.LinkedNamedEntity;
-import net.stargraph.core.processors.ner.NERSearcher;
+import net.stargraph.core.ner.LinkedNamedEntity;
+import net.stargraph.core.ner.NERSearcher;
 import net.stargraph.data.processor.BaseProcessor;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorException;
