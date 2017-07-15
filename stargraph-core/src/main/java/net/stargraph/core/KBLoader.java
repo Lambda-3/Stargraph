@@ -103,14 +103,14 @@ public final class KBLoader {
 
     private void doLoadAll(String dbId) throws InterruptedException {
         logger.warn(marker, "Loading ALL DATA of '{}'. This can take some time ;) ..", dbId);
-        List<KBId> sucessful = new ArrayList<>();
+        List<KBId> successful = new ArrayList<>();
         List<KBId> failing = new ArrayList<>();
         core.getKBIdsOf(dbId).forEach(kbId -> {
             try {
                 Indexer indexer = core.getIndexer(kbId);
                 indexer.load(true, -1);
                 indexer.awaitLoader();
-                sucessful.add(kbId);
+                successful.add(kbId);
             } catch (Exception e) {
                 logger.error(marker, "Fail to load {}", kbId);
                 failing.add(kbId);
@@ -118,10 +118,10 @@ public final class KBLoader {
         });
 
         if (failing.isEmpty()) {
-            logger.info(marker, "Sucessful: {}", sucessful);
+            logger.info(marker, "Successful: {}", successful);
         }
         else {
-            logger.warn(marker, "Sucessful: {}, failing: {}", sucessful, failing);
+            logger.warn(marker, "Successful: {}, failing: {}", successful, failing);
         }
     }
 
