@@ -42,10 +42,11 @@ import java.io.Serializable;
 public final class CoreferenceResolutionProcessor extends BaseProcessor {
     public static String name = "coref-processor";
 
-    private static final Graphene GRAPHENE = new Graphene();
+    private Graphene graphene;
 
     public CoreferenceResolutionProcessor(Config config) {
         super(config);
+        graphene = new Graphene(getConfig());
     }
 
     @Override
@@ -55,7 +56,7 @@ public final class CoreferenceResolutionProcessor extends BaseProcessor {
         if (entry instanceof Document) {
             Document document = (Document)entry;
 
-            CoreferenceContent cc = GRAPHENE.doCoreference(document.getText());
+            CoreferenceContent cc = graphene.doCoreference(document.getText());
             String resolved = cc.getSubstitutedText();
 
             holder.set(new Document(document.getTitle(), resolved));
