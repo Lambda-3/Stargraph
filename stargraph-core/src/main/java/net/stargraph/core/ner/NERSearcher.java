@@ -2,6 +2,7 @@ package net.stargraph.core.ner;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
+import net.stargraph.core.impl.corenlp.CoreNLPNERClassifier;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.query.Language;
