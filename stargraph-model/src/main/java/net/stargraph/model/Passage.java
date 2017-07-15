@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Represents a passage that can be digested by the StarGraph database.
  */
-public class Passage {
+public final class Passage {
 	private String text;
 	private List<LabeledEntity> entities;
 
