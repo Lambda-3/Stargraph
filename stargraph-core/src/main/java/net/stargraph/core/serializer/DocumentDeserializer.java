@@ -29,11 +29,13 @@ package net.stargraph.core.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import net.stargraph.model.Document;
-import net.stargraph.model.KBId;
-import net.stargraph.model.PropertyEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.stargraph.core.processors.ner.LinkedNamedEntity;
+import net.stargraph.model.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 class DocumentDeserializer extends AbstractDeserializer<Document> {
 
@@ -46,7 +48,31 @@ class DocumentDeserializer extends AbstractDeserializer<Document> {
         JsonNode node = p.getCodec().readTree(p);
         String title = node.get("title").asText();
         String text = node.get("text").asText();
-        return new Document(title, text);
+
+        List<Passage> passages = new ArrayList();
+        if (node.has("passages")) {
+            for (final JsonNode pass : node.get("passages")) {
+                String passText = pass.get("text").asText();
+                List<LabeledEntity> entities = new ArrayList<>();
+                if (pass.has("entities")) {
+                    for (final JsonNode ent : pass.get("entities")) {
+                        String entId = ent.get("id").asText();
+                        String entValue = ent.get("value").asText();
+
+                        if (ent.has("complex")) {
+                            entities.add(new ClassEntity(entId, entValue, ent.get("complex").asBoolean()));
+                        } else if (ent.has("language")) {
+                            entities.add(new ValueEntity(entId, entValue, ent.get("dataType").asText(null), ent.get("language").asText(null)));
+                        } else {
+                            entities.add(new InstanceEntity(entId, entValue));
+                        }
+                    }
+                }
+                passages.add(new Passage(passText, entities));
+            }
+        }
+
+        return new Document(title, text, passages);
     }
 
 
