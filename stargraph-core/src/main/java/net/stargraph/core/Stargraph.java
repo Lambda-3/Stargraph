@@ -259,16 +259,23 @@ public final class Stargraph {
         }
 
         for (Map.Entry<String, ConfigValue> kbEntry : kbObj.entrySet()) {
-            ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbEntry.getKey()));
-            for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
-                KBId kbId = KBId.of(kbEntry.getKey(), typeEntry.getKey());
-                logger.info(marker, "Initializing {}", kbId);
-                Indexer indexer = this.indexerFactory.create(kbId, this);
-                indexer.start();
-                indexers.put(kbId, indexer);
-                BaseSearcher searcher = new ElasticSearcher(kbId, this);
-                searcher.start();
-                searchers.put(kbId, searcher);
+            final String kbName = kbEntry.getKey();
+            Config kbCfg = this.mainConfig.getConfig(String.format("kb.%s", kbName));
+
+            if (!kbCfg.getBoolean("enabled")) {
+                logger.info(marker, "KB {} is disabled.", kbName);
+            } else {
+                ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbEntry.getKey()));
+                for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
+                    KBId kbId = KBId.of(kbName, typeEntry.getKey());
+                    logger.info(marker, "Initializing {}", kbId);
+                    Indexer indexer = this.indexerFactory.create(kbId, this);
+                    indexer.start();
+                    indexers.put(kbId, indexer);
+                    BaseSearcher searcher = new ElasticSearcher(kbId, this);
+                    searcher.start();
+                    searchers.put(kbId, searcher);
+                }
             }
         }
 
