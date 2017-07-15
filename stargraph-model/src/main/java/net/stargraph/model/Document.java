@@ -28,7 +28,6 @@ package net.stargraph.model;
 
 import net.stargraph.data.processor.Hashable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +35,7 @@ import java.util.Objects;
 /**
  * A Document.
  */
-public final class Document implements Hashable, Serializable {
+public final class Document implements Hashable {
     private String title;
     private String text;
     private List<Passage> passages; // will be created during indexing time
