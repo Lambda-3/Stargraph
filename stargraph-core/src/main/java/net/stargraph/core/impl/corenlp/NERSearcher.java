@@ -1,8 +1,9 @@
-package net.stargraph.core.ner;
+package net.stargraph.core.impl.corenlp;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import net.stargraph.core.impl.corenlp.CoreNLPNERClassifier;
+import net.stargraph.core.ner.LinkedNamedEntity;
+import net.stargraph.core.ner.NER;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.query.Language;
@@ -17,7 +18,7 @@ import org.slf4j.MarkerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NERSearcher {
+public final class NERSearcher implements NER {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Marker marker = MarkerFactory.getMarker("ner");
     private CoreNLPNERClassifier ner;
@@ -25,23 +26,14 @@ public class NERSearcher {
     private String entitySearcherDbId;
     private boolean reverseNameOrder;
 
-    public NERSearcher(Language language) {
-        this(language, null, null);
-    }
-
     public NERSearcher(Language language, EntitySearcher entitySearcher, String entitySearcherDbId) {
-        if (language == null) {
-            throw new IllegalArgumentException("'language' can't be null");
-        }
-        if (entitySearcher != null && entitySearcherDbId == null) {
-            throw new IllegalArgumentException("'entitySearcherDbId' can't be null for given entitySearcher");
-        }
-        this.ner = new CoreNLPNERClassifier(language);
-        this.entitySearcher = entitySearcher;
-        this.entitySearcherDbId = entitySearcherDbId;
-        this.reverseNameOrder = false; //TODO activate for some dbIDs?
+        this.ner = new CoreNLPNERClassifier(Objects.requireNonNull(language));
+        this.entitySearcher = Objects.requireNonNull(entitySearcher);
+        this.entitySearcherDbId = Objects.requireNonNull(entitySearcherDbId);
+        this.reverseNameOrder = false; //TODO: read from configuration, specific for each KB.
     }
 
+    @Override
     public List<LinkedNamedEntity> searchAndLink(String text) {
         logger.debug(marker, "NER Search and Linking: '{}'", text);
         final List<List<CoreLabel>> sentences = ner.classify(text);

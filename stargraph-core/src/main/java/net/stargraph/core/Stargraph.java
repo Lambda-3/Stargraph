@@ -30,12 +30,14 @@ import com.typesafe.config.*;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
+import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
 import net.stargraph.core.impl.elastic.ElasticSearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.index.IndexerFactory;
+import net.stargraph.core.ner.NER;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.EntitySearcher;
@@ -165,6 +167,11 @@ public final class Stargraph {
     public Language getLanguage(String dbId) {
         Config kbCfg = getKBConfig(dbId);
         return Language.valueOf(kbCfg.getString("language").toUpperCase());
+    }
+
+    public NER getNER(String dbId) {
+        //TODO: Should have a factory to ease test other implementation just changing configuration. See IndexerFactory.
+        return new NERSearcher(getLanguage(dbId), createEntitySearcher(), dbId);
     }
 
     public Indexer getIndexer(KBId kbId) {

@@ -30,12 +30,13 @@ import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public abstract class BaseProcessor implements Processor<Serializable> {
     private Config config;
 
     public BaseProcessor(Config config) {
-        this.config = config;
+        this.config = Objects.requireNonNull(config);
         if (!config.hasPath(getName())) {
             throw new StarGraphException("Configuration name mismatch.");
         }

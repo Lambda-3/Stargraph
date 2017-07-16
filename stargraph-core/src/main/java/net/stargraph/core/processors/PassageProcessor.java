@@ -29,19 +29,19 @@ package net.stargraph.core.processors;
 import com.typesafe.config.Config;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.ner.LinkedNamedEntity;
-import net.stargraph.core.ner.NERSearcher;
+import net.stargraph.core.ner.NER;
 import net.stargraph.data.processor.BaseProcessor;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.Document;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.Passage;
-import net.stargraph.query.Language;
 import org.lambda3.text.simplification.discourse.utils.sentences.SentencesUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Can be placed in the workflow to create passages.
@@ -51,36 +51,18 @@ public final class PassageProcessor extends BaseProcessor {
 
     private Stargraph core;
 
-    public PassageProcessor(Config config) {
-        this(null, config);
-    }
-
-    // special constructor to allow database lookup (using entity searcher)
     public PassageProcessor(Stargraph core, Config config) {
         super(config);
-        this.core = core;
+        this.core = Objects.requireNonNull(core);
     }
 
     @Override
     public void doRun(Holder<Serializable> holder) throws ProcessorException {
         Serializable entry = holder.get();
+        NER ner = core.getNER(holder.getKBId().getId());
 
         if (entry instanceof Document) {
             Document document = (Document)entry;
-
-            Language language = null;
-            if (!getConfig().getIsNull("language")) {
-                language = Language.valueOf(getConfig().getString("language"));
-            }
-
-            NERSearcher ner;
-            if (core != null && getConfig().hasPath("entity-searcher-dbId")) {
-                String entitySearcherDbId = getConfig().getString("entity-searcher-dbId");
-
-                ner = new NERSearcher(language, core.createEntitySearcher(), entitySearcherDbId);
-            } else {
-                ner = new NERSearcher(language);
-            }
 
             List<Passage> passages = new ArrayList<>();
             for (String sentence : SentencesUtils.splitIntoSentences(document.getText())) {
