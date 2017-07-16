@@ -88,7 +88,7 @@ public final class Processors {
             return constructor.newInstance(config);
 
         } catch (Exception e) {
-            throw new StarGraphException("Fail to create new processor.", e);
+            throw new StarGraphException("Fail to create processor: " +  name, e);
         }
     }
 }
