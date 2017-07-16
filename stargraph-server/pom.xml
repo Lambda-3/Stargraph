@@ -17,6 +17,18 @@
         <server.mainClass>net.stargraph.server.Server</server.mainClass>
     </properties>
 
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>docker</id>
+            <properties>
+                <skipDocker>true</skipDocker>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
