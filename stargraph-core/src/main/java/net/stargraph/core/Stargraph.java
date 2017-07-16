@@ -74,6 +74,7 @@ public final class Stargraph {
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
     private Map<String, Namespace> namespaces;
+    private Map<String, NER> ners;
     private IndexerFactory indexerFactory;
     private GraphModelFactory modelFactory;
     private boolean initialized;
@@ -93,6 +94,7 @@ public final class Stargraph {
         this.searchers = new ConcurrentHashMap<>();
         this.namespaces = new ConcurrentHashMap<>();
         this.kbLoaders = new ConcurrentHashMap<>();
+        this.ners = new ConcurrentHashMap<>();
 
         setIndexerFactory(createIndexerFactory());
         setModelFactory(new HDTModelFactory(this));
@@ -171,7 +173,7 @@ public final class Stargraph {
 
     public NER getNER(String dbId) {
         //TODO: Should have a factory to ease test other implementation just changing configuration. See IndexerFactory.
-        return new NERSearcher(getLanguage(dbId), createEntitySearcher(), dbId);
+        return ners.computeIfAbsent(dbId, (id) -> new NERSearcher(getLanguage(id), createEntitySearcher(), id));
     }
 
     public Indexer getIndexer(KBId kbId) {
