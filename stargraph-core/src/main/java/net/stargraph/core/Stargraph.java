@@ -32,7 +32,6 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
-import net.stargraph.core.impl.elastic.ElasticPassageSearcher;
 import net.stargraph.core.impl.elastic.ElasticSearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
@@ -42,7 +41,6 @@ import net.stargraph.core.ner.NER;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.EntitySearcher;
-import net.stargraph.core.search.PassageSearcher;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
@@ -130,10 +128,6 @@ public final class Stargraph {
 
     public EntitySearcher createEntitySearcher() {
         return new ElasticEntitySearcher(this);
-    }
-
-    public PassageSearcher createPassageSearcher() {
-        return new ElasticPassageSearcher(this);
     }
 
     public GraphSearcher createGraphSearcher(String dbId) {

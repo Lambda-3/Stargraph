@@ -29,8 +29,6 @@ package net.stargraph.core.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stargraph.core.processors.ner.LinkedNamedEntity;
 import net.stargraph.model.*;
 
 import java.io.IOException;
