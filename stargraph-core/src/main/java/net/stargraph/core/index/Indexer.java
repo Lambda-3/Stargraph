@@ -50,4 +50,8 @@ public interface Indexer {
     void awaitLoader(long time, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException;
 
     void index(Indexable data) throws InterruptedException;
+
+    void flush();
+
+    void deleteAll();
 }

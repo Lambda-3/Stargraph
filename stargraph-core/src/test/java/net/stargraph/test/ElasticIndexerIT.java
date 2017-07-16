@@ -48,6 +48,12 @@ import static net.stargraph.test.TestUtils.createPath;
  */
 public final class ElasticIndexerIT {
 
+    static {
+        System.setProperty("stargraph.kb.dbpedia-2016.enabled", "no");
+        System.setProperty("stargraph.kb.mytest.enabled", "no");
+        System.setProperty("stargraph.kb.simple.enabled", "no");
+    }
+
     private Stargraph stargraph;
     private KBId factsId = KBId.of("obama", "facts");
     private KBId propsId = KBId.of("obama", "relations");
@@ -129,9 +135,12 @@ public final class ElasticIndexerIT {
         Assert.assertNotNull(stargraph.getIndexer(factsId));
         Assert.assertNotNull(stargraph.getIndexer(entitiesId));
         Assert.assertNotNull(stargraph.getIndexer(propsId));
+    }
+
+    @Test(expectedExceptions = StarGraphException.class)
+    public void getMissingIndexerTest() throws Exception {
         // Minimal test when multiple datasets/types are being loaded.
         Assert.assertNotNull(stargraph.getIndexer(KBId.of("mytest", "mytype")));
-        Assert.assertNotNull(stargraph.getIndexer(KBId.of("simple", "facts")));
     }
 
     @Test(expectedExceptions = StarGraphException.class)

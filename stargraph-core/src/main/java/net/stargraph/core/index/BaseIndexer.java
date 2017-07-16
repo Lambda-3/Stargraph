@@ -58,9 +58,10 @@ public abstract class BaseIndexer implements Indexer {
     private ExecutorService loaderExecutor;
     private Future<?> loaderFutureTask;
     private ProgressWatcher loaderProgress;
-    private boolean loading;
     private DataProvider<?> dataProvider;
     private ProcessorChain processorChain;
+    private boolean loading;
+    private boolean running;
 
     public BaseIndexer(KBId kbId, Stargraph core) {
         logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
@@ -72,19 +73,20 @@ public abstract class BaseIndexer implements Indexer {
 
     @Override
     public synchronized final void start() {
-        if (dataProvider != null) {
+        if (running) {
             throw new StarGraphException("Already started!");
         }
-        this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
+        running = true;
         onStart();
     }
 
     @Override
     public synchronized final void stop() {
-        if (dataProvider == null) {
+        if (!running) {
             logger.warn(marker, "Is stopped.");
         } else {
             onStop();
+            running = false;
         }
     }
 
@@ -105,6 +107,19 @@ public abstract class BaseIndexer implements Indexer {
     @Override
     public final void load(boolean reset, int limit) {
         doLoad(reset, limit);
+    }
+
+    @Override
+    public final void flush() {
+        logger.info(marker, "Flushing..");
+        doFlush();
+    }
+
+    @Override
+    public final void deleteAll() {
+        logger.info(marker, "Deleting ALL data..");
+        doDeleteAll();
+        doFlush();
     }
 
     @Override
@@ -135,7 +150,15 @@ public abstract class BaseIndexer implements Indexer {
 
     protected abstract void doIndex(Serializable data, KBId kbId) throws InterruptedException;
 
+    protected void doFlush() {
+        // Specific implementation detail
+    }
+
     protected void afterLoad() throws InterruptedException {
+        // Specific implementation detail
+    }
+
+    protected void doDeleteAll() {
         // Specific implementation detail
     }
 
@@ -149,7 +172,8 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        dataProvider = core.createDataProvider(kbId);
+        this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
+        this.dataProvider = core.createDataProvider(kbId);
         this.processorChain = core.createProcessorChain(kbId);
         beforeLoad(reset);
     }
@@ -215,8 +239,7 @@ public abstract class BaseIndexer implements Indexer {
                 doBeforeLoad(reset);
                 loaderProgress.start(true); // now this is always true until we add a resume feature.
                 logger.info(marker, "Loader is running..");
-                Iterator<? extends Holder> iterator = dataProvider.iterator();
-                while (iterator.hasNext()) {
+                for (Holder aDataProvider : dataProvider) {
 
                     if (limit > 0 && loaderProgress.getTotalRead() >= limit) {
                         logger.info(marker, "Limit set to {} reached.", limit);
@@ -224,7 +247,7 @@ public abstract class BaseIndexer implements Indexer {
                     }
 
                     try {
-                        Holder data = iterator.next();
+                        Holder data = aDataProvider;
                         if (Thread.currentThread().isInterrupted()) {
                             break;
                         }
