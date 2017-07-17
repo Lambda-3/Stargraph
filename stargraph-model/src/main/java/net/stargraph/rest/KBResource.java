@@ -26,6 +26,7 @@ package net.stargraph.rest;
  * ==========================License-End===============================
  */
 
+import net.stargraph.model.Document;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import javax.ws.rs.*;
@@ -54,11 +55,8 @@ public interface KBResource {
     Response loadAll(@PathParam("id") String id, @QueryParam("resetKey") String resetKey);
 
     @POST
-    @Path("{id}/_upload")
+    @Path("{id}/_upload/{type}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response upload(@PathParam("id") String id, FormDataMultiPart form);
+    Response upload(@PathParam("id") String id, @PathParam("type") String type, FormDataMultiPart form);
 
-    @POST
-    @Path("{id}/_clear/{type}")
-    Response clear(@PathParam("id") String id, @PathParam("type") String type);
 }
