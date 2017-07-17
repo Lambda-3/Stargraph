@@ -27,32 +27,27 @@ package net.stargraph.server;
  */
 
 import com.google.common.base.Preconditions;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
-import net.stargraph.StarGraphException;
-import net.stargraph.core.DocumentProviderFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
+import net.stargraph.data.Indexable;
 import net.stargraph.model.Document;
 import net.stargraph.model.KBId;
 import net.stargraph.rest.KBResource;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.glassfish.jersey.media.multipart.*;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 final class KBResourceImpl implements KBResource {
@@ -89,19 +84,10 @@ final class KBResourceImpl implements KBResource {
         return ResourceUtils.createAckResponse(true);
     }
 
-    private String determineType(MediaType mediaType) {
-        Config config = core.getConfig();
-        String cfgPath = "media-type-mappings" + "." + mediaType.toString();
-
-        if (config.hasPath(cfgPath)) {
-            return config.getString(cfgPath);
-        }
-
-        return null;
-    }
-
     @Override
-    public Response upload(String id, FormDataMultiPart form) {
+    public Response upload(String id, String type, FormDataMultiPart form) {
+        final KBId kbId = KBId.of(id, type);
+        Indexer indexer = core.getIndexer(kbId);
 
         // get file information
         FormDataBodyPart filePart = form.getField("file");
@@ -109,48 +95,29 @@ final class KBResourceImpl implements KBResource {
         ContentDisposition contentDisposition =  filePart.getContentDisposition();
         String fileName = contentDisposition.getFileName();
         MediaType mediaType = filePart.getMediaType();
-
-        // determine type by mediaType
-        String type = determineType(mediaType);
-        if (type == null) {
-            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).build();
+        String content;
+        try {
+            content = IOUtils.toString(fileInputStream, "UTF-8");
+        } catch (IOException e) {
+            logger.error(marker, "Failed to retrieve document content");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        // only supported for document type yet
-        if (type.equals("documents")) {
-            String title = FilenameUtils.removeExtension(fileName);
-            try {
-                String content = IOUtils.toString(fileInputStream, "UTF-8");
-                Document document = new Document(title, content);
-
-                DocumentProviderFactory.storeDocument(KBId.of(id, type), document);
-            } catch (IOException e) {
-                logger.error(marker, "Failed to retrieve document content");
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        // index
+        try {
+            if (type.equals("documents")) {
+                String title = FilenameUtils.removeExtension(fileName);
+                indexer.index(new Indexable(new Document(title, content), kbId));
+                indexer.flush();
+            } else {
+                logger.error(marker, "Type not supported yet: " + type);
+                return Response.status(Response.Status.NOT_IMPLEMENTED).build();
             }
-        } else {
-            //TODO implement for other types
-            logger.error(marker, "Not implemented");
-            return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+        } catch (InterruptedException e) {
+            logger.error(marker, "Indexing failed.");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         return ResourceUtils.createAckResponse(true);
     }
-
-    @Override
-    public Response clear(String id, String type) {
-
-        // only supported for document type yet
-        if (type.equals("documents")) {
-            DocumentProviderFactory.clearDocuments(KBId.of(id, type));
-        } else {
-            //TODO implement for other types
-            logger.error(marker, "Not implemented");
-            return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-        }
-
-        return ResourceUtils.createAckResponse(true);
-    }
-
-
 }
