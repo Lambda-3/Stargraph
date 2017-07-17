@@ -1,4 +1,4 @@
-package net.stargraph.core.query;
+package net.stargraph.test;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.query;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,43 +26,49 @@ package net.stargraph.core.query;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
-import net.stargraph.query.InteractionMode;
-import net.stargraph.query.Language;
+import net.stargraph.core.query.QueryEngine;
+import net.stargraph.core.query.nli.ClueAnalyzer;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import java.util.Objects;
 
-import static net.stargraph.query.InteractionMode.NLI;
+public class ClueAnalyzerTest {
 
-public final class InterationModeSelector {
-    private Config config;
-    private Language language;
+    private static String dbId = "passage-wiki-2017";
+    private QueryEngine queryEngine;
 
-    public InterationModeSelector(Config config, Language language) {
-        this.config = Objects.requireNonNull(config);
-        this.language = Objects.requireNonNull(language);
+
+    @Test(enabled = true)
+    public void pronominalLATDetection() {
+
+        String clue = "The worse speller of a famous duo in November 1805 he wrote in his journal Ocian in view.";
+
+        ClueAnalyzer clueAnalyzer = new ClueAnalyzer();
+        String lat = clueAnalyzer.getAnswerType(clue);
+
+        Assert.assertEquals(lat, "PERSON");
     }
 
-    public InteractionMode detect(String queryString) {
-        InteractionMode mode = NLI;
+    @Test(enabled = true)
+    public void openLATDetection1() {
 
-        if (queryString.contains("SELECT") || queryString.contains("ASK") || queryString.contains("CONSTRUCT")) {
-            if (queryString.contains("PREFIX ") || queryString.contains("http:")) {
-                mode = InteractionMode.SPARQL;
-            } else {
-                mode = InteractionMode.SA_SPARQL;
-            }
-        } else {
-            if (queryString.contains("http:")) {
-                mode = InteractionMode.SIMPLE_SPARQL;
-            } else if (queryString.contains(":")) {
-                mode = InteractionMode.SA_SIMPLE_SPARQL;
-            }
-        }
+        String clue = "This European city is famous for its waffles.";
 
-        //TODO: other types will require configurable rules per language.
+        ClueAnalyzer clueAnalyzer = new ClueAnalyzer();
+        String lat = clueAnalyzer.getAnswerType(clue);
+        Assert.assertEquals(lat, "European city");
+    }
 
-        return mode;
+    @BeforeClass
+    public void beforeClass() throws Exception {
+
+    }
+
+    @AfterClass
+    public void afterClass() {
+
     }
 
 }

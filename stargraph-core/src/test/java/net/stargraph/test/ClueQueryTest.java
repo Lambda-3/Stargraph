@@ -1,4 +1,4 @@
-package net.stargraph.core.query.annotator;
+package net.stargraph.test;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.query.annotator;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,45 +26,32 @@ package net.stargraph.core.query.annotator;
  * ==========================License-End===============================
  */
 
-import java.util.Objects;
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.query.QueryEngine;
+import net.stargraph.core.query.response.AnswerSetResponse;
+import net.stargraph.model.InstanceEntity;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-public final class Word {
-    private POSTag posTag;
-    private String text;
 
-    public Word(POSTag posTag, String text) {
-        this.posTag = posTag;
-        this.text = text;
+public class ClueQueryTest {
+
+    private static String dbId = "passage-wiki-2017";
+    private QueryEngine queryEngine;
+
+    @BeforeClass
+    public void beforeClass() {
+        queryEngine = new QueryEngine(dbId, new Stargraph());
     }
 
-    public POSTag getPosTag() {
-        return posTag;
+    @Test(enabled = false)
+    public void simpleEntityQuery() {
+
+        String clue = "This association of British insurance underwriters began in 1688.";
+        AnswerSetResponse response = (AnswerSetResponse) queryEngine.query(clue);
+        Assert.assertTrue(response.getEntityAnswer().contains(new InstanceEntity("http://dbpedia.org/resource/Lloyd%27s_of_London", "Lloyd's of London")));
+
     }
 
-    public String getPosTagString() {
-        return posTag.getTag();
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    @Override
-    public String toString() {
-        return text + "/" + posTag;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Word word = (Word) o;
-        return Objects.equals(posTag, word.posTag) &&
-                Objects.equals(text, word.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(posTag, text);
-    }
 }

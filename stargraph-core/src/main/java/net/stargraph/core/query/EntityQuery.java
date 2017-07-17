@@ -1,4 +1,4 @@
-package net.stargraph.core.query.annotator;
+package net.stargraph.core.query;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.query.annotator;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,45 +26,40 @@ package net.stargraph.core.query.annotator;
  * ==========================License-End===============================
  */
 
-import java.util.Objects;
+public class EntityQuery {
 
-public final class Word {
-    private POSTag posTag;
+    private String coreEntity;
     private String text;
 
-    public Word(POSTag posTag, String text) {
-        this.posTag = posTag;
-        this.text = text;
+    public EntityQuery(){
+
     }
 
-    public POSTag getPosTag() {
-        return posTag;
+    public EntityQuery(String coreEntity){
+        this.coreEntity = coreEntity;
     }
 
-    public String getPosTagString() {
-        return posTag.getTag();
+    public String getCoreEntity() {
+        return coreEntity;
     }
 
     public String getText() {
         return text;
     }
 
+    public void setCoreEntity(String coreEntity) {
+        this.coreEntity = coreEntity;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public String toString() {
-        return text + "/" + posTag;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Word word = (Word) o;
-        return Objects.equals(posTag, word.posTag) &&
-                Objects.equals(text, word.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(posTag, text);
+        return "EntityQuery{" +
+                "coreEntity='" + coreEntity + '\'' +
+                ", text='" + text + '\'' +
+                '}';
     }
 }
