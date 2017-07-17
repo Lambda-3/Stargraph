@@ -69,6 +69,7 @@ public abstract class BaseIndexer implements Indexer {
         this.kbId = Objects.requireNonNull(kbId);
         this.loading = false;
         this.mapper = ObjectSerializer.createMapper(kbId);
+        this.processorChain = core.createProcessorChain(kbId);
     }
 
     @Override
@@ -174,7 +175,6 @@ public abstract class BaseIndexer implements Indexer {
         logger.debug(marker, "Before loading..");
         this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
         this.dataProvider = core.createDataProvider(kbId);
-        this.processorChain = core.createProcessorChain(kbId);
         beforeLoad(reset);
     }
 
