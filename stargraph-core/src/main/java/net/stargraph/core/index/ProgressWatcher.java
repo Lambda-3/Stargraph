@@ -127,19 +127,24 @@ final class ProgressWatcher {
     }
 
     private void logStats() {
-        String dataRootDir = config.getString("data.root-dir");
-        File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getType())).toFile();
-        logger.info(marker, "Logging stats to {}", csvFile);
+        boolean canLogStats = config.getBoolean("progress-watcher.log-stats");
+        if (canLogStats) {
+            String dataRootDir = config.getString("data.root-dir");
+            File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getType())).toFile();
+            logger.info(marker, "Logging stats to {}", csvFile);
 
-        boolean exists = csvFile.exists();
-        try (FileWriter writer = new FileWriter(csvFile, exists)) {
-            if (!exists) {
-                writer.write("read,indexed,elapsed(ms)\n"); //header
+            boolean exists = csvFile.exists();
+            try (FileWriter writer = new FileWriter(csvFile, exists)) {
+                if (!exists) {
+                    writer.write("read,indexed,elapsed(ms)\n"); //header
+                }
+                writer.append(String.format("%d,%d,%d\n", getTotalRead(), getTotalIndexed(), getElapsedTime()));
+            } catch (IOException e) {
+                logger.error(marker, "Fail to log stats", e);
             }
-            writer.append(String.format("%d,%d,%d\n", getTotalRead(), getTotalIndexed(), getElapsedTime()));
-        } catch (IOException e) {
-            logger.error(marker, "Fail to log stats", e);
         }
-
+        else {
+            logger.debug(marker, "Stats will not be persisted, stargraph.progress-watcher.log-stats=no.");
+        }
     }
 }

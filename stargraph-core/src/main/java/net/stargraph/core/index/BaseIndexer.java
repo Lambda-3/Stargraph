@@ -239,7 +239,8 @@ public abstract class BaseIndexer implements Indexer {
                 doBeforeLoad(reset);
                 loaderProgress.start(true); // now this is always true until we add a resume feature.
                 logger.info(marker, "Loader is running..");
-                for (Holder aDataProvider : dataProvider) {
+                Iterator<? extends Holder> iterator = dataProvider.iterator();
+                while (iterator.hasNext()) {
 
                     if (limit > 0 && loaderProgress.getTotalRead() >= limit) {
                         logger.info(marker, "Limit set to {} reached.", limit);
@@ -247,7 +248,7 @@ public abstract class BaseIndexer implements Indexer {
                     }
 
                     try {
-                        Holder data = aDataProvider;
+                        Holder data = iterator.next();
                         if (Thread.currentThread().isInterrupted()) {
                             break;
                         }

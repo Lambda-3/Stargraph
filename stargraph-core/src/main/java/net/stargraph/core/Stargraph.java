@@ -216,6 +216,7 @@ public final class Stargraph {
             logger.info(marker, "processors = {}", chain);
             return chain;
         }
+        logger.warn(marker, "No processors configured for {}", kbId);
         return null;
     }
 
@@ -290,7 +291,7 @@ public final class Stargraph {
         }
 
         this.initializeKB();
-        logger.info(marker, "Indexer: '{}'", mainConfig.getString("indexer.factory.class"));
+        logger.info(marker, "Indexer: '{}'", indexerFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;

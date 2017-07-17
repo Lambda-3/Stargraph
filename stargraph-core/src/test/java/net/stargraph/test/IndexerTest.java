@@ -44,6 +44,12 @@ import java.util.stream.Collectors;
 
 public final class IndexerTest {
 
+    static {
+        System.setProperty("stargraph.kb.dbpedia-2016.enabled", "no");
+        System.setProperty("stargraph.kb.simple.enabled", "no");
+        System.setProperty("stargraph.kb.obama.enabled", "no");
+    }
+
     private KBId kbId;
     private List<TestData> expected;
     private Stargraph core;
