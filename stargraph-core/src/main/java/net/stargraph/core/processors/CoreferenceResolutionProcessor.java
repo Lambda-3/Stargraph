@@ -59,7 +59,12 @@ public final class CoreferenceResolutionProcessor extends BaseProcessor {
             CoreferenceContent cc = graphene.doCoreference(document.getText());
             String resolved = cc.getSubstitutedText();
 
-            holder.set(new Document(document.getTitle(), resolved));
+            holder.set(new Document(
+                    document.getId(),
+                    document.getTitle(),
+                    document.getSummary(),
+                    resolved
+            ));
         }
     }
 

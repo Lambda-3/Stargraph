@@ -106,8 +106,9 @@ final class KBResourceImpl implements KBResource {
         // index
         try {
             if (type.equals("documents")) {
-                String title = FilenameUtils.removeExtension(fileName);
-                indexer.index(new Indexable(new Document(title, content), kbId));
+                String docId = fileName; //TODO get from other source?
+                String docTitle = FilenameUtils.removeExtension(fileName); //TODO get from other source?
+                indexer.index(new Indexable(new Document(docId, docTitle, null, content), kbId));
                 indexer.flush();
             } else {
                 logger.error(marker, "Type not supported yet: " + type);

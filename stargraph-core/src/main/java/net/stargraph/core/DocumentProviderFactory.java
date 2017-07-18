@@ -40,14 +40,6 @@ public final class DocumentProviderFactory extends BaseDataProviderFactory {
         super(core);
     }
 
-    public static void clearDocuments(KBId kbId) {
-        DocumentIterator.clearDocuments(kbId);
-    }
-
-    public static void storeDocument(KBId kbId, Document document) {
-        DocumentIterator.storeDocument(kbId, document);
-    }
-
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
         return new DataProvider<>(new DocumentIterator(kbId));
