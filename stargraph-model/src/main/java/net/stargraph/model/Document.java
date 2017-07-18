@@ -31,30 +31,43 @@ import net.stargraph.data.processor.Hashable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A Document.
  */
 public final class Document implements Hashable {
+    private String id;
     private String title;
+    private String summary; // optional
     private String text;
     private List<Passage> passages; // will be created during indexing time
 
-    public Document(String title, String text) {
-        this(title, text, new ArrayList<>());
+    public Document(String id, String title, String summary, String text) {
+        this(id, title, summary, text, null);
     }
 
-    public Document(String title, String text, List<Passage> passages) {
-        if (title == null || text == null) {
+    public Document(String id, String title, String summary, String text, List<Passage> passages) {
+        if (id == null || title == null || text == null) {
             throw new IllegalArgumentException();
         }
+        this.id = id;
         this.title = title;
+        this.summary = summary;
         this.text = text;
-        this.passages = passages;
+        this.passages = (passages != null)? passages : new ArrayList<>() ;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 
     public String getText() {
@@ -67,9 +80,12 @@ public final class Document implements Hashable {
 
     @Override
     public String toString() {
+        String abbrevSummary = (summary == null)? "NULL" : (summary.length() > 30)? text.substring(0, 30-3) + "..." : text;
         String abbrevText = (text.length() > 30)? text.substring(0, 30-3) + "..." : text;
         return "Document{" +
-                "title='" + title + '\'' +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", summary='" + abbrevSummary + '\'' +
                 ", text='" + abbrevText + '\'' +
                 ", passages=" + passages +
                 '}';
@@ -79,13 +95,12 @@ public final class Document implements Hashable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Document fact = (Document) o;
-        return Objects.equals(title, fact.title) &&
-                Objects.equals(text, fact.text);
+        Document document = (Document) o;
+        return id.equals(document.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, text);
+        return Objects.hash(id);
     }
 }

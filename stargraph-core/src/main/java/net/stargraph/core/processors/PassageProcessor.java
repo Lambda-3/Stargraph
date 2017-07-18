@@ -75,7 +75,13 @@ public final class PassageProcessor extends BaseProcessor {
                 passages.add(new Passage(sentence, entities));
             }
 
-            holder.set(new Document(document.getTitle(), document.getText(), passages));
+            holder.set(new Document(
+                    document.getId(),
+                    document.getTitle(),
+                    document.getSummary(),
+                    document.getText(),
+                    passages
+            ));
         }
     }
 

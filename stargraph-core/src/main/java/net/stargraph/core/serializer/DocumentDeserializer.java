@@ -44,7 +44,9 @@ class DocumentDeserializer extends AbstractDeserializer<Document> {
     @Override
     public Document deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
+        String id = node.get("id").asText();
         String title = node.get("title").asText();
+        String summary = (node.has("summary"))? node.get("summary").asText() : null;
         String text = node.get("text").asText();
 
         List<Passage> passages = new ArrayList();
@@ -70,7 +72,7 @@ class DocumentDeserializer extends AbstractDeserializer<Document> {
             }
         }
 
-        return new Document(title, text, passages);
+        return new Document(id, title, summary, text, passages);
     }
 
 
