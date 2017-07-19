@@ -21,12 +21,6 @@ import java.util.concurrent.TimeoutException;
  */
 public final class IndexUpdateIT {
 
-    static {
-        System.setProperty("stargraph.kb.dbpedia-2016.enabled", "no");
-        System.setProperty("stargraph.kb.mytest.enabled", "no");
-        System.setProperty("stargraph.kb.obama.enabled", "no");
-    }
-
     private Stargraph core;
     private Indexer indexer;
     private ElasticSearcher searcher;

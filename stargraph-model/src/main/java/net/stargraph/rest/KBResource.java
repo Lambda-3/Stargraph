@@ -26,7 +26,6 @@ package net.stargraph.rest;
  * ==========================License-End===============================
  */
 
-import net.stargraph.model.Document;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import javax.ws.rs.*;

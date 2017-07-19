@@ -44,8 +44,6 @@ import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
-import net.stargraph.data.DataQueue;
-import net.stargraph.data.DataQueueFactory;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
@@ -61,7 +59,6 @@ import org.slf4j.MarkerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -74,7 +71,6 @@ public final class Stargraph {
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
     private Map<String, KBLoader> kbLoaders;
-    private Map<KBId, DataQueue> dataQueues;
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
     private Map<String, Namespace> namespaces;
@@ -94,7 +90,6 @@ public final class Stargraph {
 
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
-        this.dataQueues = new ConcurrentHashMap<>();
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
         this.namespaces = new ConcurrentHashMap<>();
@@ -176,12 +171,6 @@ public final class Stargraph {
         return Language.valueOf(kbCfg.getString("language").toUpperCase());
     }
 
-    public DataQueue getDataQueue(KBId kbId) {
-        if (dataQueues.keySet().contains(kbId))
-            return dataQueues.get(kbId);
-        throw new StarGraphException("DataQueue not found nor initialized: " + kbId);
-    }
-
     public NER getNER(String dbId) {
         //TODO: Should have a factory to ease test other implementation just changing configuration. See IndexerFactory.
         return ners.computeIfAbsent(dbId, (id) -> new NERSearcher(getLanguage(id), createEntitySearcher(), id));
@@ -251,40 +240,6 @@ public final class Stargraph {
         }
     }
 
-    public Optional<DataQueue<? extends Holder>> createDataQueue(KBId kbId) {
-        if (!getDataQueueCfg(kbId).isPresent()) {
-            return Optional.empty();
-        }
-
-        try {
-            String className = getDataQueueCfg(kbId).get().getString("class");
-            Class<?> clazz = Class.forName(className);
-            Constructor[] constructors = clazz.getConstructors();
-
-            DataQueueFactory factory;
-            if (BaseDataQueueFactory.class.isAssignableFrom(clazz)) {
-                // It's our internal factory hence we inject the core dependency.
-                factory = (DataQueueFactory) constructors[0].newInstance(this);
-            } else {
-                // This should be a user factory without constructor.
-                // API user should rely on configuration or other means to initialize.
-                // See TestDataProviderFactory as an example
-                factory = (DataQueueFactory) clazz.newInstance();
-            }
-
-            DataQueue<? extends Holder> dataQueue = factory.create(kbId);
-
-            if (dataQueue == null) {
-                throw new IllegalStateException("DataQueue not created!");
-            }
-
-            logger.info(marker, "Creating {} data queue", kbId);
-            return Optional.of(dataQueue);
-        } catch (Exception e) {
-            throw new StarGraphException("Fail to initialize data queue: " + kbId, e);
-        }
-    }
-
     public synchronized final void initialize() {
         if (initialized) {
             throw new IllegalStateException("Core already initialized.");
@@ -324,10 +279,6 @@ public final class Stargraph {
                 for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
                     KBId kbId = KBId.of(kbName, typeEntry.getKey());
                     logger.info(marker, "Initializing {}", kbId);
-                    Optional<DataQueue<? extends Holder>> dataQueue = createDataQueue(kbId);
-                    if (dataQueue.isPresent()) {
-                        dataQueues.put(kbId, dataQueue.get());
-                    }
                     Indexer indexer = this.indexerFactory.create(kbId, this);
                     indexer.start();
                     indexers.put(kbId, indexer);
@@ -354,14 +305,6 @@ public final class Stargraph {
     private Config getDataProviderCfg(KBId kbId) {
         String path = String.format("%s.provider", kbId.getTypePath());
         return mainConfig.getConfig(path);
-    }
-
-    private Optional<Config> getDataQueueCfg(KBId kbId) {
-        String path = String.format("%s.provider-queue", kbId.getTypePath());
-        if (!mainConfig.hasPath(path)) {
-            return Optional.empty();
-        }
-        return Optional.of(mainConfig.getConfig(path));
     }
 
 
