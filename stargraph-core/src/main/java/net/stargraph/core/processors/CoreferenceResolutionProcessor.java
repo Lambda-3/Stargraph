@@ -28,16 +28,18 @@ package net.stargraph.core.processors;
 
 import com.typesafe.config.Config;
 import net.stargraph.data.processor.BaseProcessor;
+import net.stargraph.data.processor.FatalProcessorException;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorException;
-import net.stargraph.model.*;
+import net.stargraph.model.Document;
 import org.lambda3.graphene.core.Graphene;
 import org.lambda3.graphene.core.coreference.model.CoreferenceContent;
 
 import java.io.Serializable;
+import java.net.UnknownHostException;
 
 /**
- * Can be placed in the workflow to resolve coreferences.
+ * Can be placed in the workflow to resolve co-references.
  */
 public final class CoreferenceResolutionProcessor extends BaseProcessor {
     public static String name = "coref-processor";
@@ -54,17 +56,24 @@ public final class CoreferenceResolutionProcessor extends BaseProcessor {
         Serializable entry = holder.get();
 
         if (entry instanceof Document) {
-            Document document = (Document)entry;
+            try {
+                Document document = (Document) entry;
 
-            CoreferenceContent cc = graphene.doCoreference(document.getText());
-            String resolved = cc.getSubstitutedText();
+                CoreferenceContent cc = graphene.doCoreference(document.getText());
+                String resolved = cc.getSubstitutedText();
 
-            holder.set(new Document(
-                    document.getId(),
-                    document.getTitle(),
-                    document.getSummary(),
-                    resolved
-            ));
+                holder.set(new Document(
+                        document.getId(),
+                        document.getTitle(),
+                        document.getSummary(),
+                        resolved
+                ));
+            }
+            catch (Exception e) {
+                if (e.getCause() instanceof UnknownHostException) {
+                    throw new FatalProcessorException(e);
+                }
+            }
         }
     }
 

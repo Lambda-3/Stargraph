@@ -61,6 +61,8 @@ public abstract class BaseProcessor implements Processor<Serializable> {
             if (!holder.isSinkable()) {
                 doRun(holder);
             }
+        } catch (FatalProcessorException e) {
+            throw e; // Flags that subsequent calls to this processors is useless. Probably an unrecoverable error.
         } catch (Exception e) {
             throw new ProcessorException("Processor '" + getName() + "' has failed.", e);
         }

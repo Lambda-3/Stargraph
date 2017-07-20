@@ -31,7 +31,6 @@ import net.stargraph.data.processor.Hashable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * A Document.
@@ -39,23 +38,24 @@ import java.util.Optional;
 public final class Document implements Hashable {
     private String id;
     private String title;
-    private String summary; // optional
+    private String summary;
     private String text;
-    private List<Passage> passages; // will be created during indexing time
+    private List<Passage> passages;
+
+    public Document(String id, String title, String text) {
+        this(id, title, null, text, null);
+    }
 
     public Document(String id, String title, String summary, String text) {
         this(id, title, summary, text, null);
     }
 
     public Document(String id, String title, String summary, String text, List<Passage> passages) {
-        if (id == null || title == null || text == null) {
-            throw new IllegalArgumentException();
-        }
-        this.id = id;
-        this.title = title;
+        this.id = Objects.requireNonNull(id);
+        this.title = Objects.requireNonNull(title);
+        this.text = Objects.requireNonNull(text);
         this.summary = summary;
-        this.text = text;
-        this.passages = (passages != null)? passages : new ArrayList<>() ;
+        this.passages = (passages != null) ? passages : new ArrayList<>() ;
     }
 
     public String getId() {
@@ -80,7 +80,7 @@ public final class Document implements Hashable {
 
     @Override
     public String toString() {
-        String abbrevSummary = (summary == null)? "NULL" : (summary.length() > 30)? text.substring(0, 30-3) + "..." : text;
+        String abbrevSummary = (summary == null) ? "NULL" : (summary.length() > 30)? text.substring(0, 30-3) + "..." : text;
         String abbrevText = (text.length() > 30)? text.substring(0, 30-3) + "..." : text;
         return "Document{" +
                 "id='" + id + '\'' +

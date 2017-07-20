@@ -32,8 +32,10 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.processor.FatalProcessorException;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorChain;
+import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,7 +190,7 @@ public abstract class BaseIndexer implements Indexer {
     }
 
 
-    private void work(Holder holder) {
+    private void work(Holder holder) throws ProcessorException {
         try {
             if (processorChain != null) {
                 processorChain.run(Objects.requireNonNull(holder));
@@ -211,6 +213,8 @@ public abstract class BaseIndexer implements Indexer {
             } else {
                 sink(holder);
             }
+        } catch (FatalProcessorException e) {
+            throw e;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
@@ -259,6 +263,9 @@ public abstract class BaseIndexer implements Indexer {
 
                         work(data); // delegates heavy work
 
+                    } catch (FatalProcessorException e) {
+                        logger.error(marker, "Aborting.", e);
+                        break;
                     } catch (Exception e) {
                         logger.error(marker, "Error reading from provider.", e);
                     } finally {
