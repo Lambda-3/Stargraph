@@ -35,10 +35,19 @@ public final class NERSearcher implements NER {
 
     @Override
     public List<LinkedNamedEntity> searchAndLink(String text) {
-        logger.debug(marker, "NER Search and Linking: '{}'", text);
-        final List<List<CoreLabel>> sentences = ner.classify(text);
-        logger.debug(marker, "NER output: {}", sentences);
-        return postProcessFoundNamedEntities(sentences);
+        List<LinkedNamedEntity> linked = null;
+        long start = System.nanoTime();
+        try {
+            final List<List<CoreLabel>> sentences = ner.classify(text);
+            logger.trace(marker, "NER output: {}", sentences);
+            linked = postProcessFoundNamedEntities(sentences);
+            return linked;
+        }
+        finally {
+            double elapsedInMillis = (System.nanoTime() - start) / 1000_000;
+            logger.debug(marker, "Took {}ms, linked {} entities: '{}'",
+                    elapsedInMillis, linked != null ? linked.size() : 0, text);
+        }
     }
 
     private List<LinkedNamedEntity> postProcessFoundNamedEntities(List<List<CoreLabel>> sentences) {
@@ -46,12 +55,12 @@ public final class NERSearcher implements NER {
 
         if (this.reverseNameOrder) {
             sentenceList.forEach(sentence -> {
-                sentence.stream().forEach(LinkedNamedEntity::reverseValue);
+                sentence.forEach(LinkedNamedEntity::reverseValue);
             });
         }
 
         if (sentenceList.isEmpty() || (sentenceList.size() == 1 && sentenceList.get(0).isEmpty())) {
-            logger.debug(marker, "No NEs left to be linked.");
+            logger.trace(marker, "No NEs left to be linked.");
             return Collections.emptyList();
         }
 
@@ -121,7 +130,11 @@ public final class NERSearcher implements NER {
     private List<LinkedNamedEntity> linkNamedEntities(List<List<LinkedNamedEntity>> sentenceList) {
         List<LinkedNamedEntity> allNamedEntities = new ArrayList<>();
 
-        logger.debug(marker, "Trying to link {} NE(s).", sentenceList.get(0).size()); //TODO: corenlp: Always a list with 1 list?
+        if (sentenceList.size() > 1) {
+            throw new RuntimeException("Expecting a list with 1 list?");
+        }
+
+        logger.debug(marker, "Trying to link {}: {}", sentenceList.get(0).size(), sentenceList.get(0));
 
         for (List<LinkedNamedEntity> p : sentenceList) {
             for (LinkedNamedEntity namedEntity : p) {
@@ -147,17 +160,12 @@ public final class NERSearcher implements NER {
             }
         }
 
-        logger.info(marker, "Linked {} entities.", allNamedEntities.size());
+        logger.trace(marker, "Linked {} entities.", allNamedEntities.size());
 
         return allNamedEntities;
     }
 
     private void tryLink(LinkedNamedEntity namedEntity) {
-        if (entitySearcher == null) {
-            logger.warn(marker, "entitySearcher not specified, therefore database lookup is not possible!");
-            return;
-        }
-
         final Scores scores = entitySearcher.instanceSearch(ModifiableSearchParams.create(this.entitySearcherDbId).term(namedEntity.getValue()), ParamsBuilder.levenshtein());
 
         // Currently, we only care about the highest scored entity.

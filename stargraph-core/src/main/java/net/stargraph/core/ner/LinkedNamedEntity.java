@@ -93,10 +93,7 @@ public final class LinkedNamedEntity {
     }
 
     public void link(LabeledEntity entity, double score) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Can't link a null entity");
-        }
-        this.entity = entity;
+        this.entity = Objects.requireNonNull(entity);
         this.score = score;
     }
 }

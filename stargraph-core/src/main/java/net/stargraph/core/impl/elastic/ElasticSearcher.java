@@ -74,22 +74,32 @@ public final class ElasticSearcher extends BaseSearcher {
 
     @Override
     public Scores search(SearchQueryHolder holder) {
-        String modelName = holder.getSearchParams().getKbId().getType();
-        Class<Serializable> modelClass = core.getModelClass(modelName);
+        ElasticScroller scroller = null;
+        long start = System.nanoTime();
 
-        ElasticScroller scroller = new ElasticScroller(esClient, holder) {
-            @Override
-            protected Score build(SearchHit hit) {
-                try {
-                    Serializable entity = mapper.readValue(hit.source(), modelClass);
-                    return new Score(entity, hit.getScore());
-                } catch (Exception e) {
-                    logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
+        try {
+            String modelName = holder.getSearchParams().getKbId().getType();
+            Class<Serializable> modelClass = core.getModelClass(modelName);
+
+            scroller = new ElasticScroller(esClient, holder) {
+                @Override
+                protected Score build(SearchHit hit) {
+                    try {
+                        Serializable entity = mapper.readValue(hit.source(), modelClass);
+                        return new Score(entity, hit.getScore());
+                    } catch (Exception e) {
+                        logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
+                    }
+                    return null;
                 }
-                return null;
-            }
-        };
+            };
 
-        return scroller.getScores();
+            return scroller.getScores();
+        }
+        finally {
+            double elapsedInMillis = (System.nanoTime() - start) / 1000_000;
+            logger.debug(marker, "Took {}ms, {}, fetched {} entries.", elapsedInMillis,
+                    holder.getQuery(), scroller != null ? scroller.getScores().size() : 0);
+        }
     }
 }
