@@ -35,6 +35,7 @@ public final class NERSearcher implements NER {
 
     @Override
     public List<LinkedNamedEntity> searchAndLink(String text) {
+        logger.debug(marker, "'{}'", text);
         List<LinkedNamedEntity> linked = null;
         long start = System.nanoTime();
         try {
@@ -45,8 +46,7 @@ public final class NERSearcher implements NER {
         }
         finally {
             double elapsedInMillis = (System.nanoTime() - start) / 1000_000;
-            logger.debug(marker, "Took {}ms, linked {} entities: '{}'",
-                    elapsedInMillis, linked != null ? linked.size() : 0, text);
+            logger.debug(marker, "Took {}ms, entities: {}, text: '{}'", elapsedInMillis, linked, text);
         }
     }
 
@@ -60,7 +60,7 @@ public final class NERSearcher implements NER {
         }
 
         if (sentenceList.isEmpty() || (sentenceList.size() == 1 && sentenceList.get(0).isEmpty())) {
-            logger.trace(marker, "No NEs left to be linked.");
+            logger.trace(marker, "No Entities detected.");
             return Collections.emptyList();
         }
 
@@ -124,17 +124,11 @@ public final class NERSearcher implements NER {
                     .collect(Collectors.toList()));
         }
 
-        return sentenceList;
+        return sentenceList.stream().filter(s -> s.size() > 0).collect(Collectors.toList());
     }
 
     private List<LinkedNamedEntity> linkNamedEntities(List<List<LinkedNamedEntity>> sentenceList) {
         List<LinkedNamedEntity> allNamedEntities = new ArrayList<>();
-
-        if (sentenceList.size() > 1) {
-            throw new RuntimeException("Expecting a list with 1 list?");
-        }
-
-        logger.debug(marker, "Trying to link {}: {}", sentenceList.get(0).size(), sentenceList.get(0));
 
         for (List<LinkedNamedEntity> p : sentenceList) {
             for (LinkedNamedEntity namedEntity : p) {
@@ -166,13 +160,21 @@ public final class NERSearcher implements NER {
     }
 
     private void tryLink(LinkedNamedEntity namedEntity) {
-        final Scores scores = entitySearcher.instanceSearch(ModifiableSearchParams.create(this.entitySearcherDbId).term(namedEntity.getValue()), ParamsBuilder.levenshtein());
+        if (!namedEntity.getCat().equalsIgnoreCase("DATE")) {
+            //TODO: Limit reduce network latency but can hurt precision in some cases
+            ModifiableSearchParams searchParams =
+                    ModifiableSearchParams.create(this.entitySearcherDbId).term(namedEntity.getValue()).limit(50);
 
-        // Currently, we only care about the highest scored entity.
-        if (scores.size() > 0) {
-            InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
-            double score = scores.get(0).getValue();
-            namedEntity.link(instance, score);
+            logger.info(marker, "Trying to link {}", namedEntity);
+
+            final Scores scores = entitySearcher.instanceSearch(searchParams, ParamsBuilder.levenshtein());
+
+            // Currently, we only care about the highest scored entity.
+            if (scores.size() > 0) {
+                InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
+                double score = scores.get(0).getValue();
+                namedEntity.link(instance, score);
+            }
         }
     }
 
@@ -180,7 +182,7 @@ public final class NERSearcher implements NER {
         LinkedNamedEntity found = null;
         for (LinkedNamedEntity sne : namedEntities) {
             if (sne.getValue().contains(namedEntity)) {
-                // use the first occurence of a substring
+                // use the first occurrence of a substring
                 found = sne;
                 break;
             }

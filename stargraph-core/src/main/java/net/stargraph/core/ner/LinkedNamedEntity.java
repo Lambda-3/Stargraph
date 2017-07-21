@@ -9,7 +9,7 @@ import java.util.Objects;
 public final class LinkedNamedEntity {
 
     private LabeledEntity entity;
-    private Double score;
+    private double score;
     private int start;
     private int end;
     private String cat;
@@ -33,7 +33,7 @@ public final class LinkedNamedEntity {
         return cat;
     }
 
-    public Double getScore() {
+    public double getScore() {
         return score;
     }
 
@@ -49,33 +49,6 @@ public final class LinkedNamedEntity {
         return entity;
     }
 
-    @Override
-    public String toString() {
-        return "SNE{" +
-                "value='" + value + '\'' +
-                ", cat='" + cat + '\'' +
-                ", start='" + start + '\'' +
-                ", end='" + end + '\'' +
-                ", score='" + score + '\'' +
-                '}';
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LinkedNamedEntity that = (LinkedNamedEntity) o;
-        return start == that.start &&
-                end == that.end &&
-                Objects.equals(cat, that.cat) &&
-                Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(start, end, cat, value);
-    }
 
     public void reverseValue() {
         if (cat.equalsIgnoreCase("I-PER")) { // TODO: make 'I-PER' constant, align with all classifiers
@@ -95,5 +68,39 @@ public final class LinkedNamedEntity {
     public void link(LabeledEntity entity, double score) {
         this.entity = Objects.requireNonNull(entity);
         this.score = score;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LinkedNamedEntity that = (LinkedNamedEntity) o;
+        return start == that.start &&
+                end == that.end &&
+                Objects.equals(entity, that.entity) &&
+                Objects.equals(score, that.score) &&
+                Objects.equals(cat, that.cat) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(entity, score, start, end, cat, value);
+    }
+
+    @Override
+    public String toString() {
+        if (entity == null) {
+            return "Unlinked{" +
+                    "value='" + value + '\'' +
+                    ", cat='" + cat + '\'' +
+                    '}';
+        }
+        return "Linked{" +
+                "entity='" + entity + '\'' +
+                ", value='" + value + '\'' +
+                ", cat='" + cat + '\'' +
+                ", score='" + score + '\'' +
+                '}';
     }
 }

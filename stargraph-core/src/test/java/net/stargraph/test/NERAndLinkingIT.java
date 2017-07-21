@@ -1,6 +1,7 @@
 package net.stargraph.test;
 
 import com.typesafe.config.ConfigFactory;
+import net.stargraph.ModelUtils;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.ner.LinkedNamedEntity;
 import net.stargraph.core.ner.NER;
@@ -19,6 +20,19 @@ public final class NERAndLinkingIT {
         Stargraph core = new Stargraph();
         ner = core.getNER("dbpedia-2016");
         Assert.assertNotNull(ner);
+    }
+
+    @Test
+    public void linkObamaTest() {
+        List<LinkedNamedEntity> entities = ner.searchAndLink("Barack Obama");
+        Assert.assertEquals(entities.get(0).getEntity(), ModelUtils.createInstance("dbr:Barack_Obama"));
+    }
+
+    @Test
+    public void NoEntitiesTest() {
+        final String text = "Moreover, they were clearly meant to be exemplary invitations to revolt. And of course this will not make any sense.";
+        List<LinkedNamedEntity> entities = ner.searchAndLink(text);
+        Assert.assertTrue(entities.isEmpty());
     }
 
     @Test

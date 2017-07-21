@@ -47,4 +47,12 @@ public final class Passage {
 	public List<LabeledEntity> getEntities() {
 		return entities;
 	}
+
+	@Override
+	public String toString() {
+		return "Passage{" +
+				"text='" + text + '\'' +
+				", entities=" + entities +
+				'}';
+	}
 }

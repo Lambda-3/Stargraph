@@ -33,6 +33,7 @@ import net.stargraph.core.search.Searcher;
 import net.stargraph.model.*;
 import net.stargraph.rank.*;
 import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,8 @@ public final class ElasticEntitySearcher implements EntitySearcher {
     @Override
     public Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
         // Coupling point: the query tied with our backend ..
-        QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm());
+        QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm())
+                .fuzziness(0).fuzzyTranspositions(false).operator(Operator.AND);
         // .. and at this point we add the missing information specific for this kind of search
         searchParams.model(BuiltInModel.ENTITY);
         // Fetch the 'generic' searcher instance

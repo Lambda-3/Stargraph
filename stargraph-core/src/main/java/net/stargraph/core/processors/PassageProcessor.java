@@ -37,17 +37,25 @@ import net.stargraph.model.Document;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.Passage;
 import org.lambda3.text.simplification.discourse.utils.sentences.SentencesUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Can be placed in the workflow to create passages.
  */
 public final class PassageProcessor extends BaseProcessor {
     public static String name = "passage-processor";
+
+    private Logger logger = LoggerFactory.getLogger(getName());
+    private Marker marker = MarkerFactory.getMarker("processor");
 
     private Stargraph core;
 
@@ -67,10 +75,11 @@ public final class PassageProcessor extends BaseProcessor {
             List<Passage> passages = new ArrayList<>();
             for (String sentence : SentencesUtils.splitIntoSentences(document.getText())) {
                 List<LinkedNamedEntity> lners = ner.searchAndLink(sentence);
-                List<LabeledEntity> entities = new ArrayList<>();
 
                 // only add linked entities
-                lners.stream().filter(l -> l.getEntity() != null).forEach(l -> entities.add(l.getEntity()));
+                List<LabeledEntity> entities = lners.parallelStream()
+                        .filter(e -> e.getEntity() != null)
+                        .map(LinkedNamedEntity::getEntity).collect(Collectors.toList());
 
                 passages.add(new Passage(sentence, entities));
             }
