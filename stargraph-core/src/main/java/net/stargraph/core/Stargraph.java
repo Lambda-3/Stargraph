@@ -57,6 +57,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,6 +85,8 @@ public final class Stargraph {
     }
 
     public Stargraph(Config cfg, boolean initialize) {
+        logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+
         if (System.getProperty("config.file") == null) {
             logger.warn(marker, "No configuration found at '-Dconfig.file'.");
         }
