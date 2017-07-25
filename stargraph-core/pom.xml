@@ -44,10 +44,16 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx4g</argLine>
+                </configuration>
             </plugin>
 
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx8g</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>
