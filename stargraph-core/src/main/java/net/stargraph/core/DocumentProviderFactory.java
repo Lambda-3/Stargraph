@@ -28,7 +28,6 @@ package net.stargraph.core;
 
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
-import net.stargraph.model.Document;
 import net.stargraph.model.KBId;
 
 /**
@@ -42,7 +41,7 @@ public final class DocumentProviderFactory extends BaseDataProviderFactory {
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new DocumentIterator(kbId));
+        return new DataProvider<>(new DocumentIterator(core, kbId));
     }
 
 }

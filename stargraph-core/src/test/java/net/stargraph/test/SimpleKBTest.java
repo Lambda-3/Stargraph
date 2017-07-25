@@ -53,12 +53,12 @@ public final class SimpleKBTest {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
         Path ntPath = createPath(root, factsId).resolve("triples.nt");
         copyResource("dataSets/simple/facts/triples.nt", ntPath);
-        System.setProperty("stargraph.data.root-dir", root.toString());
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         core = new Stargraph(config, false);
         core.setIndexerFactory(new NullIndexerFactory());
         core.setModelFactory(new NTriplesModelFactory(core));
+        core.setDataRootDir(root.toFile());
         core.initialize();
     }
 

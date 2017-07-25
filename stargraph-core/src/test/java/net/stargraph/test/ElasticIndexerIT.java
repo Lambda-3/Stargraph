@@ -26,6 +26,7 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
@@ -58,10 +59,11 @@ public final class ElasticIndexerIT {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
         Path hdtPath = createPath(root, factsId).resolve("triples.hdt");
         copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
-        System.setProperty("stargraph.data.root-dir", root.toString());
         ConfigFactory.invalidateCaches();
-        stargraph = new Stargraph();
-
+        Config config = ConfigFactory.load().getConfig("stargraph");
+        stargraph = new Stargraph(config, false);
+        stargraph.setDataRootDir(root.toFile());
+        stargraph.initialize();
         //TODO: replace with KBLoader#loadAll()
         loadProperties(stargraph);
         loadEntities(stargraph);

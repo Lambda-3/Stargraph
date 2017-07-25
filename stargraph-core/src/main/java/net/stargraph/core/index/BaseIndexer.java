@@ -175,7 +175,8 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
+        boolean logStats = core.getConfig().getBoolean("progress-watcher.log-stats");
+        this.loaderProgress = new ProgressWatcher(kbId, core.getDataRootDir(), logStats);
         this.dataProvider = core.createDataProvider(kbId);
         beforeLoad(reset);
     }

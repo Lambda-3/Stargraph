@@ -83,8 +83,7 @@ public final class HDTModelFactory extends GraphModelFactory {
 
     private Path getHDTPath(String dbId) throws IOException {
 
-        Config mainConfig = core.getConfig();
-        String dataDir = mainConfig.getString("data.root-dir");
+        String dataDir = core.getDataRootDir();
         Path defaultPath = Paths.get(dataDir, dbId, "facts", "triples.hdt");
 
         final String cfgPath = "triple-store.hdt.file";

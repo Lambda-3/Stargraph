@@ -26,7 +26,6 @@ package net.stargraph.core.index;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +52,14 @@ final class ProgressWatcher {
     private long elapsedTime;
     private ScheduledExecutorService executor;
     private KBId kbId;
-    private Config config;
+    private boolean logStats;
+    private String dataRootDir;
 
-    public ProgressWatcher(KBId kbId, Config config) {
+
+    public ProgressWatcher(KBId kbId, String dataRootDir, boolean logStats) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.config = Objects.requireNonNull(config);
+        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+        this.logStats = logStats;
     }
 
     long incRead() {
@@ -127,9 +129,7 @@ final class ProgressWatcher {
     }
 
     private void logStats() {
-        boolean canLogStats = config.getBoolean("progress-watcher.log-stats");
-        if (canLogStats) {
-            String dataRootDir = config.getString("data.root-dir");
+        if (logStats) {
             File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getType())).toFile();
             logger.info(marker, "Logging stats to {}", csvFile);
 

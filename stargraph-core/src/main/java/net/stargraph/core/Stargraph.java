@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.io.File;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
@@ -71,6 +72,7 @@ public final class Stargraph {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
+    private String dataRootDir;
     private Map<String, KBLoader> kbLoaders;
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
@@ -99,6 +101,7 @@ public final class Stargraph {
         this.kbLoaders = new ConcurrentHashMap<>();
         this.ners = new ConcurrentHashMap<>();
 
+        setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setIndexerFactory(createIndexerFactory());
         setModelFactory(new HDTModelFactory(this));
 
@@ -179,6 +182,10 @@ public final class Stargraph {
         return ners.computeIfAbsent(dbId, (id) -> new NERSearcher(getLanguage(id), createEntitySearcher(), id));
     }
 
+    public String getDataRootDir() {
+        return dataRootDir;
+    }
+
     public Indexer getIndexer(KBId kbId) {
         if (indexers.keySet().contains(kbId))
             return indexers.get(kbId);
@@ -189,6 +196,14 @@ public final class Stargraph {
         if (searchers.keySet().contains(kbId))
             return searchers.get(kbId);
         throw new StarGraphException("Searcher not found nor initialized: " + kbId);
+    }
+
+    public void setDataRootDir(String dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+    }
+
+    public void setDataRootDir(File dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
     }
 
     public void setIndexerFactory(IndexerFactory indexerFactory) {
@@ -249,7 +264,8 @@ public final class Stargraph {
         }
 
         this.initializeKB();
-        logger.info(marker, "Indexer: '{}'", indexerFactory.getClass().getName());
+        logger.info(marker, "Data root directory: '{}'", getDataRootDir());
+        logger.info(marker, "Indexer Factory: '{}'", indexerFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;

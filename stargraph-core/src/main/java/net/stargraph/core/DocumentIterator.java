@@ -27,12 +27,11 @@ package net.stargraph.core;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.Indexable;
-import net.stargraph.model.*;
+import net.stargraph.model.Document;
+import net.stargraph.model.KBId;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,20 +42,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Objects;
 
-final class DocumentIterator implements Iterator<Indexable> {
+public final class DocumentIterator implements Iterator<Indexable> {
     private static Logger logger = LoggerFactory.getLogger(DocumentIterator.class);
     private static Marker marker = MarkerFactory.getMarker("core");
-    private static Config config = ConfigFactory.load().getConfig("stargraph");
 
+    private Stargraph core;
     private final KBId kbId;
     private final ObjectMapper mapper;
     private final Iterator<String> lineIt;
     private Document next;
 
-    DocumentIterator(KBId kbId) {
-        this.kbId = kbId;
+
+    public DocumentIterator(Stargraph core, KBId kbId) {
+        this.core = Objects.requireNonNull(core);
+        this.kbId = Objects.requireNonNull(kbId);
         this.mapper = ObjectSerializer.createMapper(kbId);
 
         Path filePath = getFilePath(kbId.getId());
@@ -86,11 +88,9 @@ final class DocumentIterator implements Iterator<Indexable> {
         next = null;
     }
 
-    private static Path getFilePath(String  dbId) {
-        String dataDir = config.getString("data.root-dir");
-        Path dataDirectory = Paths.get(dataDir, dbId, "documents", "documents.json");
-
-        return dataDirectory;
+    private Path getFilePath(String  dbId) {
+        String dataDir = core.getDataRootDir();
+        return Paths.get(dataDir, dbId, "documents", "documents.json");
     }
 
     @Override
