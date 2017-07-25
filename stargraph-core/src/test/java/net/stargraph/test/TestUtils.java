@@ -54,4 +54,16 @@ public final class TestUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static File prepareObamaTestEnv() {
+        Path root;
+        try {
+            root = Files.createTempFile("stargraph-", "-dataDir");
+            Path hdtPath = createPath(root, KBId.of("obama", "facts")).resolve("triples.hdt");
+            copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return root.toFile();
+    }
 }

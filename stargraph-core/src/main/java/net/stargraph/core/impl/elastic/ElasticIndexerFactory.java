@@ -1,4 +1,4 @@
-package net.stargraph.core.index;
+package net.stargraph.core.impl.elastic;
 
 /*-
  * ==========================License-Start=============================
@@ -27,10 +27,11 @@ package net.stargraph.core.index;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.impl.elastic.ElasticIndexer;
+import net.stargraph.core.index.BaseIndexer;
+import net.stargraph.core.index.IndexerFactory;
 import net.stargraph.model.KBId;
 
-public final class DefaultIndexerFactory implements IndexerFactory {
+public final class ElasticIndexerFactory implements IndexerFactory {
 
     @Override
     public BaseIndexer create(KBId kbId, Stargraph core) {

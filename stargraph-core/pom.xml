@@ -16,6 +16,7 @@
         <es.version>5.1.1</es.version>
         <corenlp.version>3.7.0</corenlp.version>
         <graphene.version>2.0.0-SNAPSHOT</graphene.version>
+        <lucene.version>6.3.0</lucene.version>
     </properties>
 
     <build>
@@ -65,7 +66,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Graphene-Core -->
         <dependency>
             <groupId>org.lambda3.graphene</groupId>
             <artifactId>graphene-core</artifactId>
@@ -75,6 +75,30 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${lucene.version}</version>
         </dependency>
 
         <dependency>
@@ -109,10 +133,6 @@
                     <groupId>org.apache.lucene</groupId>
                     <artifactId>lucene-core</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-queryparser</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -122,10 +142,6 @@
             <version>${corenlp.version}</version>
             <classifier>models</classifier>
             <exclusions>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-queryparser</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.lucene</groupId>
                     <artifactId>lucene-analyzers-common</artifactId>
