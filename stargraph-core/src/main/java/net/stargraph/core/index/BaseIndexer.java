@@ -77,26 +77,32 @@ public abstract class BaseIndexer implements Indexer {
     @Override
     public synchronized final void start() {
         if (running) {
-            throw new StarGraphException("Already started!");
+            throw new IllegalStateException("Already started!");
         }
-        running = true;
         onStart();
+        running = true;
     }
 
     @Override
     public synchronized final void stop() {
         if (!running) {
-            logger.warn(marker, "Is stopped.");
+            logger.error(marker, "Indexer already stopped.");
         } else {
-            onStop();
-            running = false;
+            try {
+                onStop();
+                running = false;
+            }
+            catch (Exception e) {
+                logger.error(marker, "Fail to stop.", e);
+            }
+
         }
     }
 
     @Override
     public final void index(Indexable data) throws InterruptedException {
         if (loading) {
-            throw new StarGraphException("Loader in progress. Incremental update is forbidden.");
+            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
         }
 
         work(data);
@@ -135,7 +141,7 @@ public abstract class BaseIndexer implements Indexer {
             throws InterruptedException, TimeoutException, ExecutionException {
 
         if (!loading && loaderFutureTask == null) {
-            throw new StarGraphException("Loader was not called.");
+            throw new IllegalStateException("Loader was not called.");
         }
 
         logger.info(marker, "Awaiting Loader finalization..");
@@ -225,7 +231,7 @@ public abstract class BaseIndexer implements Indexer {
 
     private synchronized void doLoad(boolean reset, long limit) {
         if (loading) {
-            throw new StarGraphException("Loader is already in progress. ");
+            throw new IllegalStateException("Loader is already in progress. ");
         }
 
         logger.info(marker, "Loading {}, [reset={}, limit={}]", kbId, reset, limit);

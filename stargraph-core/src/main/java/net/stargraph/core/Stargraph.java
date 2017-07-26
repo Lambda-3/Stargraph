@@ -275,8 +275,10 @@ public final class Stargraph {
         if (!initialized) {
             throw new IllegalStateException("Not initialized");
         }
+
+        indexers.values().forEach(Indexer::stop);
+        searchers.values().forEach(Searcher::stop);
         initialized = false;
-        // future shutdown procedure if needed.
     }
 
     private void initializeKB() {

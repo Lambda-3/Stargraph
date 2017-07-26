@@ -69,7 +69,7 @@ public final class IndexerTest {
         Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void doubleLoadFailTest() throws Exception {
         try {
             indexer.load(true, -1);
@@ -82,7 +82,7 @@ public final class IndexerTest {
         }
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void updateWhileLoadingFailTest() throws Exception {
         try {
             indexer.load(true, -1);
@@ -94,7 +94,7 @@ public final class IndexerTest {
         }
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void loadTwiceWithoutWaitingTest() throws Exception {
         try {
             indexer.load(true, -1);

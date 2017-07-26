@@ -40,6 +40,7 @@ public abstract class BaseSearcher implements Searcher {
     protected Marker marker = MarkerFactory.getMarker("search");
     protected Stargraph core;
     protected KBId kbId;
+    private boolean running;
 
     public BaseSearcher(KBId kbId, Stargraph core) {
         logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
@@ -47,12 +48,29 @@ public abstract class BaseSearcher implements Searcher {
         this.kbId = Objects.requireNonNull(kbId);
     }
 
+    @Override
     public synchronized final void start() {
+        if (running) {
+            throw new IllegalStateException("Already started!");
+        }
         onStart();
+        running = true;
     }
 
+    @Override
     public synchronized final void stop() {
-        onStop();
+        if (!running) {
+            logger.error(marker, "Searcher already stopped.");
+        } else {
+            try {
+                onStop();
+                running = false;
+            }
+            catch (Exception e) {
+                logger.error(marker, "Fail to stop.", e);
+            }
+
+        }
     }
 
     protected void onStart() {
