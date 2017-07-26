@@ -121,7 +121,7 @@ public final class LuceneIndexer extends BaseIndexer {
     }
 
     private Path getIndexPath() {
-        return Paths.get(core.getDataRootDir(), kbId.getId(), "idx");
+        return Paths.get(core.getDataRootDir(), kbId.getId(), kbId.getType(), "idx");
     }
 
     private IndexWriterConfig getWriterConfig() {
