@@ -28,12 +28,18 @@ package net.stargraph.data.processor;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public abstract class BaseProcessor implements Processor<Serializable> {
     private Config config;
+    protected Logger logger = LoggerFactory.getLogger(getName());
+    protected Marker marker = MarkerFactory.getMarker("processor");
 
     public BaseProcessor(Config config) {
         this.config = Objects.requireNonNull(config);

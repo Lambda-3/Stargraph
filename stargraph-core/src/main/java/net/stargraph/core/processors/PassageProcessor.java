@@ -37,10 +37,6 @@ import net.stargraph.model.Document;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.Passage;
 import org.lambda3.text.simplification.discourse.utils.sentences.SentencesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,9 +49,6 @@ import java.util.stream.Collectors;
  */
 public final class PassageProcessor extends BaseProcessor {
     public static String name = "passage-processor";
-
-    private Logger logger = LoggerFactory.getLogger(getName());
-    private Marker marker = MarkerFactory.getMarker("processor");
 
     private Stargraph core;
 

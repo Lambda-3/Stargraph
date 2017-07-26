@@ -115,6 +115,7 @@ public final class LuceneIndexer extends BaseIndexer {
     protected void onStop() {
         try {
             writer.close();
+            directory.close();
         } catch (IOException e) {
             logger.error("Fail to close index.", e);
         }
