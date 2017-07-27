@@ -72,7 +72,7 @@ public class FactProviderTest {
     }
 
     @Test
-    public void factFromNtriplesTest() throws IOException {
+    public void factFromNTriplesTest() throws IOException {
         Stargraph core = new Stargraph(config, false);
         core.setDataRootDir(root.toFile());
         core.setModelFactory(new NTriplesModelFactory(core));
