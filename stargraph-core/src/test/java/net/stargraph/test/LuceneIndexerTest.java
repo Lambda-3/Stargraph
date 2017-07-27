@@ -14,7 +14,7 @@ import java.io.File;
 
 public final class LuceneIndexerTest {
 
-    private KBId kbId;
+    private KBId kbId = KBId.of("obama", "entities"); // Entities uses Lucene. See reference.conf.
     private Stargraph core;
 
 
@@ -24,9 +24,9 @@ public final class LuceneIndexerTest {
         Config config = ConfigFactory.load().getConfig("stargraph");
         File dataRootDir = TestUtils.prepareObamaTestEnv();
         this.core = new Stargraph(config, false);
+        core.setKBInitSet(kbId.getId());
         core.setDataRootDir(dataRootDir);
         this.core.initialize();
-        this.kbId = KBId.of("obama", "entities"); // Entities uses Lucene. See reference.conf.
     }
 
 
