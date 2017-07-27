@@ -324,12 +324,27 @@ public final class Stargraph {
                 for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
                     KBId kbId = KBId.of(kbName, typeEntry.getKey());
                     logger.info(marker, "Initializing {}", kbId);
+
                     Indexer indexer = this.indicesFactory.createIndexer(kbId, this);
-                    indexer.start();
-                    indexers.put(kbId, indexer);
+
+                    if (indexer != null) {
+                        indexer.start();
+                        indexers.put(kbId, indexer);
+                    }
+                    else {
+                        logger.warn("No indexer created for {}", kbId);
+                    }
+
+
                     BaseSearcher searcher = this.indicesFactory.createSearcher(kbId, this);
-                    searcher.start();
-                    searchers.put(kbId, searcher);
+
+                    if (searcher != null) {
+                        searcher.start();
+                        searchers.put(kbId, searcher);
+                    }
+                    else {
+                        logger.warn("No searcher created for {}", kbId);
+                    }
                 }
             }
         }
@@ -355,7 +370,7 @@ public final class Stargraph {
 
     private IndicesFactory createIndicesFactory() {
         try {
-            String className = getConfig().getString("indexer.factory.class");
+            String className = getConfig().getString("index-store.factory.class");
             Class<?> providerClazz = Class.forName(className);
             Constructor<?> constructor = providerClazz.getConstructors()[0];
             return (IndicesFactory) constructor.newInstance();
