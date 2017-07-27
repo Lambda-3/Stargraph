@@ -1,4 +1,4 @@
-package net.stargraph.test;
+package net.stargraph.test.it;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;

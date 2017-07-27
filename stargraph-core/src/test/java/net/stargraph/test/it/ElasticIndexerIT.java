@@ -1,4 +1,4 @@
-package net.stargraph.test;
+package net.stargraph.test.it;
 
 /*-
  * ==========================License-Start=============================
