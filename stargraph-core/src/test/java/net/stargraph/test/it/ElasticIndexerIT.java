@@ -34,7 +34,7 @@ import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.*;
 import net.stargraph.rank.*;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

@@ -34,7 +34,7 @@ import net.stargraph.core.processors.StopPropertyFilterProcessor;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.model.KBId;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;

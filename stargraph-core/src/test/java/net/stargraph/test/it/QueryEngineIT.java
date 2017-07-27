@@ -32,7 +32,7 @@ import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.LabeledEntity;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
