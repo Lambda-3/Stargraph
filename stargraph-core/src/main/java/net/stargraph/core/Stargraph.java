@@ -83,6 +83,7 @@ public final class Stargraph {
     private Map<String, NER> ners;
     private IndicesFactory indicesFactory;
     private GraphModelFactory modelFactory;
+    private Set<String> kbInitSet;
     private boolean initialized;
 
     public Stargraph() {
@@ -104,6 +105,8 @@ public final class Stargraph {
         this.namespaces = new ConcurrentHashMap<>();
         this.kbLoaders = new ConcurrentHashMap<>();
         this.ners = new ConcurrentHashMap<>();
+        // Only KBs in this set will be initialized. Unit tests appreciates!
+        this.kbInitSet = new LinkedHashSet<>();
 
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
@@ -213,6 +216,10 @@ public final class Stargraph {
         throw new StarGraphException("Searcher not found nor initialized: " + kbId);
     }
 
+    public void setKBInitSet(String ... kbIds) {
+        this.kbInitSet.addAll(Arrays.asList(kbIds));
+    }
+
     public void setDataRootDir(String dataRootDir) {
         this.dataRootDir = Objects.requireNonNull(dataRootDir);
     }
@@ -278,7 +285,8 @@ public final class Stargraph {
             throw new IllegalStateException("Core already initialized.");
         }
 
-        this.initializeKB();
+        this.initializeKBs();
+
         logger.info(marker, "Data root directory: '{}'", getDataRootDir());
         logger.info(marker, "Index Store Factory: '{}'", indicesFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
@@ -305,53 +313,55 @@ public final class Stargraph {
         initialized = false;
     }
 
-    private void initializeKB() {
-        ConfigObject kbObj;
-        try {
-            kbObj = this.mainConfig.getObject("kb");
-        } catch (ConfigException e) {
-            throw new StarGraphException("No KB configured.", e);
+    private void initializeKBs() {
+        if (!kbInitSet.isEmpty()) {
+            logger.warn(marker, "KB init set: {}", kbInitSet);
+            kbInitSet.forEach(this::initializeKB);
         }
-
-        for (Map.Entry<String, ConfigValue> kbEntry : kbObj.entrySet()) {
-            final String kbName = kbEntry.getKey();
-            Config kbCfg = this.mainConfig.getConfig(String.format("kb.%s", kbName));
-
-            if (!kbCfg.getBoolean("enabled")) {
-                logger.info(marker, "KB {} is disabled.", kbName);
-            } else {
-                ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbEntry.getKey()));
-                for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
-                    KBId kbId = KBId.of(kbName, typeEntry.getKey());
-                    logger.info(marker, "Initializing {}", kbId);
-                    IndicesFactory factory = getIndicesFactory(kbId);
-
-                    Indexer indexer = factory.createIndexer(kbId, this);
-
-                    if (indexer != null) {
-                        indexer.start();
-                        indexers.put(kbId, indexer);
-                    }
-                    else {
-                        logger.warn("No indexer created for {}", kbId);
-                    }
-
-
-                    BaseSearcher searcher = factory.createSearcher(kbId, this);
-
-                    if (searcher != null) {
-                        searcher.start();
-                        searchers.put(kbId, searcher);
-                    }
-                    else {
-                        logger.warn("No searcher created for {}", kbId);
-                    }
+        else {
+            if (mainConfig.hasPathOrNull("kb")) {
+                if (mainConfig.getIsNull("kb")) {
+                    throw new StarGraphException("No KB configured.");
                 }
+
+                mainConfig.getObject("kb").keySet().forEach(this::initializeKB);
+            }
+            else {
+                throw new StarGraphException("No KBs configured.");
             }
         }
+    }
 
-        if (searchers.isEmpty()) {
-            logger.warn(marker, "No KBs configured.");
+    private void initializeKB(String kbName) {
+        Config kbCfg = this.mainConfig.getConfig(String.format("kb.%s", kbName));
+
+        if (!kbCfg.getBoolean("enabled")) {
+            logger.info(marker, "KB {} is disabled.", kbName);
+        } else {
+            ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbName));
+            for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
+                KBId kbId = KBId.of(kbName, typeEntry.getKey());
+                logger.info(marker, "Initializing {}", kbId);
+                IndicesFactory factory = getIndicesFactory(kbId);
+
+                Indexer indexer = factory.createIndexer(kbId, this);
+
+                if (indexer != null) {
+                    indexer.start();
+                    indexers.put(kbId, indexer);
+                } else {
+                    logger.warn(marker, "No indexer created for {}", kbId);
+                }
+
+                BaseSearcher searcher = factory.createSearcher(kbId, this);
+
+                if (searcher != null) {
+                    searcher.start();
+                    searchers.put(kbId, searcher);
+                } else {
+                    logger.warn(marker, "No searcher created for {}", kbId);
+                }
+            }
         }
     }
 

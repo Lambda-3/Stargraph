@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 public final class IndexerTest {
 
-    private KBId kbId;
+    private KBId kbId = KBId.of("mytest", "mytype");
     private List<TestData> expected;
     private Stargraph core;
     private Indexer indexer;
@@ -53,9 +53,9 @@ public final class IndexerTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         this.core = new Stargraph(config, false);
+        this.core.setKBInitSet(kbId.getId());
         this.core.setDefaultIndicesFactory(new TestDataIndexer.Factory());
         this.core.initialize();
-        this.kbId = KBId.of("mytest", "mytype");
         this.indexer = core.getIndexer(kbId);
         List<String> expected = Arrays.asList("first", "second", "third");
         this.expected = expected.stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
