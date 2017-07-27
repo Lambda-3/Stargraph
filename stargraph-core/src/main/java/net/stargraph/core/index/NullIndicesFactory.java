@@ -26,11 +26,20 @@ package net.stargraph.core.index;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.model.KBId;
 
-public interface IndexerFactory {
+public final class NullIndicesFactory implements IndicesFactory {
 
-    BaseIndexer create(KBId kbId, Stargraph core);
+    @Override
+    public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
+        return new NullIndexer(kbId, core);
+    }
 
+    @Override
+    public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
+        return null;
+    }
 }

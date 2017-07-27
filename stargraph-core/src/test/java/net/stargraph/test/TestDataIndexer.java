@@ -26,9 +26,10 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
-import net.stargraph.core.index.IndexerFactory;
+import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.model.KBId;
 
 import java.io.Serializable;
@@ -63,24 +64,30 @@ public final class TestDataIndexer extends BaseIndexer {
             Thread.sleep(lazyTime);
         }
 
-        TestData testDatadata = (TestData) data;
+        TestData testData = (TestData) data;
 
-        if (testDatadata.failOnIndexer) {
+        if (testData.failOnIndexer) {
             throw new TestFailureException();
         }
 
         System.out.println(data);
-        indexed.add(testDatadata);
+        indexed.add(testData);
     }
 
     final List<TestData> getIndexed() {
         return this.indexed;
     }
 
-    static class Factory implements IndexerFactory {
+    static class Factory implements IndicesFactory {
+
         @Override
-        public BaseIndexer create(KBId kbId, Stargraph core) {
+        public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
             return new TestDataIndexer(kbId, core, 500);
+        }
+
+        @Override
+        public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
+            return null;
         }
     }
 }

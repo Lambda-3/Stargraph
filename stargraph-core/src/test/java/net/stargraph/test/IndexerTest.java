@@ -28,7 +28,6 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.data.Indexable;
@@ -54,7 +53,7 @@ public final class IndexerTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         this.core = new Stargraph(config, false);
-        this.core.setIndexerFactory(new TestDataIndexer.Factory());
+        this.core.setIndicesFactory(new TestDataIndexer.Factory());
         this.core.initialize();
         this.kbId = KBId.of("mytest", "mytype");
         this.indexer = core.getIndexer(kbId);

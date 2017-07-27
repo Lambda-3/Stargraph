@@ -26,15 +26,21 @@ package net.stargraph.core.impl.elastic;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
-import net.stargraph.core.index.IndexerFactory;
+import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.model.KBId;
 
-public final class ElasticIndexerFactory implements IndexerFactory {
+public final class ElasticFactory implements IndicesFactory {
 
     @Override
-    public BaseIndexer create(KBId kbId, Stargraph core) {
+    public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
         return new ElasticIndexer(kbId, core);
+    }
+
+    @Override
+    public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
+        return new ElasticSearcher(kbId, core);
     }
 }

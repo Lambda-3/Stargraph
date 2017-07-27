@@ -31,7 +31,7 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.NTriplesModelFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
-import net.stargraph.core.index.NullIndexerFactory;
+import net.stargraph.core.index.NullIndicesFactory;
 import net.stargraph.model.KBId;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -56,7 +56,7 @@ public final class SimpleKBTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         core = new Stargraph(config, false);
-        core.setIndexerFactory(new NullIndexerFactory());
+        core.setIndicesFactory(new NullIndicesFactory());
         core.setModelFactory(new NTriplesModelFactory(core));
         core.setDataRootDir(root.toFile());
         core.initialize();

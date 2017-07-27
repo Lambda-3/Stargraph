@@ -32,11 +32,9 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
-import net.stargraph.core.impl.elastic.ElasticSearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
-import net.stargraph.core.index.IndexerFactory;
 import net.stargraph.core.ner.NER;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.BaseSearcher;
@@ -83,7 +81,7 @@ public final class Stargraph {
     private Map<KBId, Directory> luceneDirs;
     private Map<String, Namespace> namespaces;
     private Map<String, NER> ners;
-    private IndexerFactory indexerFactory;
+    private IndicesFactory indicesFactory;
     private GraphModelFactory modelFactory;
     private boolean initialized;
 
@@ -108,7 +106,7 @@ public final class Stargraph {
         this.ners = new ConcurrentHashMap<>();
 
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
-        setIndexerFactory(createIndexerFactory());
+        setIndicesFactory(createIndicesFactory());
         setModelFactory(new HDTModelFactory(this));
 
         if (initialize) {
@@ -184,7 +182,7 @@ public final class Stargraph {
     }
 
     public NER getNER(String dbId) {
-        //TODO: Should have a factory to ease test other implementation just changing configuration. See IndexerFactory.
+        //TODO: Should have a factory to ease test other implementation just changing configuration.
         return ners.computeIfAbsent(dbId, (id) -> new NERSearcher(getLanguage(id), createEntitySearcher(), id));
     }
 
@@ -223,8 +221,8 @@ public final class Stargraph {
         this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
     }
 
-    public void setIndexerFactory(IndexerFactory indexerFactory) {
-        this.indexerFactory = Objects.requireNonNull(indexerFactory);
+    public void setIndicesFactory(IndicesFactory indicesFactory) {
+        this.indicesFactory = Objects.requireNonNull(indicesFactory);
     }
 
     public void setModelFactory(GraphModelFactory modelFactory) {
@@ -282,7 +280,7 @@ public final class Stargraph {
 
         this.initializeKB();
         logger.info(marker, "Data root directory: '{}'", getDataRootDir());
-        logger.info(marker, "Indexer Factory: '{}'", indexerFactory.getClass().getName());
+        logger.info(marker, "Indexer Factory: '{}'", indicesFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;
@@ -326,10 +324,10 @@ public final class Stargraph {
                 for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
                     KBId kbId = KBId.of(kbName, typeEntry.getKey());
                     logger.info(marker, "Initializing {}", kbId);
-                    Indexer indexer = this.indexerFactory.create(kbId, this);
+                    Indexer indexer = this.indicesFactory.createIndexer(kbId, this);
                     indexer.start();
                     indexers.put(kbId, indexer);
-                    BaseSearcher searcher = new ElasticSearcher(kbId, this);
+                    BaseSearcher searcher = this.indicesFactory.createSearcher(kbId, this);
                     searcher.start();
                     searchers.put(kbId, searcher);
                 }
@@ -355,12 +353,12 @@ public final class Stargraph {
     }
 
 
-    private IndexerFactory createIndexerFactory() {
+    private IndicesFactory createIndicesFactory() {
         try {
             String className = getConfig().getString("indexer.factory.class");
             Class<?> providerClazz = Class.forName(className);
             Constructor<?> constructor = providerClazz.getConstructors()[0];
-            return (IndexerFactory) constructor.newInstance();
+            return (IndicesFactory) constructor.newInstance();
         } catch (Exception e) {
             throw new StarGraphException("Can't initialize indexers.", e);
         }
