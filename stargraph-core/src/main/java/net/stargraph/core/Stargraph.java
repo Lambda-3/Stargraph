@@ -51,15 +51,19 @@ import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
 import org.apache.jena.rdf.model.Model;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -76,6 +80,7 @@ public final class Stargraph {
     private Map<String, KBLoader> kbLoaders;
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
+    private Map<KBId, Directory> luceneDirs;
     private Map<String, Namespace> namespaces;
     private Map<String, NER> ners;
     private IndexerFactory indexerFactory;
@@ -97,6 +102,7 @@ public final class Stargraph {
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
+        this.luceneDirs = new ConcurrentHashMap<>();
         this.namespaces = new ConcurrentHashMap<>();
         this.kbLoaders = new ConcurrentHashMap<>();
         this.ners = new ConcurrentHashMap<>();
@@ -184,6 +190,17 @@ public final class Stargraph {
 
     public String getDataRootDir() {
         return dataRootDir;
+    }
+
+    public Directory getLuceneDir(KBId kbId) {
+        return luceneDirs.computeIfAbsent(kbId,
+                (id) -> {
+                    try {
+                        return new MMapDirectory(Paths.get(getDataRootDir(), id.getId(), id.getType(), "idx"));
+                    } catch (IOException e) {
+                        throw new StarGraphException(e);
+                    }
+                });
     }
 
     public Indexer getIndexer(KBId kbId) {
@@ -278,6 +295,15 @@ public final class Stargraph {
 
         indexers.values().forEach(Indexer::stop);
         searchers.values().forEach(Searcher::stop);
+
+        luceneDirs.values().forEach(dir -> {
+            try {
+                dir.close();
+            } catch (Exception e) {
+                logger.error("Fail to close lucene index directory.", e);
+            }
+        });
+
         initialized = false;
     }
 

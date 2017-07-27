@@ -36,19 +36,13 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
-import org.apache.lucene.store.SingleInstanceLockFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public final class LuceneIndexer extends BaseIndexer {
 
-    private Directory directory;
     private IndexWriter writer;
     private IndexWriterConfig writerConfig;
     private StandardAnalyzer analyzer;
@@ -86,6 +80,8 @@ public final class LuceneIndexer extends BaseIndexer {
     @Override
     protected void afterLoad() throws InterruptedException {
         try {
+            writer.commit();
+            writer.flush();
             writer.forceMerge(1, true);
         } catch (IOException e) {
            throw new StarGraphException("After loading error.", e);
@@ -104,8 +100,7 @@ public final class LuceneIndexer extends BaseIndexer {
     @Override
     protected void onStart() {
         try {
-            directory = new MMapDirectory(getIndexPath(), new SingleInstanceLockFactory());
-            writer = new IndexWriter(directory, getWriterConfig());
+            writer = new IndexWriter(core.getLuceneDir(kbId), getWriterConfig());
         } catch (IOException e) {
             throw new StarGraphException("Fail to initialize the directory.", e);
         }
@@ -115,14 +110,9 @@ public final class LuceneIndexer extends BaseIndexer {
     protected void onStop() {
         try {
             writer.close();
-            directory.close();
         } catch (IOException e) {
             logger.error("Fail to close index.", e);
         }
-    }
-
-    private Path getIndexPath() {
-        return Paths.get(core.getDataRootDir(), kbId.getId(), kbId.getType(), "idx");
     }
 
     private IndexWriterConfig getWriterConfig() {
