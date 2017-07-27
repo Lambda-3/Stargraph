@@ -86,15 +86,24 @@ public final class Stargraph {
     private Set<String> kbInitSet;
     private boolean initialized;
 
+    /**
+     * Constructs a new Stargraph core API entry-point.
+     */
     public Stargraph() {
         this(ConfigFactory.load().getConfig("stargraph"), true);
     }
 
-    public Stargraph(Config cfg, boolean initialize) {
+    /**
+     * Constructs a new Stargraph core API entry-point.
+     *
+     * @param cfg Configuration instance.
+     * @param initKBs Controls the startup behaviour. Use <code>false</code> to postpone KB specific initialization.
+     */
+    public Stargraph(Config cfg, boolean initKBs) {
         logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
 
         if (System.getProperty("config.file") == null) {
-            logger.warn(marker, "No configuration found at '-Dconfig.file'.");
+            logger.warn(marker, "No HOCON configuration file defined using '-Dconfig.file'.");
         }
 
         this.mainConfig = Objects.requireNonNull(cfg);
@@ -112,7 +121,7 @@ public final class Stargraph {
         setDefaultIndicesFactory(createDefaultIndicesFactory());
         setModelFactory(new HDTModelFactory(this));
 
-        if (initialize) {
+        if (initKBs) {
             initialize();
         }
     }

@@ -26,6 +26,7 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import org.testng.Assert;
@@ -38,7 +39,7 @@ public final class NamespaceTest {
 
     @BeforeClass
     public void beforeClass() {
-        Stargraph core = new Stargraph();
+        Stargraph core = new Stargraph(ConfigFactory.load().getConfig("stargraph"), false);
         this.ns = core.getNamespace("obama");
     }
 

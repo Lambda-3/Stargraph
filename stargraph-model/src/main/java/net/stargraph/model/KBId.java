@@ -26,10 +26,12 @@ package net.stargraph.model;
  * ==========================License-End===============================
  */
 
+import java.io.Serializable;
+
 /**
  * Identity for a tuple (kb, model)
  */
-public final class KBId {
+public final class KBId implements Serializable {
 
     private String id;
     private String model;

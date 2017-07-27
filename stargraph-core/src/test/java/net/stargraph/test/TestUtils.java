@@ -55,15 +55,18 @@ public final class TestUtils {
         }
     }
 
-    public static File prepareObamaTestEnv() {
+    public static Path prepareObamaTestEnv() {
         Path root;
         try {
             root = Files.createTempFile("stargraph-", "-dataDir");
-            Path hdtPath = createPath(root, KBId.of("obama", "facts")).resolve("triples.hdt");
+            Path factsPath = createPath(root, KBId.of("obama", "facts"));
+            Path hdtPath = factsPath.resolve("triples.hdt");
+            Path ntFilePath = factsPath.resolve("triples.nt");
             copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
+            copyResource("dataSets/obama/facts/triples.nt", ntFilePath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return root.toFile();
+        return root;
     }
 }

@@ -34,28 +34,19 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.model.KBId;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static net.stargraph.test.TestUtils.copyResource;
-import static net.stargraph.test.TestUtils.createPath;
 
 public class FactProviderTest {
     private Config config;
     private Path root;
 
-    @BeforeClass
-    public void beforeClass() throws IOException {
-        root = Files.createTempFile("stargraph-", "-dataDir");
-        Path factsPath = createPath(root, KBId.of("obama", "facts"));
-        Path hdtFilePath = factsPath.resolve("triples.hdt");
-        Path ntFilePath = factsPath.resolve("triples.nt");
-        copyResource("dataSets/obama/facts/triples.hdt", hdtFilePath);
-        copyResource("dataSets/obama/facts/triples.nt", ntFilePath);
+    @BeforeMethod
+    public void before() throws IOException {
+        root = TestUtils.prepareObamaTestEnv();
         ConfigFactory.invalidateCaches();
         config = ConfigFactory.load().getConfig("stargraph");
     }

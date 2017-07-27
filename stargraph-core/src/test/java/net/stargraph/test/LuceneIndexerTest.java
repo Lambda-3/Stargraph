@@ -22,7 +22,7 @@ public final class LuceneIndexerTest {
     public void beforeClass() {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
-        File dataRootDir = TestUtils.prepareObamaTestEnv();
+        File dataRootDir = TestUtils.prepareObamaTestEnv().toFile();
         this.core = new Stargraph(config, false);
         core.setKBInitSet(kbId.getId());
         core.setDataRootDir(dataRootDir);

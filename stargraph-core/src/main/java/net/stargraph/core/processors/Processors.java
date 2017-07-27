@@ -62,6 +62,10 @@ public final class Processors {
             throw new IllegalArgumentException("config is required.");
         }
 
+        if (config.isEmpty()) {
+            throw new IllegalArgumentException("No configuration found.");
+        }
+
         if (config.root().entrySet().size() != 1) {
             throw new IllegalStateException("This configuration must have only one key value!");
         }
