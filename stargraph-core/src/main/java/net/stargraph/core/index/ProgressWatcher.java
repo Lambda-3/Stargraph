@@ -130,7 +130,7 @@ final class ProgressWatcher {
 
     private void logStats() {
         if (logStats) {
-            File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getType())).toFile();
+            File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getModel())).toFile();
             logger.info(marker, "Logging stats to {}", csvFile);
 
             boolean exists = csvFile.exists();

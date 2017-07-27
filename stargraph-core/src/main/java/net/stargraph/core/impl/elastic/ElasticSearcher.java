@@ -78,7 +78,7 @@ public final class ElasticSearcher extends BaseSearcher {
         long start = System.nanoTime();
 
         try {
-            String modelName = holder.getSearchParams().getKbId().getType();
+            String modelName = holder.getSearchParams().getKbId().getModel();
             Class<Serializable> modelClass = core.getModelClass(modelName);
 
             scroller = new ElasticScroller(esClient, holder) {

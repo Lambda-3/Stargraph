@@ -118,9 +118,9 @@ public final class ElasticClient {
 
     CreateIndexRequestBuilder prepareCreate() {
         logger.info(marker, "Creating {}", kbId);
-        Config mappingCfg = getTypeCfg().getConfig("elastic.mapping");
+        Config mappingCfg = getModelCfg().getConfig("elastic.mapping");
         // Search for matching mapping definition, fallback to the dynamic _default_.
-        String targetType = mappingCfg.hasPath(kbId.getType()) ? kbId.getType() : "_default_";
+        String targetType = mappingCfg.hasPath(kbId.getModel()) ? kbId.getModel() : "_default_";
         Config mapping = mappingCfg.withOnlyPath(targetType);
         CreateIndexRequestBuilder builder = client.admin().indices().prepareCreate(getIndexName());
         return builder.addMapping(targetType, mapping.root().unwrapped());
@@ -140,15 +140,15 @@ public final class ElasticClient {
     }
 
     private String getIndexType() {
-        return kbId.getType();
+        return kbId.getModel();
     }
 
-    private Config getTypeCfg() {
-        return core.getTypeConfig(kbId);
+    private Config getModelCfg() {
+        return core.getModelConfig(kbId);
     }
 
     private TransportClient createClient() {
-        Config cfg = getTypeCfg();
+        Config cfg = getModelCfg();
         Settings settings = Settings.builder().put("cluster.name", cfg.getString("elastic.cluster-name")).build();
         TransportClient client = new PreBuiltTransportClient(settings);
 
@@ -172,6 +172,6 @@ public final class ElasticClient {
         String cfgPath = "elastic.index.prefix-name";
         String codeName = Version.getCodeName().replace(" ", "-").toLowerCase();
         String prefix = core.getConfig().getIsNull(cfgPath) ? codeName : core.getConfig().getString(cfgPath);
-        return String.format("%s.%s.%s", prefix, kbId.getId(), kbId.getType());
+        return String.format("%s.%s.%s", prefix, kbId.getId(), kbId.getModel());
     }
 }

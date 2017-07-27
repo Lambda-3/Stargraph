@@ -158,8 +158,8 @@ public final class Stargraph {
         return mainConfig.getConfig(kbId.getKBPath());
     }
 
-    public Config getTypeConfig(KBId kbId) {
-        return mainConfig.getConfig(kbId.getTypePath());
+    public Config getModelConfig(KBId kbId) {
+        return mainConfig.getConfig(kbId.getModelPath());
     }
 
     public KBLoader getKBLoader(String dbId) {
@@ -197,7 +197,7 @@ public final class Stargraph {
         return luceneDirs.computeIfAbsent(kbId,
                 (id) -> {
                     try {
-                        return new MMapDirectory(Paths.get(getDataRootDir(), id.getId(), id.getType(), "idx"));
+                        return new MMapDirectory(Paths.get(getDataRootDir(), id.getId(), id.getModel(), "idx"));
                     } catch (IOException e) {
                         throw new StarGraphException(e);
                     }
@@ -366,7 +366,7 @@ public final class Stargraph {
     }
 
     private List<? extends Config> getProcessorsCfg(KBId kbId) {
-        String path = String.format("%s.processors", kbId.getTypePath());
+        String path = String.format("%s.processors", kbId.getModelPath());
         if (mainConfig.hasPath(path)) {
             return mainConfig.getConfigList(path);
         }
@@ -374,7 +374,7 @@ public final class Stargraph {
     }
 
     private Config getDataProviderCfg(KBId kbId) {
-        String path = String.format("%s.provider", kbId.getTypePath());
+        String path = String.format("%s.provider", kbId.getModelPath());
         return mainConfig.getConfig(path);
     }
 
@@ -386,7 +386,7 @@ public final class Stargraph {
         final String idxStorePath = "index-store.factory.class";
         if (kbId != null) {
             //from model configuration
-            Config modelCfg = getTypeConfig(kbId);
+            Config modelCfg = getModelConfig(kbId);
             if (modelCfg.hasPath(idxStorePath)) {
                 String className = modelCfg.getString(idxStorePath);
                 logger.info(marker, "Using '{}'.", className);

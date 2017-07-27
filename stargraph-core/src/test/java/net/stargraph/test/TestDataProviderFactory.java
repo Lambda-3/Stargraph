@@ -42,7 +42,7 @@ public final class TestDataProviderFactory implements DataProviderFactory {
 
     @Override
     public DataProvider<? extends Holder> create(KBId kbId) {
-        String cfgPath = String.format("%s.provider.args.data", kbId.getTypePath());
+        String cfgPath = String.format("%s.provider.args.data", kbId.getModelPath());
         List<? extends Config> configList = config.getConfigList(cfgPath);
         List<TestData> testData = configList.stream()
                 .map(cfg -> new TestData(cfg.getBoolean("failOnIndexer"), cfg.getBoolean("failOnProvider"), cfg.getString("text")))

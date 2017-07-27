@@ -39,7 +39,7 @@ public final class TestUtils {
 
     public static Path createPath(Path root, KBId kbId) throws IOException {
         Files.delete(root);
-        return Files.createDirectories(root.resolve(kbId.getId()).resolve(kbId.getType()));
+        return Files.createDirectories(root.resolve(kbId.getId()).resolve(kbId.getModel()));
     }
 
     public static File copyResource(String resourceLocation, Path target) {

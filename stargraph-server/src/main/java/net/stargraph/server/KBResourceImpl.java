@@ -65,7 +65,7 @@ final class KBResourceImpl implements KBResource {
     public List<String> getKBs() {
         return core.getKBs()
                 .stream()
-                .map(kbId -> String.format("%s/%s", kbId.getId(), kbId.getType()))
+                .map(kbId -> String.format("%s/%s", kbId.getId(), kbId.getModel()))
                 .sorted(String::compareTo)
                 .collect(Collectors.toList());
     }
