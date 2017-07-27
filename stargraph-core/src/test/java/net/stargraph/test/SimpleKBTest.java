@@ -56,7 +56,7 @@ public final class SimpleKBTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         core = new Stargraph(config, false);
-        core.setIndicesFactory(new NullIndicesFactory());
+        core.setDefaultIndicesFactory(new NullIndicesFactory());
         core.setModelFactory(new NTriplesModelFactory(core));
         core.setDataRootDir(root.toFile());
         core.initialize();

@@ -3,7 +3,6 @@ package net.stargraph.test;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.impl.lucene.LuceneIndicesFactory;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.model.KBId;
@@ -26,9 +25,8 @@ public final class LuceneIndexerTest {
         File dataRootDir = TestUtils.prepareObamaTestEnv();
         this.core = new Stargraph(config, false);
         core.setDataRootDir(dataRootDir);
-        core.setIndicesFactory(new LuceneIndicesFactory());
         this.core.initialize();
-        this.kbId = KBId.of("obama", "entities");
+        this.kbId = KBId.of("obama", "entities"); // Entities uses Lucene. See reference.conf.
     }
 
 

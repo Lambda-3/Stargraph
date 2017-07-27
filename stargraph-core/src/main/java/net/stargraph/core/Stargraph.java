@@ -106,7 +106,7 @@ public final class Stargraph {
         this.ners = new ConcurrentHashMap<>();
 
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
-        setIndicesFactory(createIndicesFactory());
+        setDefaultIndicesFactory(createDefaultIndicesFactory());
         setModelFactory(new HDTModelFactory(this));
 
         if (initialize) {
@@ -221,7 +221,7 @@ public final class Stargraph {
         this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
     }
 
-    public void setIndicesFactory(IndicesFactory indicesFactory) {
+    public void setDefaultIndicesFactory(IndicesFactory indicesFactory) {
         this.indicesFactory = Objects.requireNonNull(indicesFactory);
     }
 
@@ -280,7 +280,7 @@ public final class Stargraph {
 
         this.initializeKB();
         logger.info(marker, "Data root directory: '{}'", getDataRootDir());
-        logger.info(marker, "Indexer Factory: '{}'", indicesFactory.getClass().getName());
+        logger.info(marker, "Index Store Factory: '{}'", indicesFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;
@@ -324,8 +324,9 @@ public final class Stargraph {
                 for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
                     KBId kbId = KBId.of(kbName, typeEntry.getKey());
                     logger.info(marker, "Initializing {}", kbId);
+                    IndicesFactory factory = getIndicesFactory(kbId);
 
-                    Indexer indexer = this.indicesFactory.createIndexer(kbId, this);
+                    Indexer indexer = factory.createIndexer(kbId, this);
 
                     if (indexer != null) {
                         indexer.start();
@@ -336,7 +337,7 @@ public final class Stargraph {
                     }
 
 
-                    BaseSearcher searcher = this.indicesFactory.createSearcher(kbId, this);
+                    BaseSearcher searcher = factory.createSearcher(kbId, this);
 
                     if (searcher != null) {
                         searcher.start();
@@ -367,10 +368,32 @@ public final class Stargraph {
         return mainConfig.getConfig(path);
     }
 
+    private IndicesFactory createDefaultIndicesFactory() {
+        return getIndicesFactory(null);
+    }
 
-    private IndicesFactory createIndicesFactory() {
+    private IndicesFactory getIndicesFactory(KBId kbId) {
+        final String idxStorePath = "index-store.factory.class";
+        if (kbId != null) {
+            //from model configuration
+            Config modelCfg = getTypeConfig(kbId);
+            if (modelCfg.hasPath(idxStorePath)) {
+                String className = modelCfg.getString(idxStorePath);
+                logger.info(marker, "Using '{}'.", className);
+                return createIndicesFactory(className);
+            }
+        }
+
+        if (indicesFactory == null) {
+            //from main configuration if not already set
+            indicesFactory = createIndicesFactory(getConfig().getString(idxStorePath));
+        }
+
+        return indicesFactory;
+    }
+
+    private IndicesFactory createIndicesFactory(String className) {
         try {
-            String className = getConfig().getString("index-store.factory.class");
             Class<?> providerClazz = Class.forName(className);
             Constructor<?> constructor = providerClazz.getConstructors()[0];
             return (IndicesFactory) constructor.newInstance();

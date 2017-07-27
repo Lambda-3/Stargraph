@@ -53,7 +53,7 @@ public final class IndexerTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         this.core = new Stargraph(config, false);
-        this.core.setIndicesFactory(new TestDataIndexer.Factory());
+        this.core.setDefaultIndicesFactory(new TestDataIndexer.Factory());
         this.core.initialize();
         this.kbId = KBId.of("mytest", "mytype");
         this.indexer = core.getIndexer(kbId);
