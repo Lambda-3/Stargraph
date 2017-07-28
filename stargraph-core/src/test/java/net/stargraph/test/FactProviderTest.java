@@ -66,7 +66,7 @@ public class FactProviderTest {
     public void factFromNTriplesTest() throws IOException {
         Stargraph core = new Stargraph(config, false);
         core.setDataRootDir(root.toFile());
-        core.setModelFactory(new NTriplesModelFactory(core));
+        core.setGraphModelFactory(new NTriplesModelFactory(core));
         core.initialize();
 
         KBId kbId = KBId.of("obama", "facts");

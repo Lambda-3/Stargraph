@@ -114,7 +114,7 @@ public final class Stargraph {
 
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
-        setModelFactory(new HDTModelFactory(this));
+        setGraphModelFactory(new HDTModelFactory(this));
 
         if (initKBs) {
             initialize();
@@ -236,7 +236,7 @@ public final class Stargraph {
         this.indicesFactory = Objects.requireNonNull(indicesFactory);
     }
 
-    public void setModelFactory(GraphModelFactory modelFactory) {
+    public void setGraphModelFactory(GraphModelFactory modelFactory) {
         this.modelFactory = Objects.requireNonNull(modelFactory);
     }
 
