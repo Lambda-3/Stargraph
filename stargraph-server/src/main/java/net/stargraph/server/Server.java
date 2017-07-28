@@ -95,6 +95,11 @@ public final class Server {
      * Application launcher. Exposing REST API.
      */
     public static void main(String args[]) {
+
+        if (System.getProperty("config.file") == null) {
+            logger.warn(marker, "No HOCON configuration file defined using '-Dconfig.file'.");
+        }
+
         final Stargraph core = new Stargraph();
         final Server server = new Server(core);
         server.start();

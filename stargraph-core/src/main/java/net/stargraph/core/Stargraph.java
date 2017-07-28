@@ -101,11 +101,6 @@ public final class Stargraph {
      */
     public Stargraph(Config cfg, boolean initKBs) {
         logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
-
-        if (System.getProperty("config.file") == null) {
-            logger.warn(marker, "No HOCON configuration file defined using '-Dconfig.file'.");
-        }
-
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
         this.indexers = new ConcurrentHashMap<>();
