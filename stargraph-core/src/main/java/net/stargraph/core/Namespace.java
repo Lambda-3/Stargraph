@@ -26,6 +26,8 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
 import net.stargraph.model.ClassEntity;
@@ -42,6 +44,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public final class Namespace extends TreeMap<String, String> {
@@ -49,11 +52,15 @@ public final class Namespace extends TreeMap<String, String> {
     private static Marker marker = MarkerFactory.getMarker("core");
 
     private Set<String> mainNamespaces;
+    private Cache<String, String> shortenedURICache;
 
     private Namespace(String dbId, Stargraph core) {
         super((s1, s2) -> s1.length() == s2.length() ? s1.compareTo(s2) : s2.length() - s1.length()); // reverse order
         this.readMainNamespaces(core, dbId);
         this.readMappings(core, dbId);
+        // Be aware: Facts for a given Entity may appear 1k times (like a db entry with 1k columns!).
+        // Not following this assumption may result in a poorer performance, specially while bulk loading.
+        this.shortenedURICache = CacheBuilder.newBuilder().maximumSize(1000).build();
     }
 
     private Namespace(String resource) {
@@ -62,14 +69,22 @@ public final class Namespace extends TreeMap<String, String> {
     }
 
     public String shrinkURI(String uri) {
-        if (uri.startsWith("http")) {
-            for (Map.Entry<String, String> entry : this.entrySet()) {
-                if (uri.startsWith(entry.getKey())) {
-                    return uri.replace(entry.getKey(), entry.getValue());
+        try {
+            return shortenedURICache.get(uri, () -> {
+                // This is the computation we want to avoid using the cache.
+                if (uri.startsWith("http://")) {
+                    for (Map.Entry<String, String> entry : this.entrySet()) {
+                        if (uri.startsWith(entry.getKey())) {
+                            return uri.replace(entry.getKey(), entry.getValue());
+                        }
+                    }
                 }
-            }
+
+                return uri;
+            });
+        } catch (ExecutionException e) {
+            throw new StarGraphException(e);
         }
-        return uri;
     }
 
     public String expandURI(String uri) {
