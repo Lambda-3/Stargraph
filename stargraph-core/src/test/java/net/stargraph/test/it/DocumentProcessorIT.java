@@ -42,6 +42,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Test(enabled = false)
 @SuppressWarnings("unchecked")
 public final class DocumentProcessorIT {
     KBId kbId = KBId.of("dbpedia-2016", "documents");
@@ -52,7 +53,10 @@ public final class DocumentProcessorIT {
     public void beforeClass() throws Exception {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load();
-        Stargraph core = new Stargraph();
+        Stargraph core = new Stargraph(config.getConfig("stargraph"), false);
+        core.setKBInitSet(kbId.getId());
+        core.initialize();
+
         Config processorCfg = config.getConfig("processor").withOnlyPath(PassageProcessor.name);
         processor = new PassageProcessor(core, processorCfg);
         URI u = getClass().getClassLoader().getResource("anarchism.txt").toURI();
@@ -60,7 +64,6 @@ public final class DocumentProcessorIT {
         text = new String(Files.readAllBytes(Paths.get(u)));
     }
 
-    @Test
     public void processTest() {
         Holder holder = new Indexable(new Document("anarchism.txt", "Anarchism", text), kbId);
         processor.run(holder);
