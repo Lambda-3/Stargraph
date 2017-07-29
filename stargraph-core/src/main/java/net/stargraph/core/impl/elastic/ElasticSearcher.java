@@ -31,6 +31,7 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.SearchQueryHolder;
 import net.stargraph.core.serializer.ObjectSerializer;
+import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
@@ -79,7 +80,7 @@ public final class ElasticSearcher extends BaseSearcher {
 
         try {
             String modelName = holder.getSearchParams().getKbId().getModel();
-            Class<Serializable> modelClass = stargraph.getModelClass(modelName);
+            Class<Serializable> modelClass = BuiltInModel.getModelClass(modelName);
 
             scroller = new ElasticScroller(esClient, holder) {
                 @Override

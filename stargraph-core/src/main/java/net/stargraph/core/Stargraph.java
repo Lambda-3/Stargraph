@@ -39,7 +39,6 @@ import net.stargraph.data.DataProviderFactory;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
-import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -50,7 +49,6 @@ import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.nio.file.Paths;
@@ -103,19 +101,6 @@ public final class Stargraph {
         if (initKBs) {
             initialize();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<Serializable> getModelClass(String modelName) {
-        // This should change to support user's models.
-
-        for (BuiltInModel entry : BuiltInModel.values()) {
-            if (entry.modelId.equals(modelName)) {
-                return entry.cls;
-            }
-        }
-
-        throw new StarGraphException("No Class registered for model: '" + modelName + "'");
     }
 
     public KBCore getKBCore(String dbId) {

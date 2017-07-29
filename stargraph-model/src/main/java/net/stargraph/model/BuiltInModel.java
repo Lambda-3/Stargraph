@@ -26,6 +26,10 @@ package net.stargraph.model;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
+
+import java.io.Serializable;
+
 /**
  * Naming conventions for the fact based KBs.
  */
@@ -41,5 +45,18 @@ public enum BuiltInModel {
     BuiltInModel(String modelId, Class cls) {
         this.modelId = modelId;
         this.cls = cls;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Class<Serializable> getModelClass(String modelName) {
+        // This should change to support user's models.
+
+        for (BuiltInModel entry : BuiltInModel.values()) {
+            if (entry.modelId.equals(modelName)) {
+                return entry.cls;
+            }
+        }
+
+        throw new StarGraphException("No Class registered for model: '" + modelName + "'");
     }
 }
