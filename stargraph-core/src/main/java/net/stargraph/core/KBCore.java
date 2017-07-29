@@ -56,7 +56,7 @@ public final class KBCore {
     public KBCore(String kbName, Stargraph stargraph, boolean start) {
         this.kbName = Objects.requireNonNull(kbName);
         this.stargraph = Objects.requireNonNull(stargraph);
-        this.mainConfig = stargraph.getConfig();
+        this.mainConfig = stargraph.getMainConfig();
         this.kbConfig = mainConfig.getConfig(String.format("kb.%s", kbName));
         this.marker = MarkerFactory.getMarker(kbName);
         this.indexers = new ConcurrentHashMap<>();
@@ -204,8 +204,8 @@ public final class KBCore {
     }
 
     public void configureDistributionalParams(ModifiableIndraParams params) {
-        String indraUrl = stargraph.getConfig().getString("distributional-service.rest-url");
-        String indraCorpus = stargraph.getConfig().getString("distributional-service.corpus");
+        String indraUrl = stargraph.getMainConfig().getString("distributional-service.rest-url");
+        String indraCorpus = stargraph.getMainConfig().getString("distributional-service.corpus");
         params.url(indraUrl).corpus(indraCorpus).language(language.code);
     }
 

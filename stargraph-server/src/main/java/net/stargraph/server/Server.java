@@ -62,7 +62,7 @@ public final class Server {
 
     void start() {
         try {
-            Config config = core.getConfig();
+            Config config = core.getMainConfig();
             String urlStr = config.getString("networking.rest-url");
             ResourceConfig rc = new ResourceConfig();
             rc.register(LoggingFilter.class);

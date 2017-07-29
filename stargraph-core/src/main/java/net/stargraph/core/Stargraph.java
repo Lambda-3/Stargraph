@@ -105,7 +105,7 @@ public final class Stargraph {
         throw new StarGraphException("KB not found: '" + dbId + "'");
     }
 
-    public Config getConfig() {
+    public Config getMainConfig() {
         return mainConfig;
     }
 
@@ -242,7 +242,7 @@ public final class Stargraph {
 
         if (indicesFactory == null) {
             //from main configuration if not already set
-            indicesFactory = createIndicesFactory(getConfig().getString(idxStorePath));
+            indicesFactory = createIndicesFactory(getMainConfig().getString(idxStorePath));
         }
 
         return indicesFactory;

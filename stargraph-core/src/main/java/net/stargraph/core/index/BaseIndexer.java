@@ -180,7 +180,7 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        boolean logStats = stargraph.getConfig().getBoolean("progress-watcher.log-stats");
+        boolean logStats = stargraph.getMainConfig().getBoolean("progress-watcher.log-stats");
         this.loaderProgress = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
         this.dataProvider = stargraph.createDataProvider(kbId);
         beforeLoad(reset);

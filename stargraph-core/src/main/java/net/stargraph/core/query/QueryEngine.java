@@ -66,11 +66,11 @@ public final class QueryEngine {
     public QueryEngine(String dbId, Stargraph stargraph) {
         this.dbId = Objects.requireNonNull(dbId);
         this.core = Objects.requireNonNull(stargraph.getKBCore(dbId));
-        this.analyzers = new Analyzers(stargraph.getConfig());
+        this.analyzers = new Analyzers(stargraph.getMainConfig());
         this.graphSearcher = core.createGraphSearcher();
         this.namespace = core.getNamespace();
         this.language = core.getLanguage();
-        this.modeSelector = new InteractionModeSelector(stargraph.getConfig(), language);
+        this.modeSelector = new InteractionModeSelector(stargraph.getMainConfig(), language);
     }
 
     public QueryResponse query(String query) {

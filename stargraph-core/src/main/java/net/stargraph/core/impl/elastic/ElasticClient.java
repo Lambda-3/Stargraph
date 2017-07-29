@@ -171,7 +171,7 @@ public final class ElasticClient {
     private String createIndexName() {
         String cfgPath = "elastic.index.prefix-name";
         String codeName = Version.getCodeName().replace(" ", "-").toLowerCase();
-        String prefix = core.getConfig().getIsNull(cfgPath) ? codeName : core.getConfig().getString(cfgPath);
+        String prefix = core.getMainConfig().getIsNull(cfgPath) ? codeName : core.getMainConfig().getString(cfgPath);
         return String.format("%s.%s.%s", prefix, kbId.getId(), kbId.getModel());
     }
 }
