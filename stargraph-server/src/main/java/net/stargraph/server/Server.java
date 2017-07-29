@@ -26,7 +26,6 @@ package net.stargraph.server;
  * ==========================License-End===============================
  */
 
-import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
@@ -43,6 +42,7 @@ import org.slf4j.MarkerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.URI;
+import java.util.Objects;
 
 public final class Server {
     static {
@@ -53,16 +53,15 @@ public final class Server {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
     private static Marker marker = MarkerFactory.getMarker("server");
     private HttpServer httpServer;
-    private Stargraph core;
+    private Stargraph stargraph;
 
-    Server(Stargraph core) {
-        Preconditions.checkNotNull(core);
-        this.core = core;
+    Server(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
     }
 
     void start() {
         try {
-            Config config = core.getMainConfig();
+            Config config = stargraph.getMainConfig();
             String urlStr = config.getString("networking.rest-url");
             ResourceConfig rc = new ResourceConfig();
             rc.register(LoggingFilter.class);
@@ -71,8 +70,8 @@ public final class Server {
             rc.register(CatchAllExceptionMapper.class);
             rc.register(SerializationExceptionMapper.class);
             rc.register(AdminResourceImpl.class);
-            rc.register(new KBResourceImpl(core));
-            rc.register(new QueryResourceImpl(core));
+            rc.register(new KBResourceImpl(stargraph));
+            rc.register(new QueryResourceImpl(stargraph));
             httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(urlStr), rc, true);
             logger.info(marker, "Stargraph listening on {}", urlStr);
         } catch (Exception e) {
