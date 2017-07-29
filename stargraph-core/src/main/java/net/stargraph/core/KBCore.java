@@ -17,11 +17,15 @@ import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableIndraParams;
 import org.apache.jena.rdf.model.Model;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -112,6 +116,14 @@ public final class KBCore {
         indexers.values().forEach(Indexer::stop);
         searchers.values().forEach(Searcher::stop);
 
+        luceneDirs.values().forEach(dir -> {
+            try {
+                dir.close();
+            } catch (Exception e) {
+                logger.error("Fail to close lucene index directory.", e);
+            }
+        });
+
         this.running = false;
     }
 
@@ -147,6 +159,18 @@ public final class KBCore {
             return searchers.get(modelId);
         }
         throw new StarGraphException("Searcher not found nor initialized: " + KBId.of(kbName, modelId));
+    }
+
+    public Directory getLuceneDir(String modelName) {
+        return luceneDirs.computeIfAbsent(KBId.of(kbName, modelName),
+                (id) -> {
+                    try {
+                        Path idxPath = Paths.get(stargraph.getDataRootDir(), id.getId(), id.getModel(), "idx");
+                        return new MMapDirectory(idxPath);
+                    } catch (IOException e) {
+                        throw new StarGraphException(e);
+                    }
+                });
     }
 
     public KBLoader getLoader() {

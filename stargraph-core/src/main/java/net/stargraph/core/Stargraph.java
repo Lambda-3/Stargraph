@@ -41,17 +41,14 @@ import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.KBId;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,15 +56,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * The Stargraph database core implementation.
  */
 public final class Stargraph {
-
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("core");
+    private Marker marker = MarkerFactory.getMarker("stargraph");
+
     private Config mainConfig;
     private String dataRootDir;
-    private Map<KBId, Directory> luceneDirs;
     private IndicesFactory indicesFactory;
     private GraphModelFactory graphModelFactory;
-
     private Map<String, KBCore> kbCoreMap;
     private Set<String> kbInitSet;
     private boolean initialized;
@@ -89,11 +84,11 @@ public final class Stargraph {
         logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
-        this.luceneDirs = new ConcurrentHashMap<>();
         // Only KBs in this set will be initialized. Unit tests appreciates!
         this.kbInitSet = new LinkedHashSet<>();
         this.kbCoreMap = new ConcurrentHashMap<>(8);
 
+        // Configurable defaults
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
         setGraphModelFactory(new HDTModelFactory(this));
@@ -135,14 +130,7 @@ public final class Stargraph {
     }
 
     public Directory getLuceneDir(KBId kbId) {
-        return luceneDirs.computeIfAbsent(kbId,
-                (id) -> {
-                    try {
-                        return new MMapDirectory(Paths.get(getDataRootDir(), id.getId(), id.getModel(), "idx"));
-                    } catch (IOException e) {
-                        throw new StarGraphException(e);
-                    }
-                });
+        return getKBCore(kbId.getId()).getLuceneDir(kbId.getModel());
     }
 
     public Indexer getIndexer(KBId kbId) {
@@ -236,14 +224,7 @@ public final class Stargraph {
             throw new IllegalStateException("Not initialized");
         }
 
-        luceneDirs.values().forEach(dir -> {
-            try {
-                dir.close();
-            } catch (Exception e) {
-                logger.error("Fail to close lucene index directory.", e);
-            }
-        });
-
+        kbCoreMap.values().forEach(KBCore::terminate);
         initialized = false;
     }
 
