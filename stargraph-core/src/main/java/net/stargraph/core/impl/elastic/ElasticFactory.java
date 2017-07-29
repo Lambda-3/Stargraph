@@ -35,12 +35,12 @@ import net.stargraph.model.KBId;
 public final class ElasticFactory implements IndicesFactory {
 
     @Override
-    public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
-        return new ElasticIndexer(kbId, core);
+    public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
+        return new ElasticIndexer(kbId, stargraph);
     }
 
     @Override
-    public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
-        return new ElasticSearcher(kbId, core);
+    public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
+        return new ElasticSearcher(kbId, stargraph);
     }
 }

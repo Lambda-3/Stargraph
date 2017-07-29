@@ -39,7 +39,7 @@ public final class NullIndicesFactory implements IndicesFactory {
     }
 
     @Override
-    public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
+    public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
         return null;
     }
 }

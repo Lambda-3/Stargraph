@@ -86,7 +86,7 @@ public final class TestDataIndexer extends BaseIndexer {
         }
 
         @Override
-        public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
+        public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
             return null;
         }
     }

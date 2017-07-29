@@ -32,7 +32,7 @@ import net.stargraph.model.KBId;
 
 public interface IndicesFactory {
 
-    BaseIndexer createIndexer(KBId kbId, Stargraph core);
+    BaseIndexer createIndexer(KBId kbId, Stargraph stargraph);
 
-    BaseSearcher createSearcher(KBId kbId, Stargraph core);
+    BaseSearcher createSearcher(KBId kbId, Stargraph stargraph);
 }

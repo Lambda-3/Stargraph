@@ -40,7 +40,7 @@ public final class LuceneFactory implements IndicesFactory {
     }
 
     @Override
-    public BaseSearcher createSearcher(KBId kbId, Stargraph core) {
-        return new LuceneSearcher(kbId, core);
+    public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
+        return new LuceneSearcher(kbId, stargraph);
     }
 }
