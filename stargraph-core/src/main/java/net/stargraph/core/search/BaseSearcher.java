@@ -43,7 +43,6 @@ public abstract class BaseSearcher implements Searcher {
     private boolean running;
 
     public BaseSearcher(KBId kbId, Stargraph core) {
-        logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
         this.core = Objects.requireNonNull(core);
         this.kbId = Objects.requireNonNull(kbId);
     }

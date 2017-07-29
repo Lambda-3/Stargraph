@@ -41,7 +41,6 @@ import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
-import net.stargraph.query.Language;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
@@ -57,7 +56,6 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * The Stargraph database core implementation.
@@ -145,26 +143,12 @@ public final class Stargraph {
         return mainConfig.getConfig(kbId.getModelPath());
     }
 
-    public KBLoader getKBLoader(String dbId) {
-        return kbLoaders.computeIfAbsent(dbId, (id) -> new KBLoader(this, id));
+    public Collection<KBCore> getKBs() {
+        return kbCoreMap.values();
     }
 
-    public List<KBId> getKBIdsOf(String dbId) {
-        return searchers.keySet().stream()
-                .filter(kbId -> kbId.getId().equals(Objects.requireNonNull(dbId))).collect(Collectors.toList());
-    }
-
-    public Set<KBId> getKBs() {
-        return indexers.keySet();
-    }
-
-    public boolean hasKB(String id) {
-        return getKBs().stream().anyMatch(kbId -> kbId.getId().equals(id));
-    }
-
-    public Language getLanguage(String dbId) {
-        Config kbCfg = getKBConfig(dbId);
-        return Language.valueOf(kbCfg.getString("language").toUpperCase());
+    public boolean hasKB(String kbName) {
+        return getKBs().stream().anyMatch(core -> core.getKBName().equals(kbName));
     }
 
     public String getDataRootDir() {

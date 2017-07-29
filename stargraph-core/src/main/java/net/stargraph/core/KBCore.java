@@ -2,7 +2,6 @@ package net.stargraph.core;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
@@ -22,9 +21,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * An instance of a Knowledge Base and its inner core components. What else could be?
@@ -67,12 +68,11 @@ public final class KBCore {
             throw new IllegalStateException("Already started.");
         }
 
-        ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbName));
-        for (Map.Entry<String, ConfigValue> modelEntry : typeObj.entrySet()) {
-            final String modelId = modelEntry.getKey();
-            final KBId kbId = KBId.of(kbName, modelId);
-            logger.info(marker, "Initializing '{}'", modelId);
+        final List<String> modelNames = getKBIds().stream().map(KBId::getModel).collect(Collectors.toList());
 
+        for (String modelId : modelNames) {
+            logger.info(marker, "Initializing '{}'", modelId);
+            final KBId kbId = KBId.of(kbName, modelId);
             IndicesFactory factory = stargraph.getIndicesFactory(kbId);
 
             Indexer indexer = factory.createIndexer(kbId, stargraph);
@@ -95,7 +95,7 @@ public final class KBCore {
         }
 
         this.ner = new NERSearcher(language, createEntitySearcher(), kbName);
-        this.kbLoader = new KBLoader(stargraph, kbName);
+        this.kbLoader = new KBLoader(this);
         this.running = true;
     }
 
@@ -108,8 +108,17 @@ public final class KBCore {
         this.running = false;
     }
 
+    public String getKBName() {
+        return kbName;
+    }
+
     public Language getLanguage() {
         return language;
+    }
+
+    public List<KBId> getKBIds() {
+        ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbName));
+        return typeObj.keySet().stream().map(modelName -> KBId.of(kbName, modelName)).collect(Collectors.toList());
     }
 
     public Model getGraphModel() {

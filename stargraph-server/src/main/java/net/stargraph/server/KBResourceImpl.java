@@ -26,7 +26,7 @@ package net.stargraph.server;
  * ==========================License-End===============================
  */
 
-import com.google.common.base.Preconditions;
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.data.Indexable;
@@ -47,54 +47,58 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 final class KBResourceImpl implements KBResource {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private Marker marker = MarkerFactory.getMarker("server");
 
-    private Stargraph core;
+    private Stargraph stargraph;
 
-    KBResourceImpl(Stargraph core) {
-        Preconditions.checkNotNull(core);
-        this.core = core;
+    KBResourceImpl(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
     }
 
     @Override
     public List<String> getKBs() {
-        return core.getKBs()
-                .stream()
+        List<String> kbIdList = new ArrayList<>();
+        stargraph.getKBs().forEach(core -> kbIdList.addAll(core.getKBIds().stream()
                 .map(kbId -> String.format("%s/%s", kbId.getId(), kbId.getModel()))
                 .sorted(String::compareTo)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())));
+
+        return kbIdList;
     }
 
     @Override
     public Response load(String id, String type, boolean reset, int limit) {
-        KBId kbId = KBId.of(id, type);
-        Indexer indexer = core.getIndexer(kbId);
+        KBCore core = stargraph.getKBCore(id);
+        Indexer indexer = core.getIndexer(type);
         indexer.load(reset, limit);
         return ResourceUtils.createAckResponse(true);
     }
 
     @Override
     public Response loadAll(String id, String resetKey) {
-        core.getKBLoader(id).loadAll(resetKey);
+        KBCore core = stargraph.getKBCore(id);
+        core.getLoader().loadAll(resetKey);
         return ResourceUtils.createAckResponse(true);
     }
 
     @Override
     public Response upload(String id, String type, FormDataMultiPart form) {
+        KBCore core = stargraph.getKBCore(id);
         final KBId kbId = KBId.of(id, type);
-        Indexer indexer = core.getIndexer(kbId);
+        Indexer indexer = core.getIndexer(type);
 
         // get file information
         FormDataBodyPart filePart = form.getField("file");
         InputStream fileInputStream = filePart.getValueAs(InputStream.class);
         ContentDisposition contentDisposition =  filePart.getContentDisposition();
         String fileName = contentDisposition.getFileName();
-        MediaType mediaType = filePart.getMediaType();
         String content;
         try {
             content = IOUtils.toString(fileInputStream, "UTF-8");
