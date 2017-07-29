@@ -105,7 +105,7 @@ public final class KBLoader {
         logger.warn(marker, "Loading ALL DATA of '{}'. This can take some time ;) ..", dbId);
         List<KBId> successful = new ArrayList<>();
         List<KBId> failing = new ArrayList<>();
-        core.getKBIdsOf(dbId).forEach(kbId -> {
+        core.getKBIdsOf(dbId).forEach(kbId -> { // why not parallel?
             try {
                 Indexer indexer = core.getIndexer(kbId);
                 indexer.load(true, -1);
