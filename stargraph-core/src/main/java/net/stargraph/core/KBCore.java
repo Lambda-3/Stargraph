@@ -127,6 +127,10 @@ public final class KBCore {
         this.running = false;
     }
 
+    public Config getConfig() {
+        return kbConfig;
+    }
+
     public String getKBName() {
         return kbName;
     }
