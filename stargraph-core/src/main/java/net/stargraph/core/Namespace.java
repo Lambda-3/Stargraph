@@ -157,8 +157,13 @@ public final class Namespace extends TreeMap<String, String> {
     }
 
     private void readMappings() {
-        String resource = kbConfig.getString("triple-store.namespace.mapping");
-        putAll(readNamespaceResource(resource));
+        final String key = "triple-store.namespace.mapping";
+        if (kbConfig.hasPath(key) && !kbConfig.getIsNull(key)) {
+            String resource = kbConfig.getString(key);
+            putAll(readNamespaceResource(resource));
+        } else {
+            logger.warn(marker, "No default namespace mappings configured.");
+        }
     }
 
     private static Map<String, String> readNamespaceResource(String resource) {

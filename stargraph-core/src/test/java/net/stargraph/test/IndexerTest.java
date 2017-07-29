@@ -45,18 +45,18 @@ public final class IndexerTest {
 
     private KBId kbId = KBId.of("mytest", "mytype");
     private List<TestData> expected;
-    private Stargraph core;
+    private Stargraph stargraph;
     private Indexer indexer;
 
     @BeforeClass
     public void before() {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
-        this.core = new Stargraph(config, false);
-        this.core.setKBInitSet(kbId.getId());
-        this.core.setDefaultIndicesFactory(new TestDataIndexer.Factory());
-        this.core.initialize();
-        this.indexer = core.getIndexer(kbId);
+        this.stargraph = new Stargraph(config, false);
+        this.stargraph.setKBInitSet(kbId.getId());
+        this.stargraph.setDefaultIndicesFactory(new TestDataIndexer.Factory());
+        this.stargraph.initialize();
+        this.indexer = stargraph.getIndexer(kbId);
         List<String> expected = Arrays.asList("first", "second", "third");
         this.expected = expected.stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
     }
