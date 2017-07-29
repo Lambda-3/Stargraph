@@ -46,8 +46,8 @@ public final class LuceneIndexer extends BaseIndexer {
     private IndexWriter writer;
     private IndexWriterConfig writerConfig;
 
-    public LuceneIndexer(KBId kbId, Stargraph core) {
-        super(kbId, core);
+    public LuceneIndexer(KBId kbId, Stargraph stargraph) {
+        super(kbId, stargraph);
     }
 
     @Override
