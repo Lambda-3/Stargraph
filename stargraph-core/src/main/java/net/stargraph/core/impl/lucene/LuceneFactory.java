@@ -35,8 +35,8 @@ import net.stargraph.model.KBId;
 public final class LuceneFactory implements IndicesFactory {
 
     @Override
-    public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
-        return new LuceneIndexer(kbId, core);
+    public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
+        return new LuceneIndexer(kbId, stargraph);
     }
 
     @Override

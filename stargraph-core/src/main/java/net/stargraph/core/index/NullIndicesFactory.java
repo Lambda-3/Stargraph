@@ -34,8 +34,8 @@ import net.stargraph.model.KBId;
 public final class NullIndicesFactory implements IndicesFactory {
 
     @Override
-    public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
-        return new NullIndexer(kbId, core);
+    public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
+        return new NullIndexer(kbId, stargraph);
     }
 
     @Override

@@ -45,8 +45,8 @@ public final class TestDataIndexer extends BaseIndexer {
     private List<TestData> indexed;
     private long lazyTime;
 
-    public TestDataIndexer(KBId kbId, Stargraph core, long lazyTime) {
-        super(kbId, core);
+    public TestDataIndexer(KBId kbId, Stargraph stargraph, long lazyTime) {
+        super(kbId, stargraph);
         this.indexed = new ArrayList<>();
         this.lazyTime = lazyTime;
     }
@@ -81,8 +81,8 @@ public final class TestDataIndexer extends BaseIndexer {
     static class Factory implements IndicesFactory {
 
         @Override
-        public BaseIndexer createIndexer(KBId kbId, Stargraph core) {
-            return new TestDataIndexer(kbId, core, 500);
+        public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
+            return new TestDataIndexer(kbId, stargraph, 500);
         }
 
         @Override
