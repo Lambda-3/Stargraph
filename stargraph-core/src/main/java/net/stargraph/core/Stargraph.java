@@ -66,7 +66,6 @@ public final class Stargraph {
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
     private String dataRootDir;
-    private Map<String, KBLoader> kbLoaders;
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
     private Map<KBId, Directory> luceneDirs;
@@ -97,7 +96,6 @@ public final class Stargraph {
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
         this.luceneDirs = new ConcurrentHashMap<>();
-        this.kbLoaders = new ConcurrentHashMap<>();
         // Only KBs in this set will be initialized. Unit tests appreciates!
         this.kbInitSet = new LinkedHashSet<>();
         this.kbCoreMap = new ConcurrentHashMap<>(8);
