@@ -66,8 +66,6 @@ public final class Stargraph {
     private Marker marker = MarkerFactory.getMarker("core");
     private Config mainConfig;
     private String dataRootDir;
-    private Map<KBId, Indexer> indexers;
-    private Map<KBId, Searcher> searchers;
     private Map<KBId, Directory> luceneDirs;
     private IndicesFactory indicesFactory;
     private GraphModelFactory graphModelFactory;
@@ -93,8 +91,6 @@ public final class Stargraph {
         logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
-        this.indexers = new ConcurrentHashMap<>();
-        this.searchers = new ConcurrentHashMap<>();
         this.luceneDirs = new ConcurrentHashMap<>();
         // Only KBs in this set will be initialized. Unit tests appreciates!
         this.kbInitSet = new LinkedHashSet<>();
@@ -165,15 +161,11 @@ public final class Stargraph {
     }
 
     public Indexer getIndexer(KBId kbId) {
-        if (indexers.keySet().contains(kbId))
-            return indexers.get(kbId);
-        throw new StarGraphException("Indexer not found nor initialized: " + kbId);
+        return getKBCore(kbId.getId()).getIndexer(kbId.getModel());
     }
 
     public Searcher getSearcher(KBId kbId) {
-        if (searchers.keySet().contains(kbId))
-            return searchers.get(kbId);
-        throw new StarGraphException("Searcher not found nor initialized: " + kbId);
+        return getKBCore(kbId.getId()).getSearcher(kbId.getModel());
     }
 
     public void setKBInitSet(String ... kbIds) {
@@ -259,9 +251,6 @@ public final class Stargraph {
             throw new IllegalStateException("Not initialized");
         }
 
-        indexers.values().forEach(Indexer::stop);
-        searchers.values().forEach(Searcher::stop);
-
         luceneDirs.values().forEach(dir -> {
             try {
                 dir.close();
@@ -327,11 +316,11 @@ public final class Stargraph {
                 kbCoreMap.put(kbName, new KBCore(kbName, this, true));
             }
             catch (Exception e) {
-                logger.error("Error starting '{}'", kbName, e);
+                logger.error(marker, "Error starting '{}'", kbName, e);
             }
         }
         else {
-            logger.warn("KB '{}' is disabled", kbName);
+            logger.warn(marker, "KB '{}' is disabled", kbName);
         }
     }
 

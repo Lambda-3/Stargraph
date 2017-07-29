@@ -105,6 +105,10 @@ public final class KBCore {
             throw new IllegalStateException("Already stopped.");
         }
         logger.info(marker, "Terminating '{}'", kbName);
+
+        indexers.values().forEach(Indexer::stop);
+        searchers.values().forEach(Searcher::stop);
+
         this.running = false;
     }
 
@@ -131,7 +135,7 @@ public final class KBCore {
         if (indexers.containsKey(modelId)) {
             return indexers.get(modelId);
         }
-        throw new StarGraphException("Indexer not found for: " + KBId.of(kbName, modelId));
+        throw new StarGraphException("Indexer not found nor initialized: " + KBId.of(kbName, modelId));
     }
 
     public Searcher getSearcher(String modelId) {
@@ -139,7 +143,7 @@ public final class KBCore {
         if (searchers.containsKey(modelId)) {
             return searchers.get(modelId);
         }
-        throw new StarGraphException("Searcher not found for: " + KBId.of(kbName, modelId));
+        throw new StarGraphException("Searcher not found nor initialized: " + KBId.of(kbName, modelId));
     }
 
     public KBLoader getLoader() {

@@ -44,9 +44,10 @@ import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
 
 public final class SimpleKBTest {
-    private Stargraph core;
-    private KBId factsId = KBId.of("simple", "facts");
-    private KBId entitiesId = KBId.of("simple", "entities");
+    private String kbName = "simple";
+    private Stargraph stargraph;
+    private KBId factsId = KBId.of(kbName, "facts");
+    private KBId entitiesId = KBId.of(kbName, "entities");
 
     @BeforeClass
     public void before() throws IOException {
@@ -55,23 +56,24 @@ public final class SimpleKBTest {
         copyResource("dataSets/simple/facts/triples.nt", ntPath);
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
-        core = new Stargraph(config, false);
-        core.setDefaultIndicesFactory(new NullIndicesFactory());
-        core.setGraphModelFactory(new NTriplesModelFactory(core));
-        core.setDataRootDir(root.toFile());
-        core.initialize();
+        stargraph = new Stargraph(config, false);
+        stargraph.setKBInitSet(kbName);
+        stargraph.setDefaultIndicesFactory(new NullIndicesFactory());
+        stargraph.setGraphModelFactory(new NTriplesModelFactory(stargraph));
+        stargraph.setDataRootDir(root.toFile());
+        stargraph.initialize();
     }
 
     @Test
     public void factLoadTest() throws Exception {
-        Indexer indexer = core.getIndexer(factsId);
+        Indexer indexer = stargraph.getIndexer(factsId);
         indexer.load(true, -1);
         indexer.awaitLoader();
     }
 
     @Test
     public void entitiesLoadTest() throws Exception {
-        Indexer indexer = core.getIndexer(entitiesId);
+        Indexer indexer = stargraph.getIndexer(entitiesId);
         indexer.load(true, -1);
         indexer.awaitLoader();
     }
