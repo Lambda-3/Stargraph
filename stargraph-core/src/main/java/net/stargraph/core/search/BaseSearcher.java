@@ -38,12 +38,12 @@ import java.util.Objects;
 public abstract class BaseSearcher implements Searcher {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("search");
-    protected Stargraph core;
+    protected Stargraph stargraph;
     protected KBId kbId;
     private boolean running;
 
-    public BaseSearcher(KBId kbId, Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public BaseSearcher(KBId kbId, Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
     }
 

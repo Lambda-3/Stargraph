@@ -124,7 +124,7 @@ public final class ElasticIndexer extends BaseIndexer {
 
     @Override
     protected void onStart() {
-        this.esClient = new ElasticClient(core, this.kbId);
+        this.esClient = new ElasticClient(stargraph, this.kbId);
         this.bulkProcessor = createBulkProcessor();
     }
 
@@ -186,9 +186,9 @@ public final class ElasticIndexer extends BaseIndexer {
     private BulkProcessor createBulkProcessor() {
         int processors = Runtime.getRuntime().availableProcessors();
         processors = processors > 1 ? processors - 1 : 1;
-        int concurrency = core.getModelConfig(kbId).getInt("elastic.bulk.concurrency");
+        int concurrency = stargraph.getModelConfig(kbId).getInt("elastic.bulk.concurrency");
         concurrency = concurrency > 0 ? concurrency : processors;
-        int bulkActions = core.getModelConfig(kbId).getInt("elastic.bulk.actions");
+        int bulkActions = stargraph.getModelConfig(kbId).getInt("elastic.bulk.actions");
 
         logger.info(marker, "Creating Bulk Processor. Concurrency = {}, actions = {}.", concurrency, bulkActions);
 

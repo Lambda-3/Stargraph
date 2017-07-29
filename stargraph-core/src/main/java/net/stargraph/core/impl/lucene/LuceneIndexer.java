@@ -45,8 +45,6 @@ public final class LuceneIndexer extends BaseIndexer {
 
     private IndexWriter writer;
     private IndexWriterConfig writerConfig;
-    private StandardAnalyzer analyzer;
-
 
     public LuceneIndexer(KBId kbId, Stargraph core) {
         super(kbId, core);
@@ -100,7 +98,7 @@ public final class LuceneIndexer extends BaseIndexer {
     @Override
     protected void onStart() {
         try {
-            writer = new IndexWriter(core.getLuceneDir(kbId), getWriterConfig());
+            writer = new IndexWriter(stargraph.getLuceneDir(kbId), getWriterConfig());
         } catch (IOException e) {
             throw new StarGraphException("Fail to initialize the directory.", e);
         }
@@ -117,8 +115,7 @@ public final class LuceneIndexer extends BaseIndexer {
 
     private IndexWriterConfig getWriterConfig() {
         if (writerConfig == null) {
-            analyzer = new StandardAnalyzer();
-            writerConfig = new IndexWriterConfig(analyzer);
+            writerConfig = new IndexWriterConfig(new StandardAnalyzer());
             writerConfig.setCommitOnClose(true);
         }
         return writerConfig;

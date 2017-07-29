@@ -60,14 +60,19 @@ public final class Namespace extends TreeMap<String, String> {
         this.kbConfig = Objects.requireNonNull(kbConfig);
         this.readMainNamespaces();
         this.readMappings();
-        // Be aware: Facts for a given Entity may appear 1k times (like a db entry with 1k columns!).
-        // Not following this assumption may result in a poorer performance, specially while bulk loading.
-        this.shortenedURICache = CacheBuilder.newBuilder().maximumSize(1000).build();
+        initCache();
     }
 
     private Namespace(String resource) {
         super((s1, s2) -> s1.length() == s2.length() ? s1.compareTo(s2) : s2.length() - s1.length()); // reverse order
         putAll(readNamespaceResource(resource));
+        initCache();
+    }
+
+    private void initCache() {
+        // Be aware: Facts for a given Entity may appear 1k times (like a db entry with 1k columns!).
+        // Not following this assumption may result in a poorer performance, specially while bulk loading.
+        this.shortenedURICache = CacheBuilder.newBuilder().maximumSize(1000).build();
     }
 
     public String shrinkURI(String uri) {

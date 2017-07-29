@@ -16,6 +16,7 @@ import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableIndraParams;
 import org.apache.jena.rdf.model.Model;
+import org.apache.lucene.store.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -45,6 +46,7 @@ public final class KBCore {
     private NER ner;
     private Map<String, Indexer> indexers;
     private Map<String, Searcher> searchers;
+    private Map<KBId, Directory> luceneDirs;
     private boolean running;
 
     public KBCore(String kbName, Stargraph stargraph, boolean start) {
@@ -55,6 +57,7 @@ public final class KBCore {
         this.marker = MarkerFactory.getMarker(kbName);
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
+        this.luceneDirs = new ConcurrentHashMap<>();
         this.language = Language.valueOf(kbConfig.getString("language").toUpperCase());
         this.namespace = Namespace.create(kbConfig);
 

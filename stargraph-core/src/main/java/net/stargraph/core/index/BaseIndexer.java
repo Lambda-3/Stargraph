@@ -55,7 +55,7 @@ public abstract class BaseIndexer implements Indexer {
     protected Marker marker = MarkerFactory.getMarker("index");
     protected KBId kbId;
     protected ObjectMapper mapper;
-    protected Stargraph core;
+    protected Stargraph stargraph;
 
     private ExecutorService loaderExecutor;
     private Future<?> loaderFutureTask;
@@ -65,12 +65,12 @@ public abstract class BaseIndexer implements Indexer {
     private boolean loading;
     private boolean running;
 
-    public BaseIndexer(KBId kbId, Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public BaseIndexer(KBId kbId, Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
         this.loading = false;
         this.mapper = ObjectSerializer.createMapper(kbId);
-        this.processorChain = core.createProcessorChain(kbId);
+        this.processorChain = stargraph.createProcessorChain(kbId);
     }
 
     @Override
@@ -180,9 +180,9 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        boolean logStats = core.getConfig().getBoolean("progress-watcher.log-stats");
-        this.loaderProgress = new ProgressWatcher(kbId, core.getDataRootDir(), logStats);
-        this.dataProvider = core.createDataProvider(kbId);
+        boolean logStats = stargraph.getConfig().getBoolean("progress-watcher.log-stats");
+        this.loaderProgress = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
+        this.dataProvider = stargraph.createDataProvider(kbId);
         beforeLoad(reset);
     }
 

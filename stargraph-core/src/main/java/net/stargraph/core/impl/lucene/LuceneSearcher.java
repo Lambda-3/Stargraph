@@ -78,7 +78,7 @@ public final class LuceneSearcher extends BaseSearcher {
     private synchronized IndexSearcher getLuceneSearcher() {
         try {
             if (indexReader == null) {
-                Directory directory = core.getLuceneDir(kbId);
+                Directory directory = stargraph.getLuceneDir(kbId);
                 if (!DirectoryReader.indexExists(directory)) {
                     return null;
                 }

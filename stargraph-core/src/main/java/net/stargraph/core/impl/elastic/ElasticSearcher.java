@@ -52,7 +52,7 @@ public final class ElasticSearcher extends BaseSearcher {
 
     @Override
     protected void onStart() {
-        this.esClient = new ElasticClient(core, this.kbId);
+        this.esClient = new ElasticClient(stargraph, this.kbId);
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class ElasticSearcher extends BaseSearcher {
 
         try {
             String modelName = holder.getSearchParams().getKbId().getModel();
-            Class<Serializable> modelClass = core.getModelClass(modelName);
+            Class<Serializable> modelClass = stargraph.getModelClass(modelName);
 
             scroller = new ElasticScroller(esClient, holder) {
                 @Override
