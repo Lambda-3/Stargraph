@@ -131,6 +131,10 @@ public final class KBCore {
         return kbConfig;
     }
 
+    public Config getConfig(String path) {
+        return kbConfig.getConfig(path);
+    }
+
     public String getKBName() {
         return kbName;
     }

@@ -109,10 +109,6 @@ public final class Stargraph {
         return mainConfig;
     }
 
-    public Config getKBConfig(String dbId) {
-        return mainConfig.getConfig(String.format("kb.%s", dbId));
-    }
-
     public Config getModelConfig(KBId kbId) {
         return mainConfig.getConfig(kbId.getModelPath());
     }
