@@ -168,6 +168,7 @@ public final class KBCore {
     }
 
     public EntitySearcher createEntitySearcher() {
+        //TODO: EntitySearcher creation depends on Searcher impl, need to decouple. See how NERAndLinkingIT is failing.
         return new ElasticEntitySearcher(this);
     }
 

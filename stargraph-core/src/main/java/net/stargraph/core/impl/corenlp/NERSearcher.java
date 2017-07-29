@@ -65,7 +65,7 @@ public final class NERSearcher implements NER {
         List<LinkedNamedEntity> linked = null;
         long start = System.nanoTime();
         try {
-            final List<List<CoreLabel>> sentences = ner.classify(text);
+            final List<List<CoreLabel>> sentences = ner.classify(text); //TODO: Improve decoupling, still tied to CoreNLP
             logger.trace(marker, "NER output: {}", sentences);
             linked = postProcessFoundNamedEntities(sentences);
             return linked;
