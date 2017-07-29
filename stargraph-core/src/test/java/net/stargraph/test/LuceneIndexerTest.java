@@ -41,7 +41,7 @@ import java.io.File;
 public final class LuceneIndexerTest {
 
     private KBId kbId = KBId.of("obama", "entities"); // Entities uses Lucene. See reference.conf.
-    private Stargraph core;
+    private Stargraph stargraph;
 
 
     @BeforeClass
@@ -49,19 +49,19 @@ public final class LuceneIndexerTest {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         File dataRootDir = TestUtils.prepareObamaTestEnv().toFile();
-        this.core = new Stargraph(config, false);
-        core.setKBInitSet(kbId.getId());
-        core.setDataRootDir(dataRootDir);
-        this.core.initialize();
+        this.stargraph = new Stargraph(config, false);
+        stargraph.setKBInitSet(kbId.getId());
+        stargraph.setDataRootDir(dataRootDir);
+        this.stargraph.initialize();
     }
 
 
     @Test
     public void bulkLoadTest() throws Exception {
-        Indexer indexer = core.getIndexer(kbId);
+        Indexer indexer = stargraph.getIndexer(kbId);
         indexer.load(true, -1);
         indexer.awaitLoader();
-        Searcher searcher = core.getSearcher(kbId);
+        Searcher searcher = stargraph.getSearcher(kbId);
         Assert.assertEquals(searcher.countDocuments(), 756);
     }
 }
