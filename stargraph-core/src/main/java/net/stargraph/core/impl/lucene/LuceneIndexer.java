@@ -36,18 +36,21 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.Objects;
 
 public final class LuceneIndexer extends BaseIndexer {
-
+    private Directory directory;
     private IndexWriter writer;
     private IndexWriterConfig writerConfig;
 
-    public LuceneIndexer(KBId kbId, Stargraph stargraph) {
+    public LuceneIndexer(KBId kbId, Stargraph stargraph, Directory directory) {
         super(kbId, stargraph);
+        this.directory = Objects.requireNonNull(directory);
     }
 
     @Override
@@ -98,7 +101,7 @@ public final class LuceneIndexer extends BaseIndexer {
     @Override
     protected void onStart() {
         try {
-            writer = new IndexWriter(stargraph.getLuceneDir(kbId), getWriterConfig());
+            writer = new IndexWriter(directory, getWriterConfig());
         } catch (IOException e) {
             throw new StarGraphException("Fail to initialize the directory.", e);
         }

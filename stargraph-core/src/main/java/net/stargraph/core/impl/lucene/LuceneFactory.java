@@ -26,21 +26,46 @@ package net.stargraph.core.impl.lucene;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
 import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.model.KBId;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.MMapDirectory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class LuceneFactory implements IndicesFactory {
+    private Map<KBId, Directory> luceneDirs = new ConcurrentHashMap<>();
 
     @Override
     public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
-        return new LuceneIndexer(kbId, stargraph);
+        return new LuceneIndexer(kbId, stargraph, getLuceneDir(stargraph, kbId));
     }
 
     @Override
     public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
-        return new LuceneSearcher(kbId, stargraph);
+        return new LuceneSearcher(kbId, stargraph, getLuceneDir(stargraph, kbId));
     }
+
+    private Directory getLuceneDir(Stargraph stargraph, KBId kbId) {
+        return luceneDirs.computeIfAbsent(kbId,
+                (id) -> {
+                    try {
+                        String rootPath = stargraph.getDataRootDir();
+                        Path idxPath = Paths.get(rootPath, id.getId(), id.getModel(), "idx");
+                        return new MMapDirectory(idxPath);
+                    } catch (IOException e) {
+                        throw new StarGraphException(e);
+                    }
+                });
+    }
+
+    //TODO: Put finalization code for each Lucene Directory. Suggestion: terminate method called by Stargraph class?
 }

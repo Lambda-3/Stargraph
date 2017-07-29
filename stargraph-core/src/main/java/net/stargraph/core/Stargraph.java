@@ -40,7 +40,6 @@ import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.KBId;
-import org.apache.lucene.store.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -125,10 +124,6 @@ public final class Stargraph {
         return dataRootDir;
     }
 
-    public Directory getLuceneDir(KBId kbId) {
-        return getKBCore(kbId.getId()).getLuceneDir(kbId.getModel());
-    }
-
     public Indexer getIndexer(KBId kbId) {
         return getKBCore(kbId.getId()).getIndexer(kbId.getModel());
     }
@@ -209,7 +204,7 @@ public final class Stargraph {
         this.initializeKBs();
 
         logger.info(marker, "Data root directory: '{}'", getDataRootDir());
-        logger.info(marker, "Index Store Factory: '{}'", indicesFactory.getClass().getName());
+        logger.info(marker, "Default Store Factory: '{}'", indicesFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;

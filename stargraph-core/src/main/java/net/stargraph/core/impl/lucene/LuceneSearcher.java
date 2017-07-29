@@ -38,14 +38,16 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public final class LuceneSearcher extends BaseSearcher {
-
+    private Directory directory;
     private IndexReader indexReader;
     private IndexSearcher indexSearcher;
 
-    public LuceneSearcher(KBId kbId, Stargraph core) {
+    public LuceneSearcher(KBId kbId, Stargraph core, Directory directory) {
         super(kbId, core);
+        this.directory = Objects.requireNonNull(directory);
     }
 
     @Override
@@ -78,7 +80,6 @@ public final class LuceneSearcher extends BaseSearcher {
     private synchronized IndexSearcher getLuceneSearcher() {
         try {
             if (indexReader == null) {
-                Directory directory = stargraph.getLuceneDir(kbId);
                 if (!DirectoryReader.indexExists(directory)) {
                     return null;
                 }
