@@ -41,10 +41,10 @@ public abstract class GraphModelFactory {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("core");
-    protected Stargraph core;
+    protected Stargraph stargraph;
 
-    public GraphModelFactory(Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public GraphModelFactory(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
         this.models = new ConcurrentHashMap<>();
     }
 

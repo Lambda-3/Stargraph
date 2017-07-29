@@ -62,6 +62,6 @@ public final class NTriplesModelFactory extends GraphModelFactory {
     }
 
     private Path getNTriplesPath(String dbId) {
-        return Paths.get(core.getDataRootDir(), dbId, "facts", "triples.nt");
+        return Paths.get(stargraph.getDataRootDir(), dbId, "facts", "triples.nt");
     }
 }
