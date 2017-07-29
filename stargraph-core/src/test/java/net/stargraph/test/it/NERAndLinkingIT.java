@@ -43,8 +43,8 @@ public final class NERAndLinkingIT {
     @BeforeClass
     public void beforeClass() throws Exception {
         ConfigFactory.invalidateCaches();
-        Stargraph core = new Stargraph();
-        ner = core.getNER("dbpedia-2016");
+        Stargraph stargraph = new Stargraph();
+        ner = stargraph.getKBCore("dbpedia-2016").getNER();
         Assert.assertNotNull(ner);
     }
 

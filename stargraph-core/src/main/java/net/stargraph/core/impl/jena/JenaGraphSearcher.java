@@ -27,6 +27,7 @@ package net.stargraph.core.impl.jena;
  */
 
 import net.stargraph.ModelUtils;
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
@@ -50,13 +51,13 @@ public final class JenaGraphSearcher implements GraphSearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("jena");
     private Namespace ns;
-    private Stargraph core;
+    private KBCore core;
     private String dbId;
 
-    public JenaGraphSearcher(String dbId, Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public JenaGraphSearcher(String dbId, Stargraph stargraph) {
         this.dbId = Objects.requireNonNull(dbId);
-        this.ns = core.getNamespace(dbId);
+        this.core = stargraph.getKBCore(dbId);
+        this.ns = stargraph.getKBCore(dbId).getNamespace();
     }
 
     @Override
@@ -77,7 +78,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
         Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
         EntitySearcher entitySearcher = core.createEntitySearcher();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getGraphModel(dbId))) {
+        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getGraphModel())) {
             ResultSet results = qexec.execSelect();
 
             while (results.hasNext()) {
@@ -98,8 +99,8 @@ public final class JenaGraphSearcher implements GraphSearcher {
                     }
                 }
             }
-        }
 
+        }
         long millis = System.currentTimeMillis() - startTime;
 
         if (!result.isEmpty()) {

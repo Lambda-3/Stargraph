@@ -26,6 +26,7 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import com.google.common.io.Files;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
@@ -39,8 +40,11 @@ public final class NamespaceTest {
 
     @BeforeClass
     public void beforeClass() {
-        Stargraph core = new Stargraph(ConfigFactory.load().getConfig("stargraph"), false);
-        this.ns = core.getNamespace("obama");
+        Stargraph stargraph = new Stargraph(ConfigFactory.load().getConfig("stargraph"), false);
+        stargraph.setDataRootDir(Files.createTempDir());
+        stargraph.setKBInitSet("obama");
+        stargraph.initialize();
+        this.ns = stargraph.getKBCore("obama").getNamespace();
     }
 
     @Test

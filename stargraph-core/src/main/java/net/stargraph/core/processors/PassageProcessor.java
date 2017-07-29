@@ -50,17 +50,17 @@ import java.util.stream.Collectors;
 public final class PassageProcessor extends BaseProcessor {
     public static String name = "passage-processor";
 
-    private Stargraph core;
+    private Stargraph stargraph;
 
-    public PassageProcessor(Stargraph core, Config config) {
+    public PassageProcessor(Stargraph stargraph, Config config) {
         super(config);
-        this.core = Objects.requireNonNull(core);
+        this.stargraph = Objects.requireNonNull(stargraph);
     }
 
     @Override
     public void doRun(Holder<Serializable> holder) throws ProcessorException {
         Serializable entry = holder.get();
-        NER ner = core.getNER(holder.getKBId().getId());
+        NER ner = stargraph.getKBCore(holder.getKBId().getId()).getNER();
 
         if (entry instanceof Document) {
             Document document = (Document)entry;

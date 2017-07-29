@@ -51,13 +51,15 @@ public final class Namespace extends TreeMap<String, String> {
     private static Logger logger = LoggerFactory.getLogger(Namespace.class);
     private static Marker marker = MarkerFactory.getMarker("core");
 
+    private Config kbConfig;
     private Set<String> mainNamespaces;
     private Cache<String, String> shortenedURICache;
 
-    private Namespace(String dbId, Stargraph core) {
+    private Namespace(Config kbConfig) {
         super((s1, s2) -> s1.length() == s2.length() ? s1.compareTo(s2) : s2.length() - s1.length()); // reverse order
-        this.readMainNamespaces(core, dbId);
-        this.readMappings(core, dbId);
+        this.kbConfig = Objects.requireNonNull(kbConfig);
+        this.readMainNamespaces();
+        this.readMappings();
         // Be aware: Facts for a given Entity may appear 1k times (like a db entry with 1k columns!).
         // Not following this assumption may result in a poorer performance, specially while bulk loading.
         this.shortenedURICache = CacheBuilder.newBuilder().maximumSize(1000).build();
@@ -127,8 +129,8 @@ public final class Namespace extends TreeMap<String, String> {
         }
     }
 
-    static Namespace create(Stargraph core, String dbId) {
-        return new Namespace(dbId, core);
+    static Namespace create(Config kbConfig) {
+        return new Namespace(kbConfig);
     }
 
     private static BufferedReader getReader(String resource) {
@@ -140,18 +142,16 @@ public final class Namespace extends TreeMap<String, String> {
         }
     }
 
-    private void readMainNamespaces(Stargraph core, String dbId) {
+    private void readMainNamespaces() {
         mainNamespaces = new LinkedHashSet<>();
-        Config kbConfig = core.getKBConfig(dbId);
         if (kbConfig.hasPath("namespaces")) {
-            Config nsConfig = core.getKBConfig(dbId).getConfig("namespaces");
+            Config nsConfig = kbConfig.getConfig("namespaces");
             mainNamespaces.addAll(nsConfig.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList()));
             logger.info(marker, "Main Namespaces: {}", mainNamespaces);
         }
     }
 
-    private void readMappings(Stargraph core, String dbId) {
-        Config kbConfig = core.getKBConfig(Objects.requireNonNull(dbId));
+    private void readMappings() {
         String resource = kbConfig.getString("triple-store.namespace.mapping");
         putAll(readNamespaceResource(resource));
     }

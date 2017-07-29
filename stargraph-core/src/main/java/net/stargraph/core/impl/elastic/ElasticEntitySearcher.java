@@ -26,11 +26,14 @@ package net.stargraph.core.impl.elastic;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
-import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
-import net.stargraph.model.*;
+import net.stargraph.model.BuiltInModel;
+import net.stargraph.model.Fact;
+import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.LabeledEntity;
 import net.stargraph.rank.*;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.Operator;
@@ -51,9 +54,9 @@ public final class ElasticEntitySearcher implements EntitySearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("elastic");
 
-    private Stargraph core;
+    private KBCore core;
 
-    public ElasticEntitySearcher(Stargraph core) {
+    public ElasticEntitySearcher(KBCore core) {
         this.core = Objects.requireNonNull(core);
     }
 
@@ -69,11 +72,11 @@ public final class ElasticEntitySearcher implements EntitySearcher {
     @Override
     public List<LabeledEntity> getEntities(String dbId, List<String> ids) {
         logger.info(marker, "Fetching ids={}", ids);
-        Namespace ns = core.getNamespace(dbId);
+        Namespace ns = core.getNamespace();
         List idList = ids.stream().map(ns::shrinkURI).collect(Collectors.toList());
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
         QueryBuilder queryBuilder = termsQuery("id", idList);
-        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
         return scores.stream().map(s -> (LabeledEntity)s.getEntry()).collect(Collectors.toList());
     }
@@ -84,7 +87,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         searchParams.model(BuiltInModel.FACT);
 
         if (rankParams instanceof ModifiableIndraParams) {
-            configureDistributionalParams(searchParams.getKbId(), (ModifiableIndraParams) rankParams);
+            core.configureDistributionalParams((ModifiableIndraParams) rankParams);
         }
 
         QueryBuilder queryBuilder = boolQuery()
@@ -94,7 +97,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
                         matchQuery("o.value", searchParams.getSearchTerm()),  ScoreMode.Max))
                 .minimumShouldMatch("1");
 
-        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
 
         List<Score> classes2Score = scores.stream()
@@ -111,7 +114,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         // .. and at this point we add the missing information specific for this kind of search
         searchParams.model(BuiltInModel.ENTITY);
         // Fetch the 'generic' searcher instance
-        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
         // Fetch initial candidates from the search engine
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
         // Re-Rank
@@ -124,7 +127,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         searchParams.model(BuiltInModel.PROPERTY);
 
         if (rankParams instanceof ModifiableIndraParams) {
-            configureDistributionalParams(searchParams.getKbId(), (ModifiableIndraParams) rankParams);
+            core.configureDistributionalParams((ModifiableIndraParams) rankParams);
         }
 
         QueryBuilder queryBuilder = boolQuery()
@@ -136,7 +139,7 @@ public final class ElasticEntitySearcher implements EntitySearcher {
                         matchQuery("synonyms.word", searchParams.getSearchTerm()), ScoreMode.Max))
                 .minimumNumberShouldMatch(1);
 
-        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
 
         return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
@@ -149,14 +152,14 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         searchParams.model(BuiltInModel.FACT);
 
         if (rankParams instanceof ModifiableIndraParams) {
-            configureDistributionalParams(searchParams.getKbId(), (ModifiableIndraParams) rankParams);
+            core.configureDistributionalParams((ModifiableIndraParams) rankParams);
         }
 
         QueryBuilder queryBuilder = boolQuery()
                 .should(nestedQuery("s", termQuery("s.id", pivot.getId()), ScoreMode.Max))
                 .should(nestedQuery("o", termQuery("o.id", pivot.getId()), ScoreMode.Max)).minimumNumberShouldMatch(1);
 
-        Searcher searcher = core.getSearcher(searchParams.getKbId());
+        Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
         Scores scores = searcher.search(new ElasticQueryHolder(queryBuilder, searchParams));
 
         // We have to remap the facts to properties, the real target of the ranker call.
@@ -170,10 +173,4 @@ public final class ElasticEntitySearcher implements EntitySearcher {
         return Rankers.apply(propScores, rankParams, searchParams.getSearchTerm());
     }
 
-    private void configureDistributionalParams(KBId kbId, ModifiableIndraParams params) {
-        String indraUrl = core.getConfig().getString("distributional-service.rest-url");
-        String indraCorpus = core.getConfig().getString("distributional-service.corpus");
-        String lang = core.getKBConfig(kbId).getString("language");
-        params.url(indraUrl).corpus(indraCorpus).language(lang);
-    }
 }

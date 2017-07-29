@@ -32,7 +32,7 @@ import net.stargraph.core.index.BaseIndexer;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.model.KBId;
 
-public final class LuceneIndicesFactory implements IndicesFactory {
+public final class LuceneFactory implements IndicesFactory {
 
     @Override
     public BaseIndexer createIndexer(KBId kbId, Stargraph core) {

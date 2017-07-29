@@ -27,6 +27,7 @@ package net.stargraph.core.query;
  */
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
@@ -55,21 +56,21 @@ public final class QueryEngine {
     private Marker marker = MarkerFactory.getMarker("query");
 
     private String dbId;
-    private Stargraph core;
+    private KBCore core;
     private Analyzers analyzers;
     private GraphSearcher graphSearcher;
     private InteractionModeSelector modeSelector;
     private Namespace namespace;
     private Language language;
 
-    public QueryEngine(String dbId, Stargraph core) {
+    public QueryEngine(String dbId, Stargraph stargraph) {
         this.dbId = Objects.requireNonNull(dbId);
-        this.core = Objects.requireNonNull(core);
-        this.analyzers = new Analyzers(core.getConfig());
-        this.graphSearcher = core.createGraphSearcher(dbId);
-        this.namespace = core.getNamespace(dbId);
-        this.language = core.getLanguage(dbId);
-        this.modeSelector = new InteractionModeSelector(core.getConfig(), language);
+        this.core = Objects.requireNonNull(stargraph.getKBCore(dbId));
+        this.analyzers = new Analyzers(stargraph.getConfig());
+        this.graphSearcher = core.createGraphSearcher();
+        this.namespace = core.getNamespace();
+        this.language = core.getLanguage();
+        this.modeSelector = new InteractionModeSelector(stargraph.getConfig(), language);
     }
 
     public QueryResponse query(String query) {

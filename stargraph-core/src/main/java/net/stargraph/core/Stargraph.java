@@ -26,19 +26,13 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.*;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
-import net.stargraph.core.graph.GraphSearcher;
-import net.stargraph.core.impl.corenlp.NERSearcher;
-import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
-import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
-import net.stargraph.core.ner.NER;
 import net.stargraph.core.processors.Processors;
-import net.stargraph.core.search.BaseSearcher;
-import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
@@ -48,7 +42,6 @@ import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
-import org.apache.jena.rdf.model.Model;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.slf4j.Logger;
@@ -79,10 +72,10 @@ public final class Stargraph {
     private Map<KBId, Indexer> indexers;
     private Map<KBId, Searcher> searchers;
     private Map<KBId, Directory> luceneDirs;
-    private Map<String, Namespace> namespaces;
-    private Map<String, NER> ners;
     private IndicesFactory indicesFactory;
-    private GraphModelFactory modelFactory;
+    private GraphModelFactory graphModelFactory;
+
+    private Map<String, KBCore> kbCoreMap;
     private Set<String> kbInitSet;
     private boolean initialized;
 
@@ -106,11 +99,10 @@ public final class Stargraph {
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
         this.luceneDirs = new ConcurrentHashMap<>();
-        this.namespaces = new ConcurrentHashMap<>();
         this.kbLoaders = new ConcurrentHashMap<>();
-        this.ners = new ConcurrentHashMap<>();
         // Only KBs in this set will be initialized. Unit tests appreciates!
         this.kbInitSet = new LinkedHashSet<>();
+        this.kbCoreMap = new ConcurrentHashMap<>(8);
 
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
@@ -134,20 +126,11 @@ public final class Stargraph {
         throw new StarGraphException("No Class registered for model: '" + modelName + "'");
     }
 
-    public Namespace getNamespace(String dbId) {
-        return namespaces.computeIfAbsent(dbId, (id) -> Namespace.create(this, dbId));
-    }
-
-    public EntitySearcher createEntitySearcher() {
-        return new ElasticEntitySearcher(this);
-    }
-
-    public GraphSearcher createGraphSearcher(String dbId) {
-        return new JenaGraphSearcher(dbId, this);
-    }
-
-    public Model getGraphModel(String dbId) {
-        return modelFactory.getModel(dbId);
+    public KBCore getKBCore(String dbId) {
+        if (kbCoreMap.containsKey(dbId)) {
+            return kbCoreMap.get(dbId);
+        }
+        throw new StarGraphException("KB not found: '" + dbId + "'");
     }
 
     public Config getConfig() {
@@ -156,10 +139,6 @@ public final class Stargraph {
 
     public Config getKBConfig(String dbId) {
         return mainConfig.getConfig(String.format("kb.%s", dbId));
-    }
-
-    public Config getKBConfig(KBId kbId) {
-        return mainConfig.getConfig(kbId.getKBPath());
     }
 
     public Config getModelConfig(KBId kbId) {
@@ -186,11 +165,6 @@ public final class Stargraph {
     public Language getLanguage(String dbId) {
         Config kbCfg = getKBConfig(dbId);
         return Language.valueOf(kbCfg.getString("language").toUpperCase());
-    }
-
-    public NER getNER(String dbId) {
-        //TODO: Should have a factory to ease test other implementation just changing configuration.
-        return ners.computeIfAbsent(dbId, (id) -> new NERSearcher(getLanguage(id), createEntitySearcher(), id));
     }
 
     public String getDataRootDir() {
@@ -237,7 +211,7 @@ public final class Stargraph {
     }
 
     public void setGraphModelFactory(GraphModelFactory modelFactory) {
-        this.modelFactory = Objects.requireNonNull(modelFactory);
+        this.graphModelFactory = Objects.requireNonNull(modelFactory);
     }
 
     public ProcessorChain createProcessorChain(KBId kbId) {
@@ -317,9 +291,38 @@ public final class Stargraph {
         initialized = false;
     }
 
+    GraphModelFactory getGraphModelFactory() {
+        return graphModelFactory;
+    }
+
+    IndicesFactory getIndicesFactory(KBId kbId) {
+        final String idxStorePath = "index-store.factory.class";
+        if (kbId != null) {
+            //from model configuration
+            Config modelCfg = getModelConfig(kbId);
+            if (modelCfg.hasPath(idxStorePath)) {
+                String className = modelCfg.getString(idxStorePath);
+                logger.info(marker, "Using '{}'.", className);
+                return createIndicesFactory(className);
+            }
+        }
+
+        if (indicesFactory == null) {
+            //from main configuration if not already set
+            indicesFactory = createIndicesFactory(getConfig().getString(idxStorePath));
+        }
+
+        return indicesFactory;
+    }
+
+    private boolean isEnabled(String kbName) {
+        Config kbConfig = mainConfig.getConfig(String.format("kb.%s", kbName));
+        return kbConfig.getBoolean("enabled");
+    }
+
     private void initializeKBs() {
         if (!kbInitSet.isEmpty()) {
-            logger.warn(marker, "KB init set: {}", kbInitSet);
+            logger.info(marker, "KB init set: {}", kbInitSet);
             kbInitSet.forEach(this::initializeKB);
         }
         else {
@@ -337,35 +340,16 @@ public final class Stargraph {
     }
 
     private void initializeKB(String kbName) {
-        Config kbCfg = this.mainConfig.getConfig(String.format("kb.%s", kbName));
-
-        if (!kbCfg.getBoolean("enabled")) {
-            logger.info(marker, "KB {} is disabled.", kbName);
-        } else {
-            ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbName));
-            for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
-                KBId kbId = KBId.of(kbName, typeEntry.getKey());
-                logger.info(marker, "Initializing {}", kbId);
-                IndicesFactory factory = getIndicesFactory(kbId);
-
-                Indexer indexer = factory.createIndexer(kbId, this);
-
-                if (indexer != null) {
-                    indexer.start();
-                    indexers.put(kbId, indexer);
-                } else {
-                    logger.warn(marker, "No indexer created for {}", kbId);
-                }
-
-                BaseSearcher searcher = factory.createSearcher(kbId, this);
-
-                if (searcher != null) {
-                    searcher.start();
-                    searchers.put(kbId, searcher);
-                } else {
-                    logger.warn(marker, "No searcher created for {}", kbId);
-                }
+        if (isEnabled(kbName)) {
+            try {
+                kbCoreMap.put(kbName, new KBCore(kbName, this, true));
             }
+            catch (Exception e) {
+                logger.error("Error starting '{}'", kbName, e);
+            }
+        }
+        else {
+            logger.warn("KB '{}' is disabled", kbName);
         }
     }
 
@@ -384,26 +368,6 @@ public final class Stargraph {
 
     private IndicesFactory createDefaultIndicesFactory() {
         return getIndicesFactory(null);
-    }
-
-    private IndicesFactory getIndicesFactory(KBId kbId) {
-        final String idxStorePath = "index-store.factory.class";
-        if (kbId != null) {
-            //from model configuration
-            Config modelCfg = getModelConfig(kbId);
-            if (modelCfg.hasPath(idxStorePath)) {
-                String className = modelCfg.getString(idxStorePath);
-                logger.info(marker, "Using '{}'.", className);
-                return createIndicesFactory(className);
-            }
-        }
-
-        if (indicesFactory == null) {
-            //from main configuration if not already set
-            indicesFactory = createIndicesFactory(getConfig().getString(idxStorePath));
-        }
-
-        return indicesFactory;
     }
 
     private IndicesFactory createIndicesFactory(String className) {

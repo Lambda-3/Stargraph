@@ -34,8 +34,8 @@ public enum Language {
 
     ;
 
-    String code;
-    String name;
+    public String code;
+    public String name;
 
     Language(String code, String name) {
         this.code = code;
