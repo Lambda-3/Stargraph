@@ -54,16 +54,16 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
     }
 
     @Override
-    public SearchQueryHolder entitiesWithIds(List idList, ModifiableSearchParams searchParams) {
+    public SearchQueryHolder entitiesWithIds(List<String> idList, ModifiableSearchParams searchParams) {
         QueryBuilder queryBuilder = termsQuery("id", idList);
 
         return new ElasticQueryHolder(queryBuilder, searchParams);
     }
 
     @Override
-    public SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams) {
+    public SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits) {
         QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm())
-                .fuzziness(0).fuzzyTranspositions(false).operator(Operator.AND);
+                .fuzziness(maxEdits).fuzzyTranspositions(false).operator(Operator.AND);
 
         return new ElasticQueryHolder(queryBuilder, searchParams);
     }

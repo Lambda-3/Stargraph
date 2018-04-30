@@ -33,8 +33,8 @@ import java.util.List;
 
 public interface SearchQueryGenerator {
     SearchQueryHolder findClassFacts(ModifiableSearchParams searchParams);
-    SearchQueryHolder entitiesWithIds(List idList, ModifiableSearchParams searchParams);
-    SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams);
+    SearchQueryHolder entitiesWithIds(List<String> idList, ModifiableSearchParams searchParams);
+    SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits);
     SearchQueryHolder findPropertyInstances(ModifiableSearchParams searchParams);
     SearchQueryHolder findPivotFacts(InstanceEntity pivot, ModifiableSearchParams searchParams);
 

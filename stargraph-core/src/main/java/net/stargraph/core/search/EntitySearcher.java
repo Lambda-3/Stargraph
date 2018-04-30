@@ -44,6 +44,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EntitySearcher {
+    private static final int FUZZINESS = 1;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("elastic");
 
@@ -65,7 +67,7 @@ public class EntitySearcher {
     public List<LabeledEntity> getEntities(String dbId, List<String> ids) {
         logger.info(marker, "Fetching ids={}", ids);
         Namespace ns = core.getNamespace();
-        List idList = ids.stream().map(ns::shrinkURI).collect(Collectors.toList());
+        List<String> idList = ids.stream().map(ns::shrinkURI).collect(Collectors.toList());
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
 
         SearchQueryGenerator searchQueryGenerator = core.getSearchQueryGenerator(searchParams.getKbId().getModel());
@@ -104,7 +106,7 @@ public class EntitySearcher {
         searchParams.model(BuiltInModel.ENTITY);
 
         SearchQueryGenerator searchQueryGenerator = core.getSearchQueryGenerator(searchParams.getKbId().getModel());
-        SearchQueryHolder holder = searchQueryGenerator.findEntityInstances(searchParams);
+        SearchQueryHolder holder = searchQueryGenerator.findEntityInstances(searchParams, FUZZINESS);
         Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
 
         // Fetch initial candidates from the search engine
