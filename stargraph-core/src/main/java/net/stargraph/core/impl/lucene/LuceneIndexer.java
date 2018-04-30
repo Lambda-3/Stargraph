@@ -33,6 +33,8 @@ import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.KBId;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -130,8 +132,9 @@ public final class LuceneIndexer extends BaseIndexer {
         //TODO support indexing of other types?
         if (data instanceof InstanceEntity) {
             InstanceEntity entity = (InstanceEntity)data;
-            doc.add(new TextField("id", new StringReader(entity.getId())));
-            doc.add(new TextField("value", new StringReader(entity.getValue())));
+            doc.add(new StringField("id", entity.getId(), Field.Store.YES));
+            doc.add(new TextField("value", entity.getValue(), Field.Store.YES));
+
             return doc;
         }
 
