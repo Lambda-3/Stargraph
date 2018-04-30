@@ -1,4 +1,4 @@
-package net.stargraph.core.impl.elastic;
+package net.stargraph.core.impl.lucene;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.impl.elastic;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,27 +26,27 @@ package net.stargraph.core.impl.elastic;
  * ==========================License-End===============================
  */
 
-import net.stargraph.core.IndicesFactory;
-import net.stargraph.core.Stargraph;
-import net.stargraph.core.index.BaseIndexer;
-import net.stargraph.core.search.BaseSearcher;
-import net.stargraph.core.search.SearchQueryGenerator;
-import net.stargraph.model.KBId;
+import net.stargraph.core.search.SearchQueryHolder;
+import net.stargraph.rank.ModifiableSearchParams;
+import org.apache.lucene.search.Query;
 
-public final class ElasticFactory implements IndicesFactory {
+import java.util.Objects;
 
-    @Override
-    public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
-        return new ElasticIndexer(kbId, stargraph);
+public class LuceneQueryHolder implements SearchQueryHolder<Query> {
+    private ModifiableSearchParams searchParams;
+    private Query query;
+
+    public LuceneQueryHolder(Query query, ModifiableSearchParams searchParams) {
+        this.query = Objects.requireNonNull(query);
+        this.searchParams = Objects.requireNonNull(searchParams);
     }
 
     @Override
-    public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
-        return new ElasticSearcher(kbId, stargraph);
+    public Query getQuery() {
+        return query;
     }
 
-    @Override
-    public SearchQueryGenerator createSearchQueryGenerator(KBId kbId, Stargraph stargraph) {
-        return new ElasticSearchQueryGenerator();
+    public ModifiableSearchParams getSearchParams() {
+        return searchParams;
     }
 }

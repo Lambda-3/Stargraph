@@ -5,12 +5,12 @@ import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
-import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.ner.NER;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.EntitySearcher;
+import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
@@ -45,6 +45,7 @@ public final class KBCore {
     private NER ner;
     private Map<String, Indexer> indexers;
     private Map<String, Searcher> searchers;
+    private Map<String, SearchQueryGenerator> searchQueryGenerators;
     private boolean running;
 
     public KBCore(String kbName, Stargraph stargraph, boolean start) {
@@ -55,6 +56,7 @@ public final class KBCore {
         this.marker = MarkerFactory.getMarker(kbName);
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
+        this.searchQueryGenerators = new ConcurrentHashMap<>();
         this.language = Language.valueOf(kbConfig.getString("language").toUpperCase());
         this.namespace = Namespace.create(kbConfig);
 
@@ -91,6 +93,13 @@ public final class KBCore {
                 searchers.put(modelId, searcher);
             } else {
                 logger.warn(marker, "No searcher created for {}", kbId);
+            }
+
+            SearchQueryGenerator searchQueryGenerator = factory.createSearchQueryGenerator(kbId, stargraph);
+            if (searchQueryGenerator != null) {
+                searchQueryGenerators.put(modelId, searchQueryGenerator);
+            } else {
+                logger.warn(marker, "No search query generator created for {}", kbId);
             }
         }
 
@@ -154,6 +163,13 @@ public final class KBCore {
         throw new StarGraphException("Searcher not found nor initialized: " + KBId.of(kbName, modelId));
     }
 
+    public SearchQueryGenerator getSearchQueryGenerator(String modelId) {
+        if (searchQueryGenerators.containsKey(modelId)) {
+            return searchQueryGenerators.get(modelId);
+        }
+        throw new StarGraphException("SearchQueryGenerator not found nor initialized: " + KBId.of(kbName, modelId));
+    }
+
     public KBLoader getLoader() {
         checkRunning();
         return kbLoader;
@@ -168,8 +184,7 @@ public final class KBCore {
     }
 
     public EntitySearcher createEntitySearcher() {
-        //TODO: EntitySearcher creation depends on Searcher impl, need to decouple. See how NERAndLinkingIT is failing.
-        return new ElasticEntitySearcher(this);
+        return new EntitySearcher(this);
     }
 
 

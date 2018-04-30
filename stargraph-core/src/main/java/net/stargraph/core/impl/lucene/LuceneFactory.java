@@ -31,6 +31,7 @@ import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
 import net.stargraph.core.search.BaseSearcher;
+import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.model.KBId;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
@@ -53,6 +54,12 @@ public final class LuceneFactory implements IndicesFactory {
     public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
         return new LuceneSearcher(kbId, stargraph, getLuceneDir(stargraph, kbId));
     }
+
+    @Override
+    public SearchQueryGenerator createSearchQueryGenerator(KBId kbId, Stargraph stargraph) {
+        return new LuceneSearchQueryGenerator();
+    }
+
 
     private Directory getLuceneDir(Stargraph stargraph, KBId kbId) {
         return luceneDirs.computeIfAbsent(kbId,

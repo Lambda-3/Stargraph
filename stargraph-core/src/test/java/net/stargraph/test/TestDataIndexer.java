@@ -30,6 +30,7 @@ import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
 import net.stargraph.core.search.BaseSearcher;
+import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.model.KBId;
 
 import java.io.Serializable;
@@ -87,6 +88,11 @@ public final class TestDataIndexer extends BaseIndexer {
 
         @Override
         public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
+            return null;
+        }
+
+        @Override
+        public SearchQueryGenerator createSearchQueryGenerator(KBId kbId, Stargraph stargraph) {
             return null;
         }
     }

@@ -52,7 +52,8 @@ public final class LuceneSearcher extends BaseSearcher {
 
     @Override
     public Scores search(SearchQueryHolder holder) {
-        return null;
+        //TODO implement
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
