@@ -4,6 +4,7 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.search.SearchQueryHolder;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public abstract class LuceneScroller implements Iterable<Score> {
         return scores;
     }
 
-    protected abstract Score build(ScoreDoc hit);
+    protected abstract Score build(Document hitDoc, ScoreDoc hit);
 
     private class InnerIterator implements Iterator<Score> {
         Iterator<ScoreDoc> innerIt;
@@ -83,7 +84,9 @@ public abstract class LuceneScroller implements Iterable<Score> {
         @Override
         public Score next() {
             try {
-                Score score = build(innerIt.next());
+                ScoreDoc scoreDoc = innerIt.next();
+                Document doc = indexSearcher.doc(scoreDoc.doc);
+                Score score = build(doc, scoreDoc);
                 if (score == null) {
                     throw new IllegalStateException("Can't return a NULL entry");
                 }

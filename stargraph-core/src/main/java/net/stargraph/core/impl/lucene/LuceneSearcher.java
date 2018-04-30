@@ -64,13 +64,11 @@ public final class LuceneSearcher extends BaseSearcher {
             try {
                 scroller = new LuceneScroller(idxSearcher, holder) {
                     @Override
-                    protected Score build(ScoreDoc hit) {
+                    protected Score build(Document hitDoc, ScoreDoc hit) {
                         try {
-                            Document doc = idxSearcher.doc(hit.doc);
-
                             //TODO support indexing of other types?
-                            String id = doc.get("id");
-                            String value = doc.get("value");
+                            String id = hitDoc.get("id");
+                            String value = hitDoc.get("value");
                             InstanceEntity entity = new InstanceEntity(id, value);
 
                             return new Score(entity, hit.score);
