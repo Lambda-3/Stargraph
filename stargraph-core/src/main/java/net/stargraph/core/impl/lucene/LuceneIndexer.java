@@ -127,6 +127,7 @@ public final class LuceneIndexer extends BaseIndexer {
     private static Document createDocument(Serializable data) {
         final Document doc = new Document();
 
+        //TODO support indexing of other types?
         if (data instanceof InstanceEntity) {
             InstanceEntity entity = (InstanceEntity)data;
             doc.add(new TextField("id", new StringReader(entity.getId())));
