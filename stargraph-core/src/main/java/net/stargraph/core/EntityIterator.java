@@ -49,15 +49,15 @@ public final class EntityIterator implements Iterator<Indexable> {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private KBId kbId;
-    private Stargraph core;
+    private KBCore core;
     private Namespace namespace;
     private Iterator<Node> iterator;
     private Node currentNode;
 
-    public EntityIterator(Stargraph core, KBId kbId) {
+    public EntityIterator(Stargraph stargraph, KBId kbId) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.core = core;
-        this.namespace = Namespace.create(core, kbId.getId());
+        this.core = stargraph.getKBCore(kbId.getId());
+        this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
         this.iterator = createIterator();
     }
 
@@ -105,7 +105,7 @@ public final class EntityIterator implements Iterator<Indexable> {
     }
 
     private Iterator<Node> createIterator() {
-        Model model = core.getGraphModel(kbId.getId());
+        Model model = core.getGraphModel();
         Graph g = model.getGraph();
         ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
         ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);

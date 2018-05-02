@@ -55,8 +55,13 @@ public final class OpenNLPAnnotator extends Annotator {
     public OpenNLPAnnotator(Config config) {
         this.tokenizerModels = new ConcurrentHashMap<>();
         this.posModels = new ConcurrentHashMap<>();
-        this.modelsDir = new File(Objects.requireNonNull(config).getString("opennlp.models-dir"));
-        logger.debug(marker, "Models dir: {}", modelsDir);
+        this.modelsDir = new File(Objects.requireNonNull(config).getString("annotator.factory.models-dir"));
+        if (!modelsDir.canRead()) {
+            logger.error(marker, "Can't read models dir: {}", modelsDir);
+        }
+        else {
+            logger.debug(marker, "Models dir: {}", modelsDir);
+        }
     }
 
     @Override

@@ -26,7 +26,6 @@ package net.stargraph.core.index;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,47 +41,52 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
-final class ProgressWatcher {
+
+public final class ProgressWatcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("watcher");
-    private long read;
-    private long indexed;
+    private AtomicLong read = new AtomicLong(0);
+    private AtomicLong indexed = new AtomicLong(0);
     private long startTime;
     private long stopTime;
     private long elapsedTime;
     private ScheduledExecutorService executor;
     private KBId kbId;
-    private Config config;
+    private boolean logStats;
+    private String dataRootDir;
 
-    public ProgressWatcher(KBId kbId, Config config) {
+
+    public ProgressWatcher(KBId kbId, String dataRootDir, boolean logStats) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.config = Objects.requireNonNull(config);
+        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+        this.logStats = logStats;
     }
 
-    long incRead() {
-        return ++read;
+    public long incRead() {
+        return read.incrementAndGet();
     }
 
-    long incIndexed() {
-        return ++indexed;
+    public long incIndexed() {
+        return indexed.incrementAndGet();
     }
 
-    long getTotalIndexed() {
-        return indexed;
+    public long getTotalIndexed() {
+        return indexed.get();
     }
 
-    long getTotalRead() {
-        return read;
+    public long getTotalRead() {
+        return read.get();
     }
 
-    long getElapsedTime() {
+    public long getElapsedTime() {
         return elapsedTime;
     }
 
-    synchronized void stop() throws InterruptedException {
+    public synchronized void stop() throws InterruptedException {
         if (executor != null && !executor.isShutdown()) {
-            stopTime = System.currentTimeMillis();
+            stopTime = System.nanoTime() / 1000_000;
             elapsedTime = stopTime - startTime;
             executor.shutdownNow();
             logStats();
@@ -90,7 +94,7 @@ final class ProgressWatcher {
         }
     }
 
-    synchronized void start(boolean reset) {
+    public synchronized void start(boolean reset) {
         if (executor == null || executor.isTerminated()) {
             executor = Executors.newSingleThreadScheduledExecutor();
         } else {
@@ -98,15 +102,15 @@ final class ProgressWatcher {
         }
 
         if (reset) {
-            read = 0;
-            indexed = 0;
-            startTime = System.currentTimeMillis();
+            read.set(0);
+            indexed.set(0);
+            startTime = System.nanoTime() / 1000_000;
             stopTime = 0;
             elapsedTime = 0;
         }
 
         executor.scheduleAtFixedRate(() -> {
-            elapsedTime = System.currentTimeMillis() - startTime;
+            elapsedTime = (System.nanoTime() / 1000_000) - startTime;
             if (elapsedTime > 0) {
                 double entriesPerSec = 1000 * getTotalRead() / elapsedTime;
                 logger.info(marker, "{} entries/s. {}", entriesPerSec, getReportMsg());
@@ -117,7 +121,7 @@ final class ProgressWatcher {
         logger.info(marker, "Progress Watcher started.");
     }
 
-    private String getReportMsg() {
+    public String getReportMsg() {
         long elapsedTime = getElapsedTime();
         return String.format("Read %d entries in %d min, %d sec. Indexed %d entries.",
                 getTotalRead(),
@@ -127,19 +131,22 @@ final class ProgressWatcher {
     }
 
     private void logStats() {
-        String dataRootDir = config.getString("data.root-dir");
-        File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getType())).toFile();
-        logger.info(marker, "Logging stats to {}", csvFile);
+        if (logStats) {
+            File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getModel())).toFile();
+            logger.info(marker, "Logging stats to {}", csvFile);
 
-        boolean exists = csvFile.exists();
-        try (FileWriter writer = new FileWriter(csvFile, exists)) {
-            if (!exists) {
-                writer.write("read,indexed,elapsed(ms)\n"); //header
+            boolean exists = csvFile.exists();
+            try (FileWriter writer = new FileWriter(csvFile, exists)) {
+                if (!exists) {
+                    writer.write("read,indexed,elapsed(ms)\n"); //header
+                }
+                writer.append(String.format("%d,%d,%d\n", getTotalRead(), getTotalIndexed(), getElapsedTime()));
+            } catch (IOException e) {
+                logger.error(marker, "Fail to log stats", e);
             }
-            writer.append(String.format("%d,%d,%d\n", getTotalRead(), getTotalIndexed(), getElapsedTime()));
-        } catch (IOException e) {
-            logger.error(marker, "Fail to log stats", e);
         }
-
+        else {
+            logger.debug(marker, "Stats will not be persisted, stargraph.progress-watcher.log-stats=no.");
+        }
     }
 }

@@ -15,6 +15,8 @@
     <properties>
         <es.version>5.1.1</es.version>
         <corenlp.version>3.7.0</corenlp.version>
+        <graphene.version>2.0.0-SNAPSHOT</graphene.version>
+        <lucene.version>6.3.0</lucene.version>
     </properties>
 
     <build>
@@ -43,10 +45,16 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx4g</argLine>
+                </configuration>
             </plugin>
 
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx8g</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -59,8 +67,38 @@
         </dependency>
 
         <dependency>
+            <groupId>org.lambda3.graphene</groupId>
+            <artifactId>graphene-core</artifactId>
+            <version>${graphene.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${lucene.version}</version>
         </dependency>
 
         <dependency>
@@ -95,10 +133,6 @@
                     <groupId>org.apache.lucene</groupId>
                     <artifactId>lucene-core</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-queryparser</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
 
@@ -108,10 +142,6 @@
             <version>${corenlp.version}</version>
             <classifier>models</classifier>
             <exclusions>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-queryparser</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.lucene</groupId>
                     <artifactId>lucene-analyzers-common</artifactId>
@@ -211,6 +241,10 @@
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

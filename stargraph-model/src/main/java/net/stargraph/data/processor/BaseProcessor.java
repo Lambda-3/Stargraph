@@ -28,14 +28,21 @@ package net.stargraph.data.processor;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public abstract class BaseProcessor implements Processor<Serializable> {
     private Config config;
+    protected Logger logger = LoggerFactory.getLogger(getName());
+    protected Marker marker = MarkerFactory.getMarker("processor");
 
     public BaseProcessor(Config config) {
-        this.config = config;
+        this.config = Objects.requireNonNull(config);
         if (!config.hasPath(getName())) {
             throw new StarGraphException("Configuration name mismatch.");
         }
@@ -60,6 +67,8 @@ public abstract class BaseProcessor implements Processor<Serializable> {
             if (!holder.isSinkable()) {
                 doRun(holder);
             }
+        } catch (FatalProcessorException e) {
+            throw e; // Flags that subsequent calls to this processors is useless. Probably an unrecoverable error.
         } catch (Exception e) {
             throw new ProcessorException("Processor '" + getName() + "' has failed.", e);
         }

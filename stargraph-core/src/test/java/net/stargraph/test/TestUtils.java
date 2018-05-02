@@ -39,7 +39,7 @@ public final class TestUtils {
 
     public static Path createPath(Path root, KBId kbId) throws IOException {
         Files.delete(root);
-        return Files.createDirectories(root.resolve(kbId.getId()).resolve(kbId.getType()));
+        return Files.createDirectories(root.resolve(kbId.getId()).resolve(kbId.getModel()));
     }
 
     public static File copyResource(String resourceLocation, Path target) {
@@ -53,5 +53,20 @@ public final class TestUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Path prepareObamaTestEnv() {
+        Path root;
+        try {
+            root = Files.createTempFile("stargraph-", "-dataDir");
+            Path factsPath = createPath(root, KBId.of("obama", "facts"));
+            Path hdtPath = factsPath.resolve("triples.hdt");
+            Path ntFilePath = factsPath.resolve("triples.nt");
+            copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
+            copyResource("dataSets/obama/facts/triples.nt", ntFilePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return root;
     }
 }

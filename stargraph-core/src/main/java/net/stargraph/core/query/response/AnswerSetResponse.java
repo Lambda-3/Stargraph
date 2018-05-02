@@ -39,18 +39,27 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class AnswerSetResponse extends QueryResponse {
-    private List<LabeledEntity> shortAnswer;
+    private List<LabeledEntity> entityAnswer;
+    private List<String> textAnswer;
     private String sparqlQuery;
     private QueryType queryType;
     private Map<DataModelBinding, List<Score>> mappings;
+
+    public AnswerSetResponse(InteractionMode mode, String userQuery) {
+        super(mode, userQuery);
+    }
 
     public AnswerSetResponse(InteractionMode mode, String userQuery, SPARQLQueryBuilder sparqlQueryBuilder) {
         super(mode, userQuery);
         this.queryType = Objects.requireNonNull(sparqlQueryBuilder).getQueryType();
     }
 
-    public void setShortAnswer(List<LabeledEntity> shortAnswer) {
-        this.shortAnswer = Objects.requireNonNull(shortAnswer);
+    public void setEntityAnswer(List<LabeledEntity> entityAnswer) {
+        this.entityAnswer = Objects.requireNonNull(entityAnswer);
+    }
+
+    public void setTextAnswer(List<String> textAnswer) {
+        this.textAnswer = textAnswer;
     }
 
     public void setMappings(Map<DataModelBinding, List<Score>> mappings) {
@@ -61,8 +70,12 @@ public final class AnswerSetResponse extends QueryResponse {
         this.sparqlQuery = Objects.requireNonNull(sparqlQuery);
     }
 
-    public List<LabeledEntity> getShortAnswer() {
-        return shortAnswer;
+    public List<LabeledEntity> getEntityAnswer() {
+        return entityAnswer;
+    }
+
+    public List<String> getTextAnswer() {
+        return textAnswer;
     }
 
     public QueryType getQueryType() {
@@ -80,7 +93,7 @@ public final class AnswerSetResponse extends QueryResponse {
     @Override
     public String toString() {
         return "AnswerSet{" +
-                "shortAnswer=" + shortAnswer +
+                "entityAnswer=" + entityAnswer +
                 ", userQuery='" + getUserQuery() + '\'' +
                 '}';
     }

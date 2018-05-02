@@ -41,6 +41,10 @@ public final class Word {
         return posTag;
     }
 
+    public String getPosTagString() {
+        return posTag.getTag();
+    }
+
     public String getText() {
         return text;
     }

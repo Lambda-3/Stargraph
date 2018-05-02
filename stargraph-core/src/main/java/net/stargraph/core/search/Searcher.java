@@ -33,6 +33,10 @@ import net.stargraph.rank.Scores;
  */
 public interface Searcher {
 
+    void start();
+
+    void stop();
+
     Scores search(SearchQueryHolder holder);
 
     long countDocuments();

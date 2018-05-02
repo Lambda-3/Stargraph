@@ -31,6 +31,7 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.SearchQueryHolder;
 import net.stargraph.core.serializer.ObjectSerializer;
+import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
@@ -52,7 +53,7 @@ public final class ElasticSearcher extends BaseSearcher {
 
     @Override
     protected void onStart() {
-        this.esClient = new ElasticClient(core, this.kbId);
+        this.esClient = new ElasticClient(stargraph, this.kbId);
     }
 
     @Override
@@ -74,22 +75,32 @@ public final class ElasticSearcher extends BaseSearcher {
 
     @Override
     public Scores search(SearchQueryHolder holder) {
-        String modelName = holder.getSearchParams().getKbId().getType();
-        Class<Serializable> modelClass = core.getModelClass(modelName);
+        ElasticScroller scroller = null;
+        long start = System.nanoTime();
 
-        ElasticScroller scroller = new ElasticScroller(esClient, holder) {
-            @Override
-            protected Score build(SearchHit hit) {
-                try {
-                    Serializable entity = mapper.readValue(hit.source(), modelClass);
-                    return new Score(entity, hit.getScore());
-                } catch (Exception e) {
-                    logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
+        try {
+            String modelName = holder.getSearchParams().getKbId().getModel();
+            Class<Serializable> modelClass = BuiltInModel.getModelClass(modelName);
+
+            scroller = new ElasticScroller(esClient, holder) {
+                @Override
+                protected Score build(SearchHit hit) {
+                    try {
+                        Serializable entity = mapper.readValue(hit.source(), modelClass);
+                        return new Score(entity, hit.getScore());
+                    } catch (Exception e) {
+                        logger.error(marker, "Fail to deserialize {}", hit.sourceAsString(), e);
+                    }
+                    return null;
                 }
-                return null;
-            }
-        };
+            };
 
-        return scroller.getScores();
+            return scroller.getScores();
+        }
+        finally {
+            double elapsedInMillis = (System.nanoTime() - start) / 1000_000;
+            logger.debug(marker, "Took {}ms, {}, fetched {} entries.", elapsedInMillis,
+                    holder.getQuery(), scroller != null ? scroller.getScores().size() : 0);
+        }
     }
 }

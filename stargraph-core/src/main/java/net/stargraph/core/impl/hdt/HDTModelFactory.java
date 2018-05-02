@@ -77,18 +77,17 @@ public final class HDTModelFactory extends GraphModelFactory {
     }
 
     private boolean useIndex(String id) {
-        Config tripleStoreCfg = core.getKBConfig(id).getConfig("triple-store");
+        Config tripleStoreCfg = stargraph.getKBCore(id).getConfig("triple-store");
         return tripleStoreCfg.hasPath("hdt.use-index") && tripleStoreCfg.getBoolean("hdt.use-index");
     }
 
     private Path getHDTPath(String dbId) throws IOException {
 
-        Config mainConfig = core.getConfig();
-        String dataDir = mainConfig.getString("data.root-dir");
+        String dataDir = stargraph.getDataRootDir();
         Path defaultPath = Paths.get(dataDir, dbId, "facts", "triples.hdt");
 
         final String cfgPath = "triple-store.hdt.file";
-        Config cfg = core.getKBConfig(dbId);
+        Config cfg = stargraph.getKBCore(dbId).getConfig();
 
         if (cfg.hasPath(cfgPath)) {
             String hdtFileName = cfg.getString(cfgPath);

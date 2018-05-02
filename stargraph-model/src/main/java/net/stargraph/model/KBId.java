@@ -26,28 +26,30 @@ package net.stargraph.model;
  * ==========================License-End===============================
  */
 
+import java.io.Serializable;
+
 /**
- * Identity for a tuple (kb, type)
+ * Identity for a tuple (kb, model)
  */
-public final class KBId {
+public final class KBId implements Serializable {
 
     private String id;
-    private String type;
+    private String model;
 
-    private KBId(String id, String type) {
+    private KBId(String id, String model) {
         this.id = id;
-        this.type = type;
+        this.model = model;
     }
 
-    public static KBId of(String id, String type) {
-        if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
-            throw new IllegalArgumentException(String.format("id=%s, type=%s", id, type));
+    public static KBId of(String id, String model) {
+        if (id == null || model == null || id.isEmpty() || model.isEmpty()) {
+            throw new IllegalArgumentException(String.format("id=%s, type=%s", id, model));
         }
-        return new KBId(id, type);
+        return new KBId(id, model);
     }
 
-    public String getTypePath() {
-        return String.format("kb.%s.model.%s", id, type);
+    public String getModelPath() {
+        return String.format("kb.%s.model.%s", id, model);
     }
 
     public String getKBPath() {
@@ -61,28 +63,28 @@ public final class KBId {
 
         KBId kbId = (KBId) o;
 
-        return id.equals(kbId.id) && type.equals(kbId.type);
+        return id.equals(kbId.id) && model.equals(kbId.model);
 
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + type.hashCode();
+        result = 31 * result + model.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return String.format("%s.%s", id, type);
+        return String.format("%s.%s", id, model);
     }
 
     public String getId() {
         return id;
     }
 
-    public String getType() {
-        return type;
+    public String getModel() {
+        return model;
     }
 
 }

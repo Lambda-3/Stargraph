@@ -28,6 +28,7 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import net.stargraph.core.impl.corenlp.CoreNLPAnnotatorFactory;
 import net.stargraph.core.query.Analyzers;
 import net.stargraph.core.query.annotator.Annotator;
 import net.stargraph.core.query.annotator.Word;
@@ -45,8 +46,10 @@ public final class EnglishPOSTest {
 
     @BeforeClass
     public void beforeClass() {
-        Config config = ConfigFactory.load().getConfig("stargraph");
+        Config config = ConfigFactory.parseString("annotator.factory.class="
+                + CoreNLPAnnotatorFactory.class.getCanonicalName());
         annotator = Analyzers.createAnnotatorFactory(config).create();
+        System.out.println(annotator.getClass());
     }
 
     @Test

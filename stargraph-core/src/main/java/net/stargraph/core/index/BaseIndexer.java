@@ -32,8 +32,10 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.processor.FatalProcessorException;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorChain;
+import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,45 +55,53 @@ public abstract class BaseIndexer implements Indexer {
     protected Marker marker = MarkerFactory.getMarker("index");
     protected KBId kbId;
     protected ObjectMapper mapper;
-    protected Stargraph core;
+    protected Stargraph stargraph;
 
     private ExecutorService loaderExecutor;
     private Future<?> loaderFutureTask;
     private ProgressWatcher loaderProgress;
-    private boolean loading;
     private DataProvider<?> dataProvider;
     private ProcessorChain processorChain;
+    private boolean loading;
+    private boolean running;
 
-    public BaseIndexer(KBId kbId, Stargraph core) {
-        logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
-        this.core = Objects.requireNonNull(core);
+    public BaseIndexer(KBId kbId, Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
         this.loading = false;
         this.mapper = ObjectSerializer.createMapper(kbId);
+        this.processorChain = stargraph.createProcessorChain(kbId);
     }
 
     @Override
     public synchronized final void start() {
-        if (dataProvider != null) {
-            throw new StarGraphException("Already started!");
+        if (running) {
+            throw new IllegalStateException("Already started!");
         }
-        this.loaderProgress = new ProgressWatcher(kbId, core.getConfig());
         onStart();
+        running = true;
     }
 
     @Override
     public synchronized final void stop() {
-        if (dataProvider == null) {
-            logger.warn(marker, "Is stopped.");
+        if (!running) {
+            logger.error(marker, "Indexer already stopped.");
         } else {
-            onStop();
+            try {
+                onStop();
+                running = false;
+            }
+            catch (Exception e) {
+                logger.error(marker, "Fail to stop.", e);
+            }
+
         }
     }
 
     @Override
     public final void index(Indexable data) throws InterruptedException {
         if (loading) {
-            throw new StarGraphException("Loader in progress. Incremental update is forbidden.");
+            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
         }
 
         work(data);
@@ -108,6 +118,19 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     @Override
+    public final void flush() {
+        logger.info(marker, "Flushing..");
+        doFlush();
+    }
+
+    @Override
+    public final void deleteAll() {
+        logger.info(marker, "Deleting ALL data..");
+        doDeleteAll();
+        doFlush();
+    }
+
+    @Override
     public final void awaitLoader() throws InterruptedException, TimeoutException, ExecutionException {
         awaitLoader(Long.MAX_VALUE, TimeUnit.DAYS); // pretty much forever ;)
     }
@@ -117,7 +140,7 @@ public abstract class BaseIndexer implements Indexer {
             throws InterruptedException, TimeoutException, ExecutionException {
 
         if (!loading && loaderFutureTask == null) {
-            throw new StarGraphException("Loader was not called.");
+            throw new IllegalStateException("Loader was not called.");
         }
 
         logger.info(marker, "Awaiting Loader finalization..");
@@ -135,7 +158,15 @@ public abstract class BaseIndexer implements Indexer {
 
     protected abstract void doIndex(Serializable data, KBId kbId) throws InterruptedException;
 
+    protected void doFlush() {
+        // Specific implementation detail
+    }
+
     protected void afterLoad() throws InterruptedException {
+        // Specific implementation detail
+    }
+
+    protected void doDeleteAll() {
         // Specific implementation detail
     }
 
@@ -149,8 +180,9 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        dataProvider = core.createDataProvider(kbId);
-        this.processorChain = core.createProcessorChain(kbId);
+        boolean logStats = stargraph.getMainConfig().getBoolean("progress-watcher.log-stats");
+        this.loaderProgress = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
+        this.dataProvider = stargraph.createDataProvider(kbId);
         beforeLoad(reset);
     }
 
@@ -164,7 +196,7 @@ public abstract class BaseIndexer implements Indexer {
     }
 
 
-    private void work(Holder holder) {
+    private void work(Holder holder) throws ProcessorException {
         try {
             if (processorChain != null) {
                 processorChain.run(Objects.requireNonNull(holder));
@@ -187,6 +219,8 @@ public abstract class BaseIndexer implements Indexer {
             } else {
                 sink(holder);
             }
+        } catch (FatalProcessorException e) {
+            throw e;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
@@ -196,7 +230,7 @@ public abstract class BaseIndexer implements Indexer {
 
     private synchronized void doLoad(boolean reset, long limit) {
         if (loading) {
-            throw new StarGraphException("Loader is already in progress. ");
+            throw new IllegalStateException("Loader is already in progress. ");
         }
 
         logger.info(marker, "Loading {}, [reset={}, limit={}]", kbId, reset, limit);
@@ -235,6 +269,9 @@ public abstract class BaseIndexer implements Indexer {
 
                         work(data); // delegates heavy work
 
+                    } catch (FatalProcessorException e) {
+                        logger.error(marker, "Aborting.", e);
+                        break;
                     } catch (Exception e) {
                         logger.error(marker, "Error reading from provider.", e);
                     } finally {

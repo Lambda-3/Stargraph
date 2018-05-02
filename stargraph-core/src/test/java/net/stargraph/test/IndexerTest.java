@@ -28,7 +28,6 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.data.Indexable;
@@ -44,20 +43,20 @@ import java.util.stream.Collectors;
 
 public final class IndexerTest {
 
-    private KBId kbId;
+    private KBId kbId = KBId.of("mytest", "mytype");
     private List<TestData> expected;
-    private Stargraph core;
+    private Stargraph stargraph;
     private Indexer indexer;
 
     @BeforeClass
     public void before() {
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
-        this.core = new Stargraph(config, false);
-        this.core.setIndexerFactory(new TestDataIndexer.Factory());
-        this.core.initialize();
-        this.kbId = KBId.of("mytest", "mytype");
-        this.indexer = core.getIndexer(kbId);
+        this.stargraph = new Stargraph(config, false);
+        this.stargraph.setKBInitSet(kbId.getId());
+        this.stargraph.setDefaultIndicesFactory(new TestDataIndexer.Factory());
+        this.stargraph.initialize();
+        this.indexer = stargraph.getIndexer(kbId);
         List<String> expected = Arrays.asList("first", "second", "third");
         this.expected = expected.stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
     }
@@ -69,7 +68,7 @@ public final class IndexerTest {
         Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void doubleLoadFailTest() throws Exception {
         try {
             indexer.load(true, -1);
@@ -82,7 +81,7 @@ public final class IndexerTest {
         }
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void updateWhileLoadingFailTest() throws Exception {
         try {
             indexer.load(true, -1);
@@ -94,7 +93,7 @@ public final class IndexerTest {
         }
     }
 
-    @Test(expectedExceptions = StarGraphException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void loadTwiceWithoutWaitingTest() throws Exception {
         try {
             indexer.load(true, -1);

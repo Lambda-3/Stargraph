@@ -29,15 +29,14 @@ package net.stargraph.test;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
+import net.stargraph.core.processors.CoreferenceResolutionProcessor;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.processor.FatalProcessorException;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
-import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.KBId;
-import net.stargraph.model.PropertyEntity;
+import net.stargraph.model.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -51,26 +50,8 @@ public final class ProcessorsTest {
 
     @BeforeClass
     public void beforeClass() {
+        ConfigFactory.invalidateCaches();
         config = ConfigFactory.load().getConfig("processor");
-    }
-
-    @Test
-    public void nsProcessorTest() {
-        final KBId kbId = KBId.of("obama", "facts");
-
-        Holder holder = ModelUtils.createWrappedFact(kbId,
-                "http://dbpedia.org/resource/President_of_the_United_States",
-                "http://dbpedia.org/property/incumbent",
-                "http://dbpedia.org/resource/Barack_Obama");
-
-        Processor processor = Processors.create(config.withOnlyPath("namespace"));
-        processor.run(holder);
-        Fact processed = (Fact) holder.get();
-
-        Assert.assertEquals(((InstanceEntity) processed.getSubject()).getId(), "dbr:President_of_the_United_States");
-        Assert.assertEquals(processed.getPredicate().getId(), "dbp:incumbent");
-        Assert.assertEquals(processed.getObject().getId(), "dbr:Barack_Obama");
-
     }
 
     @Test
@@ -83,16 +64,18 @@ public final class ProcessorsTest {
                 "http://dbpedia.org/resource/Category:Football_clubs_in_Germany");
 
         Processor entityClassifierProcessor = Processors.create(config.withOnlyPath("entity-classifier"));
-        Processor nsProcessor = Processors.create(config.withOnlyPath("namespace"));
+        Processor nsProcessor = Processors.create(config.withOnlyPath("sink-duplicate"));
         ProcessorChain chain = new ProcessorChain(Arrays.asList(entityClassifierProcessor, nsProcessor));
 
 
         chain.run(holder);
         Fact processed = (Fact) holder.get();
 
-        Assert.assertEquals(((InstanceEntity) processed.getSubject()).getId(), "dbr:FC_Oberlausitz_Neugersdorf");
+        Assert.assertEquals(((InstanceEntity) processed.getSubject()).getId(),
+                "http://dbpedia.org/resource/FC_Oberlausitz_Neugersdorf");
         Assert.assertEquals(processed.getPredicate().getId(), "is-a");
-        Assert.assertEquals(processed.getObject().getId(), "dbc:Football_clubs_in_Germany");
+        Assert.assertEquals(processed.getObject().getId(),
+                "http://dbpedia.org/resource/Category:Football_clubs_in_Germany");
     }
 
 
@@ -106,6 +89,15 @@ public final class ProcessorsTest {
         Assert.assertFalse(holder.isSinkable());
         processor.run(holder);
         Assert.assertTrue(holder.isSinkable());
+    }
+
+    @Test(expectedExceptions = FatalProcessorException.class)
+    public void unrecoverableErrorProcessorTest() {
+        KBId kbId = KBId.of("any", "type");
+        Processor processor = Processors.create(config.withOnlyPath(CoreferenceResolutionProcessor.name));
+        Holder holder = new Indexable(new Document("Some Id", " Some title", "A bunch of text .."), kbId);
+        processor.run(holder);
+        Assert.assertFalse(holder.isSinkable());
     }
 
 }

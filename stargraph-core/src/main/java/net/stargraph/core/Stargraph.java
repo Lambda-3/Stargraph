@@ -26,18 +26,13 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.*;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
-import net.stargraph.core.graph.GraphSearcher;
-import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
-import net.stargraph.core.impl.elastic.ElasticSearcher;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
-import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
-import net.stargraph.core.index.IndexerFactory;
 import net.stargraph.core.processors.Processors;
-import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
@@ -45,157 +40,132 @@ import net.stargraph.data.DataProviderFactory;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
-import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.KBId;
-import net.stargraph.query.Language;
-import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import java.io.Serializable;
+import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * The Stargraph database core implementation.
  */
 public final class Stargraph {
-
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("core");
+    private Marker marker = MarkerFactory.getMarker("stargraph");
+
     private Config mainConfig;
-    private Map<String, KBLoader> kbLoaders;
-    private Map<KBId, Indexer> indexers;
-    private Map<KBId, Searcher> searchers;
-    private Map<String, Namespace> namespaces;
-    private IndexerFactory indexerFactory;
-    private GraphModelFactory modelFactory;
+    private String dataRootDir;
+    private IndicesFactory indicesFactory;
+    private GraphModelFactory graphModelFactory;
+    private Map<String, KBCore> kbCoreMap;
+    private Set<String> kbInitSet;
+    private EntitySearcher entitySearcher;
     private boolean initialized;
 
+    /**
+     * Constructs a new Stargraph core API entry-point.
+     */
     public Stargraph() {
         this(ConfigFactory.load().getConfig("stargraph"), true);
     }
 
-    public Stargraph(Config cfg, boolean initialize) {
-        if (System.getProperty("config.file") == null) {
-            logger.warn(marker, "No configuration found at '-Dconfig.file'.");
-        }
-
+    /**
+     * Constructs a new Stargraph core API entry-point.
+     *
+     * @param cfg Configuration instance.
+     * @param initKBs Controls the startup behaviour. Use <code>false</code> to postpone KB specific initialization.
+     */
+    public Stargraph(Config cfg, boolean initKBs) {
+        logger.info(marker, "Memory: {}", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
         this.mainConfig = Objects.requireNonNull(cfg);
         logger.trace(marker, "Configuration: {}", ModelUtils.toStr(mainConfig));
-        this.indexers = new ConcurrentHashMap<>();
-        this.searchers = new ConcurrentHashMap<>();
-        this.namespaces = new ConcurrentHashMap<>();
-        this.kbLoaders = new ConcurrentHashMap<>();
+        // Only KBs in this set will be initialized. Unit tests appreciates!
+        this.kbInitSet = new LinkedHashSet<>();
+        this.kbCoreMap = new ConcurrentHashMap<>(8);
 
-        setIndexerFactory(createIndexerFactory());
-        setModelFactory(new HDTModelFactory(this));
+        this.entitySearcher = new EntitySearcher(this);
 
-        if (initialize) {
+        // Configurable defaults
+        setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
+        setDefaultIndicesFactory(createDefaultIndicesFactory());
+        setGraphModelFactory(new HDTModelFactory(this));
+
+        if (initKBs) {
             initialize();
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public Class<Serializable> getModelClass(String modelName) {
-        // This should change to support user's models.
-
-        for (BuiltInModel entry : BuiltInModel.values()) {
-            if (entry.modelId.equals(modelName)) {
-                return entry.cls;
-            }
+    public KBCore getKBCore(String dbId) {
+        if (kbCoreMap.containsKey(dbId)) {
+            return kbCoreMap.get(dbId);
         }
-
-        throw new StarGraphException("No Class registered for model: '" + modelName + "'");
+        throw new StarGraphException("KB not found: '" + dbId + "'");
     }
 
-    public Namespace getNamespace(String dbId) {
-        return namespaces.computeIfAbsent(dbId, (id) -> Namespace.create(this, dbId));
-    }
-
-    public EntitySearcher createEntitySearcher() {
-        return new ElasticEntitySearcher(this);
-    }
-
-    public GraphSearcher createGraphSearcher(String dbId) {
-        return new JenaGraphSearcher(dbId, this);
-    }
-
-    public Model getGraphModel(String dbId) {
-        return modelFactory.getModel(dbId);
-    }
-
-    public Config getConfig() {
+    public Config getMainConfig() {
         return mainConfig;
     }
 
-    public Config getKBConfig(String dbId) {
-        return mainConfig.getConfig(String.format("kb.%s", dbId));
+    public Config getModelConfig(KBId kbId) {
+        return mainConfig.getConfig(kbId.getModelPath());
     }
 
-    public Config getKBConfig(KBId kbId) {
-        return mainConfig.getConfig(kbId.getKBPath());
+    public Collection<KBCore> getKBs() {
+        return kbCoreMap.values();
     }
 
-    public Config getTypeConfig(KBId kbId) {
-        return mainConfig.getConfig(kbId.getTypePath());
+    public boolean hasKB(String kbName) {
+        return getKBs().stream().anyMatch(core -> core.getKBName().equals(kbName));
     }
 
-    public KBLoader getKBLoader(String dbId) {
-        return kbLoaders.computeIfAbsent(dbId, (id) -> new KBLoader(this, id));
-    }
-
-    public List<KBId> getKBIdsOf(String dbId) {
-        return searchers.keySet().stream()
-                .filter(kbId -> kbId.getId().equals(Objects.requireNonNull(dbId))).collect(Collectors.toList());
-    }
-
-    public Set<KBId> getKBs() {
-        return indexers.keySet();
-    }
-
-    public boolean hasKB(String id) {
-        return getKBs().stream().anyMatch(kbId -> kbId.getId().equals(id));
-    }
-
-    public Language getLanguage(String dbId) {
-        Config kbCfg = getKBConfig(dbId);
-        return Language.valueOf(kbCfg.getString("language").toUpperCase());
+    public String getDataRootDir() {
+        return dataRootDir;
     }
 
     public Indexer getIndexer(KBId kbId) {
-        if (indexers.keySet().contains(kbId))
-            return indexers.get(kbId);
-        throw new StarGraphException("Indexer not found nor initialized: " + kbId);
+        return getKBCore(kbId.getId()).getIndexer(kbId.getModel());
     }
 
     public Searcher getSearcher(KBId kbId) {
-        if (searchers.keySet().contains(kbId))
-            return searchers.get(kbId);
-        throw new StarGraphException("Indexer not found nor initialized: " + kbId);
+        return getKBCore(kbId.getId()).getSearcher(kbId.getModel());
     }
 
-    public void setIndexerFactory(IndexerFactory indexerFactory) {
-        this.indexerFactory = Objects.requireNonNull(indexerFactory);
+    public void setKBInitSet(String ... kbIds) {
+        this.kbInitSet.addAll(Arrays.asList(kbIds));
     }
 
-    public void setModelFactory(GraphModelFactory modelFactory) {
-        this.modelFactory = Objects.requireNonNull(modelFactory);
+    public void setDataRootDir(String dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+    }
+
+    public void setDataRootDir(File dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
+    }
+
+    public void setDefaultIndicesFactory(IndicesFactory indicesFactory) {
+        this.indicesFactory = Objects.requireNonNull(indicesFactory);
+    }
+
+    public void setGraphModelFactory(GraphModelFactory modelFactory) {
+        this.graphModelFactory = Objects.requireNonNull(modelFactory);
     }
 
     public ProcessorChain createProcessorChain(KBId kbId) {
         List<? extends Config> processorsCfg = getProcessorsCfg(kbId);
         if (processorsCfg != null && processorsCfg.size() != 0) {
             List<Processor> processors = new ArrayList<>();
-            processorsCfg.forEach(config -> processors.add(Processors.create(config)));
+            processorsCfg.forEach(config -> processors.add(Processors.create(this, config)));
             ProcessorChain chain = new ProcessorChain(processors);
             logger.info(marker, "processors = {}", chain);
             return chain;
         }
+        logger.warn(marker, "No processors configured for {}", kbId);
         return null;
     }
 
@@ -235,8 +205,10 @@ public final class Stargraph {
             throw new IllegalStateException("Core already initialized.");
         }
 
-        this.initializeKB();
-        logger.info(marker, "Indexer: '{}'", mainConfig.getString("indexer.factory.class"));
+        this.initializeKBs();
+
+        logger.info(marker, "Data root directory: '{}'", getDataRootDir());
+        logger.info(marker, "Default Store Factory: '{}'", indicesFactory.getClass().getName());
         logger.info(marker, "DS Service Endpoint: '{}'", mainConfig.getString("distributional-service.rest-url"));
         logger.info(marker, "★☆ {}, {} ({}) ★☆", Version.getCodeName(), Version.getBuildVersion(), Version.getBuildNumber());
         initialized = true;
@@ -246,39 +218,75 @@ public final class Stargraph {
         if (!initialized) {
             throw new IllegalStateException("Not initialized");
         }
+
+        kbCoreMap.values().forEach(KBCore::terminate);
         initialized = false;
-        // future shutdown procedure if needed.
     }
 
-    private void initializeKB() {
-        ConfigObject kbObj;
-        try {
-            kbObj = this.mainConfig.getObject("kb");
-        } catch (ConfigException e) {
-            throw new StarGraphException("No KB configured.", e);
-        }
+    GraphModelFactory getGraphModelFactory() {
+        return graphModelFactory;
+    }
 
-        for (Map.Entry<String, ConfigValue> kbEntry : kbObj.entrySet()) {
-            ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbEntry.getKey()));
-            for (Map.Entry<String, ConfigValue> typeEntry : typeObj.entrySet()) {
-                KBId kbId = KBId.of(kbEntry.getKey(), typeEntry.getKey());
-                logger.info(marker, "Initializing {}", kbId);
-                Indexer indexer = this.indexerFactory.create(kbId, this);
-                indexer.start();
-                indexers.put(kbId, indexer);
-                BaseSearcher searcher = new ElasticSearcher(kbId, this);
-                searcher.start();
-                searchers.put(kbId, searcher);
+    IndicesFactory getIndicesFactory(KBId kbId) {
+        final String idxStorePath = "index-store.factory.class";
+        if (kbId != null) {
+            //from model configuration
+            Config modelCfg = getModelConfig(kbId);
+            if (modelCfg.hasPath(idxStorePath)) {
+                String className = modelCfg.getString(idxStorePath);
+                logger.info(marker, "Using '{}'.", className);
+                return createIndicesFactory(className);
             }
         }
 
-        if (searchers.isEmpty()) {
-            logger.warn(marker, "No KBs configured.");
+        if (indicesFactory == null) {
+            //from main configuration if not already set
+            indicesFactory = createIndicesFactory(getMainConfig().getString(idxStorePath));
+        }
+
+        return indicesFactory;
+    }
+
+    private boolean isEnabled(String kbName) {
+        Config kbConfig = mainConfig.getConfig(String.format("kb.%s", kbName));
+        return kbConfig.getBoolean("enabled");
+    }
+
+    private void initializeKBs() {
+        if (!kbInitSet.isEmpty()) {
+            logger.info(marker, "KB init set: {}", kbInitSet);
+            kbInitSet.forEach(this::initializeKB);
+        }
+        else {
+            if (mainConfig.hasPathOrNull("kb")) {
+                if (mainConfig.getIsNull("kb")) {
+                    throw new StarGraphException("No KB configured.");
+                }
+
+                mainConfig.getObject("kb").keySet().forEach(this::initializeKB);
+            }
+            else {
+                throw new StarGraphException("No KBs configured.");
+            }
+        }
+    }
+
+    private void initializeKB(String kbName) {
+        if (isEnabled(kbName)) {
+            try {
+                kbCoreMap.put(kbName, new KBCore(kbName, this, true));
+            }
+            catch (Exception e) {
+                logger.error(marker, "Error starting '{}'", kbName, e);
+            }
+        }
+        else {
+            logger.warn(marker, "KB '{}' is disabled", kbName);
         }
     }
 
     private List<? extends Config> getProcessorsCfg(KBId kbId) {
-        String path = String.format("%s.processors", kbId.getTypePath());
+        String path = String.format("%s.processors", kbId.getModelPath());
         if (mainConfig.hasPath(path)) {
             return mainConfig.getConfigList(path);
         }
@@ -286,20 +294,25 @@ public final class Stargraph {
     }
 
     private Config getDataProviderCfg(KBId kbId) {
-        String path = String.format("%s.provider", kbId.getTypePath());
+        String path = String.format("%s.provider", kbId.getModelPath());
         return mainConfig.getConfig(path);
     }
 
+    private IndicesFactory createDefaultIndicesFactory() {
+        return getIndicesFactory(null);
+    }
 
-    private IndexerFactory createIndexerFactory() {
+    private IndicesFactory createIndicesFactory(String className) {
         try {
-            String className = getConfig().getString("indexer.factory.class");
             Class<?> providerClazz = Class.forName(className);
             Constructor<?> constructor = providerClazz.getConstructors()[0];
-            return (IndexerFactory) constructor.newInstance();
+            return (IndicesFactory) constructor.newInstance();
         } catch (Exception e) {
             throw new StarGraphException("Can't initialize indexers.", e);
         }
     }
 
+    public EntitySearcher getEntitySearcher() {
+        return entitySearcher;
+    }
 }

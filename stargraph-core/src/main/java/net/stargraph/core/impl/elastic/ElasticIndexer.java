@@ -71,13 +71,9 @@ public final class ElasticIndexer extends BaseIndexer {
                 createIndex();
             } else {
                 if (reset) {
-                    deleteIndex();
-                    createIndex();
+                   deleteAll();
                 }
             }
-
-            bulkProcessor = createBulkProcessor();
-
         } catch (Exception e) {
             throw new IndexingException(e);
         }
@@ -95,23 +91,53 @@ public final class ElasticIndexer extends BaseIndexer {
             logger.info(marker, "Optimizing index for reading..");
             ForceMergeResponse res = esClient.prepareForceMerge().get();
             if (res.getFailedShards() != 0) {
-                logger.warn(marker, "An error was detected during optimizaton. Check logs.");
+                logger.warn(marker, "An error was detected during optimization. Check logs.");
             }
 
             if (!indexRequests.isEmpty()) {
-                logger.warn(marker, "Still pending {} index requests?", indexRequests.size()); // should not happen
+                logger.error(marker, "Still pending {} index requests!?", indexRequests.size()); // should not happen
                 indexRequests.clear();
             }
         }
     }
 
     @Override
+    protected void doDeleteAll() {
+        deleteIndex();
+        createIndex();
+    }
+
+    @Override
+    protected void doFlush() {
+        bulkProcessor.flush();
+        try {
+            //TODO: Figure out why flushing is not always being honored without delaying.
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        ForceMergeResponse res = esClient.prepareForceMerge().get();
+        if (res.getFailedShards() > 0) {
+            logger.warn("Flush request failure detected on {}", kbId);
+        }
+    }
+
+    @Override
     protected void onStart() {
-        this.esClient = new ElasticClient(core, this.kbId);
+        this.esClient = new ElasticClient(stargraph, this.kbId);
+        this.bulkProcessor = createBulkProcessor();
     }
 
     @Override
     protected void onStop() {
+        try {
+            doFlush();
+            if (!bulkProcessor.awaitClose(30, TimeUnit.SECONDS)) {
+                logger.warn(marker, "Time out after waiting pending requests.");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         if (this.esClient != null) {
             this.esClient.getTransport().close();
         }
@@ -160,9 +186,9 @@ public final class ElasticIndexer extends BaseIndexer {
     private BulkProcessor createBulkProcessor() {
         int processors = Runtime.getRuntime().availableProcessors();
         processors = processors > 1 ? processors - 1 : 1;
-        int concurrency = core.getTypeConfig(kbId).getInt("elastic.bulk.concurrency");
+        int concurrency = stargraph.getModelConfig(kbId).getInt("elastic.bulk.concurrency");
         concurrency = concurrency > 0 ? concurrency : processors;
-        int bulkActions = core.getTypeConfig(kbId).getInt("elastic.bulk.actions");
+        int bulkActions = stargraph.getModelConfig(kbId).getInt("elastic.bulk.actions");
 
         logger.info(marker, "Creating Bulk Processor. Concurrency = {}, actions = {}.", concurrency, bulkActions);
 

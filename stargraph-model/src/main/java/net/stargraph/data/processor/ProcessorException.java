@@ -28,7 +28,7 @@ package net.stargraph.data.processor;
 
 import net.stargraph.StarGraphException;
 
-public final class ProcessorException extends StarGraphException {
+public class ProcessorException extends StarGraphException {
 
     public ProcessorException(String message) {
         super(message);

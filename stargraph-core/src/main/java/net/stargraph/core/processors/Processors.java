@@ -28,6 +28,7 @@ package net.stargraph.core.processors;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Stargraph;
 import net.stargraph.data.processor.Processor;
 
 import java.lang.reflect.Constructor;
@@ -41,20 +42,28 @@ public final class Processors {
     static {
         registered = new HashMap<String, Class<? extends Processor>>() {{
             put(SinkDuplicateProcessor.name, SinkDuplicateProcessor.class);
-            put(NamespaceProcessor.name, NamespaceProcessor.class);
             put(EntityClassifierProcessor.name, EntityClassifierProcessor.class);
-            put(WordNetProcessor.name, WordNetProcessor.class);
             put(WordNetProcessor.name, WordNetProcessor.class);
             put(RegExFilterProcessor.name, RegExFilterProcessor.class);
             put(StopPropertyFilterProcessor.name, StopPropertyFilterProcessor.class);
             put(LengthFilterProcessor.name, LengthFilterProcessor.class);
+            put(CoreferenceResolutionProcessor.name, CoreferenceResolutionProcessor.class);
+            put(PassageProcessor.name, PassageProcessor.class);
         }};
     }
 
 
     public static Processor create(Config config) {
+        return create(null, config);
+    }
+
+    public static Processor create(Stargraph core, Config config) {
         if (config == null) {
             throw new IllegalArgumentException("config is required.");
+        }
+
+        if (config.isEmpty()) {
+            throw new IllegalArgumentException("No configuration found.");
         }
 
         if (config.root().entrySet().size() != 1) {
@@ -63,7 +72,6 @@ public final class Processors {
 
         //Expected name of the registered processor
         final String name = config.root().keySet().iterator().next();
-
         Class<? extends Processor> c = registered.get(name);
 
         if (c == null) {
@@ -71,10 +79,18 @@ public final class Processors {
         }
 
         try {
+
+            // use special constructor for PassageProcessor (to pass core-reference)
+            if ((core != null) && (c.equals(PassageProcessor.class))) {
+                Constructor<? extends Processor> constructor = c.getConstructor(Stargraph.class, Config.class);
+                return constructor.newInstance(core, config);
+            }
+
             Constructor<? extends Processor> constructor = c.getConstructor(Config.class);
             return constructor.newInstance(config);
+
         } catch (Exception e) {
-            throw new StarGraphException("Fail to create new processor.", e);
+            throw new StarGraphException("Fail to create processor: " +  name, e);
         }
     }
 }

@@ -26,7 +26,6 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -63,8 +62,6 @@ public final class NTriplesModelFactory extends GraphModelFactory {
     }
 
     private Path getNTriplesPath(String dbId) {
-        Config mainConfig = core.getConfig();
-        String dataDir = mainConfig.getString("data.root-dir");
-        return Paths.get(dataDir, dbId, "facts", "triples.nt");
+        return Paths.get(stargraph.getDataRootDir(), dbId, "facts", "triples.nt");
     }
 }

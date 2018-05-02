@@ -31,7 +31,7 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.NTriplesModelFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
-import net.stargraph.core.index.NullIndexerFactory;
+import net.stargraph.core.index.NullIndicesFactory;
 import net.stargraph.model.KBId;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -44,34 +44,36 @@ import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
 
 public final class SimpleKBTest {
-    private Stargraph core;
-    private KBId factsId = KBId.of("simple", "facts");
-    private KBId entitiesId = KBId.of("simple", "entities");
+    private String kbName = "simple";
+    private Stargraph stargraph;
+    private KBId factsId = KBId.of(kbName, "facts");
+    private KBId entitiesId = KBId.of(kbName, "entities");
 
     @BeforeClass
     public void before() throws IOException {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
         Path ntPath = createPath(root, factsId).resolve("triples.nt");
         copyResource("dataSets/simple/facts/triples.nt", ntPath);
-        System.setProperty("stargraph.data.root-dir", root.toString());
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
-        core = new Stargraph(config, false);
-        core.setIndexerFactory(new NullIndexerFactory());
-        core.setModelFactory(new NTriplesModelFactory(core));
-        core.initialize();
+        stargraph = new Stargraph(config, false);
+        stargraph.setKBInitSet(kbName);
+        stargraph.setDefaultIndicesFactory(new NullIndicesFactory());
+        stargraph.setGraphModelFactory(new NTriplesModelFactory(stargraph));
+        stargraph.setDataRootDir(root.toFile());
+        stargraph.initialize();
     }
 
     @Test
     public void factLoadTest() throws Exception {
-        Indexer indexer = core.getIndexer(factsId);
+        Indexer indexer = stargraph.getIndexer(factsId);
         indexer.load(true, -1);
         indexer.awaitLoader();
     }
 
     @Test
     public void entitiesLoadTest() throws Exception {
-        Indexer indexer = core.getIndexer(entitiesId);
+        Indexer indexer = stargraph.getIndexer(entitiesId);
         indexer.load(true, -1);
         indexer.awaitLoader();
     }

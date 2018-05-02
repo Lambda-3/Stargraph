@@ -27,7 +27,7 @@ package net.stargraph.test;
  */
 
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.core.query.InterationModeSelector;
+import net.stargraph.core.query.InteractionModeSelector;
 import net.stargraph.query.InteractionMode;
 import net.stargraph.query.Language;
 import org.testng.Assert;
@@ -39,11 +39,11 @@ import org.testng.annotations.Test;
  */
 public final class QueryInteractionModeTest {
 
-    InterationModeSelector selector;
+    InteractionModeSelector selector;
 
     @BeforeClass
     public void beforeClass() {
-        selector = new InterationModeSelector(ConfigFactory.load().getConfig("stargraph"), Language.EN);
+        selector = new InteractionModeSelector(ConfigFactory.load().getConfig("stargraph"), Language.EN);
     }
 
     @Test

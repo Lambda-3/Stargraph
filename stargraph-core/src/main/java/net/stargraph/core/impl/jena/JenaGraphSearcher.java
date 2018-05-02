@@ -27,6 +27,7 @@ package net.stargraph.core.impl.jena;
  */
 
 import net.stargraph.ModelUtils;
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
@@ -37,6 +38,7 @@ import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
@@ -50,13 +52,15 @@ public final class JenaGraphSearcher implements GraphSearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("jena");
     private Namespace ns;
-    private Stargraph core;
+    private EntitySearcher entitySearcher;
+    private Model graphModel;
     private String dbId;
 
-    public JenaGraphSearcher(String dbId, Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public JenaGraphSearcher(String dbId, Stargraph stargraph) {
         this.dbId = Objects.requireNonNull(dbId);
-        this.ns = core.getNamespace(dbId);
+        this.entitySearcher = stargraph.getEntitySearcher();
+        this.graphModel = stargraph.getKBCore(dbId).getGraphModel();
+        this.ns = stargraph.getKBCore(dbId).getNamespace();
     }
 
     @Override
@@ -75,9 +79,8 @@ public final class JenaGraphSearcher implements GraphSearcher {
         long startTime = System.currentTimeMillis();
 
         Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
-        EntitySearcher entitySearcher = core.createEntitySearcher();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, core.getGraphModel(dbId))) {
+        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, graphModel)) {
             ResultSet results = qexec.execSelect();
 
             while (results.hasNext()) {
@@ -98,8 +101,8 @@ public final class JenaGraphSearcher implements GraphSearcher {
                     }
                 }
             }
-        }
 
+        }
         long millis = System.currentTimeMillis() - startTime;
 
         if (!result.isEmpty()) {

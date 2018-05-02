@@ -38,21 +38,38 @@ import java.util.Objects;
 public abstract class BaseSearcher implements Searcher {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("search");
-    protected Stargraph core;
+    protected Stargraph stargraph;
     protected KBId kbId;
+    private boolean running;
 
-    public BaseSearcher(KBId kbId, Stargraph core) {
-        logger.trace(marker, "Initializing {}, language is '{}'", kbId, core.getLanguage(kbId.getId()));
-        this.core = Objects.requireNonNull(core);
+    public BaseSearcher(KBId kbId, Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
     }
 
+    @Override
     public synchronized final void start() {
+        if (running) {
+            throw new IllegalStateException("Already started!");
+        }
         onStart();
+        running = true;
     }
 
+    @Override
     public synchronized final void stop() {
-        onStop();
+        if (!running) {
+            logger.error(marker, "Searcher already stopped.");
+        } else {
+            try {
+                onStop();
+                running = false;
+            }
+            catch (Exception e) {
+                logger.error(marker, "Fail to stop.", e);
+            }
+
+        }
     }
 
     protected void onStart() {

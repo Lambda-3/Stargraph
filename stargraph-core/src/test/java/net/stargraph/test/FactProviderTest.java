@@ -34,35 +34,28 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.model.KBId;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static net.stargraph.test.TestUtils.copyResource;
-import static net.stargraph.test.TestUtils.createPath;
 
 public class FactProviderTest {
     private Config config;
+    private Path root;
 
-    @BeforeClass
-    public void beforeClass() throws IOException {
-        Path root = Files.createTempFile("stargraph-", "-dataDir");
-        Path factsPath = createPath(root, KBId.of("obama", "facts"));
-        Path hdtFilePath = factsPath.resolve("triples.hdt");
-        Path ntFilePath = factsPath.resolve("triples.nt");
-        copyResource("dataSets/obama/facts/triples.hdt", hdtFilePath);
-        copyResource("dataSets/obama/facts/triples.nt", ntFilePath);
-        System.setProperty("stargraph.data.root-dir", root.toString());
+    @BeforeMethod
+    public void before() throws IOException {
+        root = TestUtils.prepareObamaTestEnv();
         ConfigFactory.invalidateCaches();
         config = ConfigFactory.load().getConfig("stargraph");
     }
 
     @Test
     public void factIterateTest() {
-        Stargraph core = new Stargraph(config, true);
+        Stargraph core = new Stargraph(config, false);
+        core.setDataRootDir(root.toFile());
+        core.initialize();
         KBId kbId = KBId.of("obama", "facts");
         FactProviderFactory factory = new FactProviderFactory(core);
         DataProvider<?> provider = factory.create(kbId);
@@ -70,9 +63,10 @@ public class FactProviderTest {
     }
 
     @Test
-    public void factFromNtriplesTest() throws IOException {
+    public void factFromNTriplesTest() throws IOException {
         Stargraph core = new Stargraph(config, false);
-        core.setModelFactory(new NTriplesModelFactory(core));
+        core.setDataRootDir(root.toFile());
+        core.setGraphModelFactory(new NTriplesModelFactory(core));
         core.initialize();
 
         KBId kbId = KBId.of("obama", "facts");

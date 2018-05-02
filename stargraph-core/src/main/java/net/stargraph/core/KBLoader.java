@@ -49,14 +49,12 @@ public final class KBLoader {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private ExecutorService executor;
-    private String dbId;
-    private Stargraph core;
+    private KBCore core;
     private boolean loading;
     private String lastResetKey;
 
-    KBLoader(Stargraph core, String dbId) {
+    KBLoader(KBCore core) {
         this.core = Objects.requireNonNull(core);
-        this.dbId = Objects.requireNonNull(dbId);
         this.executor = Executors.newSingleThreadExecutor();
         this.lastResetKey = null;
     }
@@ -66,21 +64,23 @@ public final class KBLoader {
             throw new StarGraphException("Loaders are in progress...");
         }
 
-        boolean hasSomeData = core.getKBIdsOf(dbId).parallelStream().anyMatch(this::containsData);
+        boolean hasSomeData = core.getKBIds().parallelStream().anyMatch(this::containsData);
 
         if (hasSomeData) {
             if (lastResetKey == null) {
                 lastResetKey = UUID.randomUUID().toString();
                 String msg = String.format("This KB (%s) is not empty. " +
                         "This operation WILL OVERWRITE EVERYTHING. " +
-                        "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.", dbId, lastResetKey);
+                        "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.",
+                        core.getKBName(), lastResetKey);
                 throw new StarGraphException(msg);
             }
             else {
                 if (!lastResetKey.equals(resetKey)) {
                     logger.warn(marker, "Wrong reset key='{}'", resetKey);
                     String msg = String.format("Wrong RESET KEY for KB (%s). " +
-                            "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.", dbId, lastResetKey);
+                            "Repeat this request to confirm your action adding the query param 'resetKey=%s' to the URL.",
+                            core.getKBName(), lastResetKey);
                     throw new StarGraphException(msg);
                 }
 
@@ -91,7 +91,7 @@ public final class KBLoader {
         executor.submit(() -> {
             loading = true;
             try {
-                doLoadAll(dbId);
+                doLoadAll(core.getKBName());
             } catch (InterruptedException e) {
                 logger.error(marker, "Interrupted.", e);
             }
@@ -103,14 +103,14 @@ public final class KBLoader {
 
     private void doLoadAll(String dbId) throws InterruptedException {
         logger.warn(marker, "Loading ALL DATA of '{}'. This can take some time ;) ..", dbId);
-        List<KBId> sucessful = new ArrayList<>();
+        List<KBId> successful = new ArrayList<>();
         List<KBId> failing = new ArrayList<>();
-        core.getKBIdsOf(dbId).forEach(kbId -> {
+        core.getKBIds().forEach(kbId -> { // why not parallel?
             try {
-                Indexer indexer = core.getIndexer(kbId);
+                Indexer indexer = core.getIndexer(kbId.getModel());
                 indexer.load(true, -1);
                 indexer.awaitLoader();
-                sucessful.add(kbId);
+                successful.add(kbId);
             } catch (Exception e) {
                 logger.error(marker, "Fail to load {}", kbId);
                 failing.add(kbId);
@@ -118,15 +118,15 @@ public final class KBLoader {
         });
 
         if (failing.isEmpty()) {
-            logger.info(marker, "Sucessful: {}", sucessful);
+            logger.info(marker, "Successful: {}", successful);
         }
         else {
-            logger.warn(marker, "Sucessful: {}, failing: {}", sucessful, failing);
+            logger.warn(marker, "Successful: {}, failing: {}", successful, failing);
         }
     }
 
     private boolean containsData(KBId kbId) {
-        Searcher searcher = core.getSearcher(kbId);
+        Searcher searcher = core.getSearcher(kbId.getModel());
         return searcher.countDocuments() > 0;
     }
 }

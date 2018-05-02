@@ -2,7 +2,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%date{ISO8601} %blue(%logger{0}) %highlight(%-5level) | %cyan([%marker]) %M - %.-1000msg %n
+            <pattern>%date{ISO8601} %blue(%logger{0}) %highlight(%-5level) %cyan([%marker]) %M - %.-1000msg %n
             </pattern>
         </encoder>
     </appender>
@@ -11,6 +11,7 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
+    <logger name="org.lambda3" level="WARN" additivity="true"/>
     <logger name="net.stargraph" level="DEBUG" additivity="true"/>
     <logger name="org.elasticsearch" level="ERROR" additivity="true"/>
     <logger name="org.apache.jena" level="INFO" additivity="true"/>

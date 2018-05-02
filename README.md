@@ -62,7 +62,23 @@ _Docker Compose_ will assemble all software components and ease the setup of thi
 version: '2'
 
 services:
- 
+
+  coreference:
+    depends_on:
+      - corenlp
+    image: "lambdacube/pycobalt:v1.1.1"
+    environment:
+      - PYCOBALT_CORENLP=http://corenlp:9000
+    expose:
+      - "5128"
+    ports:
+      - "5128:5128"
+
+  corenlp:
+    image: "lambdacube/corenlp:3.7.0"
+    expose:
+      - "9000"
+
   elastic:
     image: elasticsearch:5.1.1
     container_name: elastic
@@ -187,4 +203,5 @@ And the output is a JSON response.
 - Andre Freitas
 - Bernhard Bermeitinger
 - Leonardo Souza
+- Matthias Cetto
 - Siegfried Handschuh

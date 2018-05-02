@@ -27,6 +27,7 @@ package net.stargraph.core.query;
  */
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
@@ -48,29 +49,30 @@ import org.slf4j.MarkerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static net.stargraph.query.InteractionMode.NLI;
-import static net.stargraph.query.InteractionMode.SPARQL;
+import static net.stargraph.query.InteractionMode.*;
 
 public final class QueryEngine {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("query");
 
     private String dbId;
-    private Stargraph core;
+    private KBCore core;
     private Analyzers analyzers;
     private GraphSearcher graphSearcher;
-    private InterationModeSelector modeSelector;
+    private EntitySearcher entitySearcher;
+    private InteractionModeSelector modeSelector;
     private Namespace namespace;
     private Language language;
 
-    public QueryEngine(String dbId, Stargraph core) {
+    public QueryEngine(String dbId, Stargraph stargraph) {
         this.dbId = Objects.requireNonNull(dbId);
-        this.core = Objects.requireNonNull(core);
-        this.analyzers = new Analyzers(core.getConfig());
-        this.graphSearcher = core.createGraphSearcher(dbId);
-        this.namespace = core.getNamespace(dbId);
-        this.language = core.getLanguage(dbId);
-        this.modeSelector = new InterationModeSelector(core.getConfig(), language);
+        this.core = Objects.requireNonNull(stargraph.getKBCore(dbId));
+        this.analyzers = new Analyzers(stargraph.getMainConfig());
+        this.graphSearcher = core.createGraphSearcher();
+        this.entitySearcher = stargraph.getEntitySearcher();
+        this.namespace = core.getNamespace();
+        this.language = core.getLanguage();
+        this.modeSelector = new InteractionModeSelector(stargraph.getMainConfig(), language);
     }
 
     public QueryResponse query(String query) {
@@ -85,6 +87,12 @@ public final class QueryEngine {
                     break;
                 case SPARQL:
                     response = sparqlQuery(query);
+                    break;
+                case ENTITY_SIMILARITY:
+                    response = entitySimilarityQuery(query, language);
+                    break;
+                case DEFINITION:
+                    response = definitionQuery(query, language);
                     break;
                 default:
                     throw new StarGraphException("Input type not yet supported");
@@ -135,9 +143,87 @@ public final class QueryEngine {
             Set<LabeledEntity> expanded = vars.get("VAR_1").stream()
                     .map(e -> namespace.expand(e)).collect(Collectors.toSet());
 
-            answerSet.setShortAnswer(new ArrayList<>(expanded)); // convention, answer must be bound to the first var
+            answerSet.setEntityAnswer(new ArrayList<>(expanded)); // convention, answer must be bound to the first var
             answerSet.setMappings(queryBuilder.getMappings());
             answerSet.setSPARQLQuery(sparqlQueryStr);
+
+            System.out.println("-----> " + answerSet.getMappings());
+            //
+            //if (triplePattern.getTypes().contains("VARIABLE TYPE CLASS")) {
+            //    entities = core.getEntitySearcher().searchByTypes(new HashSet<String>(Arrays.asList(triplePattern.objectLabel.split(" "))), true, 100);
+            //}
+
+            return answerSet;
+        }
+
+        return new NoResponse(NLI, userQuery);
+    }
+
+    private QueryResponse entitySimilarityQuery(String userQuery, Language language) {
+
+        EntityQueryBuilder queryBuilder = new EntityQueryBuilder();
+        EntityQuery query = queryBuilder.parse(userQuery, ENTITY_SIMILARITY);
+        InstanceEntity instance = resolveInstance(query.getCoreEntity());
+
+        Set<LabeledEntity> entities = new HashSet<>();
+        // \TODO Call mltSearch here
+        // mltSearch()
+        // mltSearch will return Set<LabeledEntity>
+
+        if(!entities.isEmpty()) {
+            AnswerSetResponse answerSet = new AnswerSetResponse(ENTITY_SIMILARITY, userQuery);
+            // \TODO define mappings for name entity
+            // answerSet.setMappings();
+            // answerSet.setMappings(); ->
+            answerSet.setEntityAnswer(new ArrayList<>(entities));
+            return answerSet;
+        }
+
+        return new NoResponse(NLI, userQuery);
+    }
+
+    public QueryResponse definitionQuery(String userQuery, Language language) {
+
+        EntityQueryBuilder queryBuilder = new EntityQueryBuilder();
+        EntityQuery query = queryBuilder.parse(userQuery, DEFINITION);
+        InstanceEntity instance = resolveInstance(query.getCoreEntity());
+
+        Set<LabeledEntity> entities = new HashSet<>();
+        Set<String> textAnswers = new HashSet<>();
+        // \TODO Call document search
+        // Document document = core.getDocumentSearcher().getDocument(entities.entrySet().iterator().next().getKey().getId());
+        // \TODO Equate document with normalized entity id
+        // final Entity def = new Entity(document.getId());
+        // Definition is the summary of the document
+        // document.getSummary()
+
+        if(!textAnswers.isEmpty()) {
+            AnswerSetResponse answerSet = new AnswerSetResponse(DEFINITION, userQuery);
+            // \TODO define mappings for name entity
+            // answerSet.setMappings(); ->
+            answerSet.setTextAnswer(new ArrayList<>(textAnswers));
+            return answerSet;
+        }
+
+        return new NoResponse(NLI, userQuery);
+
+    }
+
+    public QueryResponse clueQuery(String userQuery, Language language) {
+
+//      These filters will be used very soon
+//      ClueAnalyzer clueAnalyzer = new ClueAnalyzer();
+//      String pronominalAnswerType = clueAnalyzer.getPronominalAnswerType(userQuery);
+//      String lexicalAnswerType = clueAnalyzer.getLexicalAnswerType(userQuery);
+//      String abstractLexicalAnswerType = clueAnalyzer.getAbstractType(lexicalAnswerType);
+
+//      Get documents containing the keywords
+//      Map<Document, Double> documents = core.getDocumentSearcher().searchDocuments(userQuery, 3);
+
+        Set<LabeledEntity> entities = new HashSet<>();
+        if(!entities.isEmpty()) {
+            AnswerSetResponse answerSet = new AnswerSetResponse(DEFINITION, userQuery);
+            answerSet.setEntityAnswer(new ArrayList<>(entities));
             return answerSet;
         }
 
@@ -152,7 +238,7 @@ public final class QueryEngine {
             resolvePredicate(pivot, triple.p, builder);
         }
         else {
-            // Problably is: V T C
+            // Probably is: V T C
             DataModelBinding binding = triple.s.getModelType() == DataModelType.VARIABLE ? triple.o : triple.s;
             resolveClass(binding, builder);
         }
@@ -160,10 +246,10 @@ public final class QueryEngine {
 
     private void resolveClass(DataModelBinding binding, SPARQLQueryBuilder builder) {
         if (binding.getModelType() == DataModelType.CLASS) {
-            EntitySearcher searcher = core.createEntitySearcher();
+
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
-            Scores scores = searcher.classSearch(searchParams, rankParams);
+            Scores scores = entitySearcher.classSearch(searchParams, rankParams);
             builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
         }
     }
@@ -172,10 +258,9 @@ public final class QueryEngine {
         if ((binding.getModelType() == DataModelType.CLASS
                 || binding.getModelType() == DataModelType.PROPERTY) && !builder.isResolved(binding)) {
 
-            EntitySearcher searcher = core.createEntitySearcher();
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
-            Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
+            Scores scores = entitySearcher.pivotedSearch(pivot, searchParams, rankParams);
             builder.add(binding, scores.stream().limit(6).collect(Collectors.toList()));
         }
     }
@@ -187,15 +272,23 @@ public final class QueryEngine {
         }
 
         if (binding.getModelType() == DataModelType.INSTANCE) {
-            EntitySearcher searcher = core.createEntitySearcher();
+
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-            Scores scores = searcher.instanceSearch(searchParams, rankParams);
+            Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
             InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
             builder.add(binding, Collections.singletonList(scores.get(0)));
             return instance;
         }
         return null;
+    }
+
+    private InstanceEntity resolveInstance(String instanceTerm) {
+
+        ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(instanceTerm);
+        ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
+        Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
+        return (InstanceEntity) scores.get(0).getEntry();
     }
 
     private Triple asTriple(TriplePattern pattern, List<DataModelBinding> bindings) {
