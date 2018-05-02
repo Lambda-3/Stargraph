@@ -33,6 +33,7 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.processors.Processors;
+import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
@@ -64,6 +65,7 @@ public final class Stargraph {
     private GraphModelFactory graphModelFactory;
     private Map<String, KBCore> kbCoreMap;
     private Set<String> kbInitSet;
+    private EntitySearcher entitySearcher;
     private boolean initialized;
 
     /**
@@ -86,6 +88,8 @@ public final class Stargraph {
         // Only KBs in this set will be initialized. Unit tests appreciates!
         this.kbInitSet = new LinkedHashSet<>();
         this.kbCoreMap = new ConcurrentHashMap<>(8);
+
+        this.entitySearcher = new EntitySearcher(this);
 
         // Configurable defaults
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
@@ -308,4 +312,7 @@ public final class Stargraph {
         }
     }
 
+    public EntitySearcher getEntitySearcher() {
+        return entitySearcher;
+    }
 }

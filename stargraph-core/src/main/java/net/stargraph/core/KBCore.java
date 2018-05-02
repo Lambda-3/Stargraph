@@ -38,6 +38,7 @@ public final class KBCore {
     private Config mainConfig;
     private Config kbConfig;
     private Language language;
+    private String nerKbName;
     private KBLoader kbLoader;
     private Model graphModel;
     private Namespace namespace;
@@ -58,6 +59,16 @@ public final class KBCore {
         this.searchers = new ConcurrentHashMap<>();
         this.searchQueryGenerators = new ConcurrentHashMap<>();
         this.language = Language.valueOf(kbConfig.getString("language").toUpperCase());
+
+        if (kbConfig.hasPathOrNull("ner-kb")) {
+            if (kbConfig.getIsNull("ner-kb")) {
+                throw new StarGraphException("No NER-KB configured.");
+            }
+            this.nerKbName = kbConfig.getString("ner-kb");
+        } else {
+            this.nerKbName = kbName;
+        }
+
         this.namespace = Namespace.create(kbConfig);
 
         if (start) {
@@ -103,7 +114,7 @@ public final class KBCore {
             }
         }
 
-        this.ner = new NERSearcher(language, createEntitySearcher(), kbName);
+        this.ner = new NERSearcher(language, stargraph.getEntitySearcher(), nerKbName);
         this.kbLoader = new KBLoader(this);
         this.running = true;
     }
@@ -131,6 +142,10 @@ public final class KBCore {
 
     public String getKBName() {
         return kbName;
+    }
+
+    public String getNERKBName() {
+        return nerKbName;
     }
 
     public Language getLanguage() {
@@ -182,11 +197,6 @@ public final class KBCore {
     public Namespace getNamespace() {
         return namespace;
     }
-
-    public EntitySearcher createEntitySearcher() {
-        return new EntitySearcher(this);
-    }
-
 
     public GraphSearcher createGraphSearcher() {
         return new JenaGraphSearcher(kbName, stargraph);

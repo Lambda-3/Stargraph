@@ -28,6 +28,7 @@ package net.stargraph.core.search;
 
 import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
+import net.stargraph.core.Stargraph;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.Fact;
 import net.stargraph.model.InstanceEntity;
@@ -49,11 +50,10 @@ public class EntitySearcher {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("elastic");
 
-    private KBCore core;
+    private Stargraph stargraph;
 
-
-    public EntitySearcher(KBCore core) {
-        this.core = Objects.requireNonNull(core);
+    public EntitySearcher(Stargraph stargraph) {
+        this.stargraph = stargraph;
     }
 
     public LabeledEntity getEntity(String dbId, String id) {
@@ -65,10 +65,12 @@ public class EntitySearcher {
     }
 
     public List<LabeledEntity> getEntities(String dbId, List<String> ids) {
+        ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
+        KBCore core = stargraph.getKBCore(dbId);
+
         logger.info(marker, "Fetching ids={}", ids);
         Namespace ns = core.getNamespace();
         List<String> idList = ids.stream().map(ns::shrinkURI).collect(Collectors.toList());
-        ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
 
         SearchQueryGenerator searchQueryGenerator = core.getSearchQueryGenerator(searchParams.getKbId().getModel());
         SearchQueryHolder holder = searchQueryGenerator.entitiesWithIds(idList, searchParams);
@@ -81,8 +83,8 @@ public class EntitySearcher {
     }
 
     public Scores classSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
-
         searchParams.model(BuiltInModel.FACT);
+        KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
         if (rankParams instanceof ModifiableIndraParams) {
             core.configureDistributionalParams((ModifiableIndraParams) rankParams);
@@ -102,8 +104,8 @@ public class EntitySearcher {
     }
 
     public Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
-
         searchParams.model(BuiltInModel.ENTITY);
+        KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
         SearchQueryGenerator searchQueryGenerator = core.getSearchQueryGenerator(searchParams.getKbId().getModel());
         SearchQueryHolder holder = searchQueryGenerator.findEntityInstances(searchParams, FUZZINESS);
@@ -116,8 +118,8 @@ public class EntitySearcher {
     }
 
     public Scores propertySearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
-
         searchParams.model(BuiltInModel.PROPERTY);
+        KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
         if (rankParams instanceof ModifiableIndraParams) {
             core.configureDistributionalParams((ModifiableIndraParams) rankParams);
@@ -135,8 +137,8 @@ public class EntitySearcher {
 
     public Scores pivotedSearch(InstanceEntity pivot,
                                 ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
-
         searchParams.model(BuiltInModel.FACT);
+        KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
         if (rankParams instanceof ModifiableIndraParams) {
             core.configureDistributionalParams((ModifiableIndraParams) rankParams);

@@ -59,6 +59,7 @@ public final class QueryEngine {
     private KBCore core;
     private Analyzers analyzers;
     private GraphSearcher graphSearcher;
+    private EntitySearcher entitySearcher;
     private InteractionModeSelector modeSelector;
     private Namespace namespace;
     private Language language;
@@ -68,6 +69,7 @@ public final class QueryEngine {
         this.core = Objects.requireNonNull(stargraph.getKBCore(dbId));
         this.analyzers = new Analyzers(stargraph.getMainConfig());
         this.graphSearcher = core.createGraphSearcher();
+        this.entitySearcher = stargraph.getEntitySearcher();
         this.namespace = core.getNamespace();
         this.language = core.getLanguage();
         this.modeSelector = new InteractionModeSelector(stargraph.getMainConfig(), language);
@@ -244,10 +246,10 @@ public final class QueryEngine {
 
     private void resolveClass(DataModelBinding binding, SPARQLQueryBuilder builder) {
         if (binding.getModelType() == DataModelType.CLASS) {
-            EntitySearcher searcher = core.createEntitySearcher();
+
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
-            Scores scores = searcher.classSearch(searchParams, rankParams);
+            Scores scores = entitySearcher.classSearch(searchParams, rankParams);
             builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
         }
     }
@@ -256,10 +258,9 @@ public final class QueryEngine {
         if ((binding.getModelType() == DataModelType.CLASS
                 || binding.getModelType() == DataModelType.PROPERTY) && !builder.isResolved(binding)) {
 
-            EntitySearcher searcher = core.createEntitySearcher();
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
-            Scores scores = searcher.pivotedSearch(pivot, searchParams, rankParams);
+            Scores scores = entitySearcher.pivotedSearch(pivot, searchParams, rankParams);
             builder.add(binding, scores.stream().limit(6).collect(Collectors.toList()));
         }
     }
@@ -271,10 +272,10 @@ public final class QueryEngine {
         }
 
         if (binding.getModelType() == DataModelType.INSTANCE) {
-            EntitySearcher searcher = core.createEntitySearcher();
+
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-            Scores scores = searcher.instanceSearch(searchParams, rankParams);
+            Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
             InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
             builder.add(binding, Collections.singletonList(scores.get(0)));
             return instance;
@@ -283,10 +284,10 @@ public final class QueryEngine {
     }
 
     private InstanceEntity resolveInstance(String instanceTerm) {
-        EntitySearcher searcher = core.createEntitySearcher();
+
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(instanceTerm);
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-        Scores scores = searcher.instanceSearch(searchParams, rankParams);
+        Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
         return (InstanceEntity) scores.get(0).getEntry();
     }
 
