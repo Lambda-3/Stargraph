@@ -71,7 +71,7 @@ public final class PassageProcessor extends BaseProcessor {
 
                 // only add linked entities
                 List<LabeledEntity> entities = lners.parallelStream()
-                        .filter(e -> e.getEntity() != null)
+                        .filter(e -> e.isLinked())
                         .map(LinkedNamedEntity::getEntity).collect(Collectors.toList());
 
                 passages.add(new Passage(sentence, entities));

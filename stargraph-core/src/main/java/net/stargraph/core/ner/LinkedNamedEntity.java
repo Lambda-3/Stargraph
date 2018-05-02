@@ -71,6 +71,10 @@ public final class LinkedNamedEntity {
         return end;
     }
 
+    public boolean isLinked() {
+        return entity != null;
+    }
+
     public LabeledEntity getEntity() {
         return entity;
     }
@@ -116,7 +120,7 @@ public final class LinkedNamedEntity {
 
     @Override
     public String toString() {
-        if (entity == null) {
+        if (!isLinked()) {
             return "Unlinked{" +
                     "value='" + value + '\'' +
                     ", cat='" + cat + '\'' +
