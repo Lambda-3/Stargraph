@@ -64,7 +64,7 @@ public class LuceneSearchQueryGenerator implements SearchQueryGenerator {
             if (i > 0) {
                 queryStr.append(" AND ");
             }
-            queryStr.append(words[i]).append("~").append(maxEdits);
+            queryStr.append(ComplexPhraseQueryParser.escape(words[i])).append("~").append(maxEdits);
         }
         queryStr.append(")");
 
