@@ -5,12 +5,12 @@ import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
-import net.stargraph.core.impl.elastic.ElasticEntitySearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.ner.NER;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.EntitySearcher;
+import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
@@ -38,6 +38,7 @@ public final class KBCore {
     private Config mainConfig;
     private Config kbConfig;
     private Language language;
+    private String nerKbName;
     private KBLoader kbLoader;
     private Model graphModel;
     private Namespace namespace;
@@ -45,6 +46,7 @@ public final class KBCore {
     private NER ner;
     private Map<String, Indexer> indexers;
     private Map<String, Searcher> searchers;
+    private Map<String, SearchQueryGenerator> searchQueryGenerators;
     private boolean running;
 
     public KBCore(String kbName, Stargraph stargraph, boolean start) {
@@ -55,7 +57,18 @@ public final class KBCore {
         this.marker = MarkerFactory.getMarker(kbName);
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
+        this.searchQueryGenerators = new ConcurrentHashMap<>();
         this.language = Language.valueOf(kbConfig.getString("language").toUpperCase());
+
+        if (kbConfig.hasPathOrNull("ner-kb")) {
+            if (kbConfig.getIsNull("ner-kb")) {
+                throw new StarGraphException("No NER-KB configured.");
+            }
+            this.nerKbName = kbConfig.getString("ner-kb");
+        } else {
+            this.nerKbName = kbName;
+        }
+
         this.namespace = Namespace.create(kbConfig);
 
         if (start) {
@@ -92,9 +105,16 @@ public final class KBCore {
             } else {
                 logger.warn(marker, "No searcher created for {}", kbId);
             }
+
+            SearchQueryGenerator searchQueryGenerator = factory.createSearchQueryGenerator(kbId, stargraph);
+            if (searchQueryGenerator != null) {
+                searchQueryGenerators.put(modelId, searchQueryGenerator);
+            } else {
+                logger.warn(marker, "No search query generator created for {}", kbId);
+            }
         }
 
-        this.ner = new NERSearcher(language, createEntitySearcher(), kbName);
+        this.ner = new NERSearcher(language, stargraph.getEntitySearcher(), nerKbName);
         this.kbLoader = new KBLoader(this);
         this.running = true;
     }
@@ -122,6 +142,10 @@ public final class KBCore {
 
     public String getKBName() {
         return kbName;
+    }
+
+    public String getNERKBName() {
+        return nerKbName;
     }
 
     public Language getLanguage() {
@@ -154,6 +178,13 @@ public final class KBCore {
         throw new StarGraphException("Searcher not found nor initialized: " + KBId.of(kbName, modelId));
     }
 
+    public SearchQueryGenerator getSearchQueryGenerator(String modelId) {
+        if (searchQueryGenerators.containsKey(modelId)) {
+            return searchQueryGenerators.get(modelId);
+        }
+        throw new StarGraphException("SearchQueryGenerator not found nor initialized: " + KBId.of(kbName, modelId));
+    }
+
     public KBLoader getLoader() {
         checkRunning();
         return kbLoader;
@@ -166,12 +197,6 @@ public final class KBCore {
     public Namespace getNamespace() {
         return namespace;
     }
-
-    public EntitySearcher createEntitySearcher() {
-        //TODO: EntitySearcher creation depends on Searcher impl, need to decouple. See how NERAndLinkingIT is failing.
-        return new ElasticEntitySearcher(this);
-    }
-
 
     public GraphSearcher createGraphSearcher() {
         return new JenaGraphSearcher(kbName, stargraph);

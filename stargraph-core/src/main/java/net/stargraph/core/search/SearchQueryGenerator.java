@@ -1,4 +1,4 @@
-package net.stargraph.core.impl.elastic;
+package net.stargraph.core.search;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.impl.elastic;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,27 +26,16 @@ package net.stargraph.core.impl.elastic;
  * ==========================License-End===============================
  */
 
-import net.stargraph.core.IndicesFactory;
-import net.stargraph.core.Stargraph;
-import net.stargraph.core.index.BaseIndexer;
-import net.stargraph.core.search.BaseSearcher;
-import net.stargraph.core.search.SearchQueryGenerator;
-import net.stargraph.model.KBId;
+import net.stargraph.model.InstanceEntity;
+import net.stargraph.rank.ModifiableSearchParams;
 
-public final class ElasticFactory implements IndicesFactory {
+import java.util.List;
 
-    @Override
-    public BaseIndexer createIndexer(KBId kbId, Stargraph stargraph) {
-        return new ElasticIndexer(kbId, stargraph);
-    }
+public interface SearchQueryGenerator {
+    SearchQueryHolder findClassFacts(ModifiableSearchParams searchParams);
+    SearchQueryHolder entitiesWithIds(List<String> idList, ModifiableSearchParams searchParams);
+    SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits);
+    SearchQueryHolder findPropertyInstances(ModifiableSearchParams searchParams);
+    SearchQueryHolder findPivotFacts(InstanceEntity pivot, ModifiableSearchParams searchParams);
 
-    @Override
-    public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
-        return new ElasticSearcher(kbId, stargraph);
-    }
-
-    @Override
-    public SearchQueryGenerator createSearchQueryGenerator(KBId kbId, Stargraph stargraph) {
-        return new ElasticSearchQueryGenerator();
-    }
 }

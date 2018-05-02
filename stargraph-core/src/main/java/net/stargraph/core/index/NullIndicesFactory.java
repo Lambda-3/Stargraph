@@ -29,6 +29,7 @@ package net.stargraph.core.index;
 import net.stargraph.core.IndicesFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.BaseSearcher;
+import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.model.KBId;
 
 public final class NullIndicesFactory implements IndicesFactory {
@@ -40,6 +41,11 @@ public final class NullIndicesFactory implements IndicesFactory {
 
     @Override
     public BaseSearcher createSearcher(KBId kbId, Stargraph stargraph) {
+        return null;
+    }
+
+    @Override
+    public SearchQueryGenerator createSearchQueryGenerator(KBId kbId, Stargraph stargraph) {
         return null;
     }
 }

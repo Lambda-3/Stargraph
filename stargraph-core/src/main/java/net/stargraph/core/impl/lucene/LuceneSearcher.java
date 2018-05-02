@@ -30,11 +30,15 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.SearchQueryHolder;
+import net.stargraph.model.InstanceEntity;
 import net.stargraph.model.KBId;
+import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
@@ -52,7 +56,37 @@ public final class LuceneSearcher extends BaseSearcher {
 
     @Override
     public Scores search(SearchQueryHolder holder) {
-        return null;
+        IndexSearcher idxSearcher = getLuceneSearcher();
+        if (idxSearcher != null) {
+            LuceneScroller scroller = null;
+            long start = System.nanoTime();
+
+            try {
+                scroller = new LuceneScroller(idxSearcher, holder) {
+                    @Override
+                    protected Score build(Document hitDoc, ScoreDoc hit) {
+                        try {
+                            //TODO support indexing of other types?
+                            String id = hitDoc.get("id");
+                            String value = hitDoc.get("value");
+                            InstanceEntity entity = new InstanceEntity(id, value);
+
+                            return new Score(entity, hit.score);
+                        } catch (Exception e) {
+                            logger.error(marker, "Fail to deserialize document {}", hit.doc, e);
+                        }
+                        return null;
+                    }
+                };
+
+                return scroller.getScores();
+            } finally {
+                double elapsedInMillis = (System.nanoTime() - start) / 1000_000;
+                logger.debug(marker, "Took {}ms, {}, fetched {} entries.", elapsedInMillis,
+                        holder.getQuery(), scroller != null ? scroller.getScores().size() : 0);
+            }
+        }
+        throw new StarGraphException("Index not found for " + kbId);
     }
 
     @Override

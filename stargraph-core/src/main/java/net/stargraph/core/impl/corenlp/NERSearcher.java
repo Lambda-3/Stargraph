@@ -171,7 +171,7 @@ public final class NERSearcher implements NER {
                     tryLink(namedEntity);
                 }
                 else {
-                    if (reference.get().getEntity() != null) {
+                    if (reference.get().isLinked()) {
                         namedEntity.link(reference.get().getEntity(), reference.get().getScore());
                     }
                 }

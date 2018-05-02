@@ -51,6 +51,7 @@ import static net.stargraph.test.TestUtils.createPath;
 public final class ElasticIndexerIT {
 
     private KBCore core;
+    private EntitySearcher entitySearcher;
     private KBId factsId = KBId.of("obama", "facts");
     private KBId propsId = KBId.of("obama", "relations");
     private KBId entitiesId = KBId.of("obama", "entities");
@@ -66,6 +67,7 @@ public final class ElasticIndexerIT {
         stargraph.setDataRootDir(root.toFile());
         stargraph.initialize();
         core = stargraph.getKBCore("obama");
+        entitySearcher = stargraph.getEntitySearcher();
         //TODO: replace with KBLoader#loadAll()
         loadProperties();
         loadEntities();
@@ -74,21 +76,18 @@ public final class ElasticIndexerIT {
 
     @Test
     public void classSearchTest() {
-        EntitySearcher searcher = core.createEntitySearcher();
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("president");
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein();
-        Scores scores = searcher.classSearch(searchParams, rankParams);
+        Scores scores = entitySearcher.classSearch(searchParams, rankParams);
         ClassEntity expected = new ClassEntity("dbc:Presidents_of_the_United_States", "Presidents of the United States", true);
         Assert.assertEquals(expected, scores.get(0).getEntry());
     }
 
     @Test
     public void instanceSearchTest() {
-        EntitySearcher searcher = core.createEntitySearcher();
-
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("baraCk Obuma");
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-        Scores scores = searcher.instanceSearch(searchParams, rankParams);
+        Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
 
         Assert.assertEquals(1, scores.size());
         InstanceEntity expected = new InstanceEntity("dbr:Barack_Obama", "Barack Obama");
@@ -97,11 +96,9 @@ public final class ElasticIndexerIT {
 
     @Test
     public void propertySearchTest() {
-        EntitySearcher searcher = core.createEntitySearcher();
-
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("position");
         ModifiableRankParams rankParams = ParamsBuilder.word2vec().threshold(Threshold.auto());
-        Scores scores = searcher.propertySearch(searchParams, rankParams);
+        Scores scores = entitySearcher.propertySearch(searchParams, rankParams);
 
         PropertyEntity expected = new PropertyEntity("dbp:office", "office");
         Assert.assertEquals(expected, scores.get(0).getEntry());
@@ -109,13 +106,11 @@ public final class ElasticIndexerIT {
 
     @Test
     public void pivotedSearchTest() {
-        EntitySearcher searcher = core.createEntitySearcher();
-
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("school");
         ModifiableRankParams rankParams = ParamsBuilder.word2vec().threshold(Threshold.auto());
 
         final InstanceEntity obama = new InstanceEntity("dbr:Barack_Obama", "Barack Obama");
-        Scores scores = searcher.pivotedSearch(obama, searchParams, rankParams);
+        Scores scores = entitySearcher.pivotedSearch(obama, searchParams, rankParams);
 
         PropertyEntity expected = new PropertyEntity("dbp:education", "education");
         Assert.assertEquals(expected, scores.get(0).getEntry());
@@ -123,8 +118,7 @@ public final class ElasticIndexerIT {
 
     @Test
     public void getEntitiesTest() {
-        EntitySearcher searcher = core.createEntitySearcher();
-        LabeledEntity obama = searcher.getEntity("obama", "dbr:Barack_Obama");
+        LabeledEntity obama = entitySearcher.getEntity("obama", "dbr:Barack_Obama");
         Assert.assertEquals(new InstanceEntity("dbr:Barack_Obama", "Barack Obama"), obama);
     }
 
