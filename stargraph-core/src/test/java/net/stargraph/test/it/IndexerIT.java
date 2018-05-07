@@ -46,9 +46,9 @@ import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
 
 /**
- * Exercises the Elastic backend in a controlled environment.
+ *
  */
-public final class ElasticIndexerIT {
+public final class IndexerIT {
 
     private KBCore core;
     private EntitySearcher entitySearcher;

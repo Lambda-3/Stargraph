@@ -42,8 +42,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-@Test(enabled = false)
-@SuppressWarnings("unchecked")
+@Test
 public final class DocumentProcessorIT {
     KBId kbId = KBId.of("dbpedia-2016", "documents");
     PassageProcessor processor;
