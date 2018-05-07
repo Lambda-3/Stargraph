@@ -26,7 +26,15 @@ package net.stargraph.core.graph;
  * ==========================License-End===============================
  */
 
-public interface GraphModelFactory {
+import net.stargraph.core.Stargraph;
 
-    GraphModelProvider create(String dbId);
+import java.util.Objects;
+
+public abstract class BaseGraphModelProviderFactory implements GraphModelFactory {
+
+    protected Stargraph stargraph;
+
+    public BaseGraphModelProviderFactory(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
+    }
 }

@@ -26,32 +26,53 @@ package net.stargraph.core.impl.ntriples;
  * ==========================License-End===============================
  */
 
-import net.stargraph.core.Stargraph;
-import net.stargraph.core.data.FileDataSource;
-import net.stargraph.core.graph.BaseGraphModelProviderFactory;
-import net.stargraph.core.graph.GraphModelProvider;
-import net.stargraph.model.KBId;
+import net.stargraph.StarGraphException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Iterator;
 
-public final class NTriplesModelFactory extends BaseGraphModelProviderFactory {
+public final class NTriplesModelFileLoader {
+    private static Logger logger = LoggerFactory.getLogger(NTriplesModelFileLoader.class);
+    private static Marker marker = MarkerFactory.getMarker("core");
 
-    public NTriplesModelFactory(Stargraph stargraph) {
-        super(stargraph);
+    private final String dbId;
+    private final File file;
+
+
+    public NTriplesModelFileLoader(String dbid, File file) {
+        this.dbId = dbid;
+        this.file = file;
     }
 
-    @Override
-    public GraphModelProvider create(String dbId) {
-        final KBId kbId = KBId.of(dbId, "facts");
+    public Model loadModel() {
+        logger.info(marker, "Loading '{}'", file.getAbsolutePath());
 
-        return new GraphModelProvider(
-                new FileDataSource(stargraph, kbId, "triples.nt", "triples.nt") {
-                    @Override
-                    protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
-                        return new NTriplesModelFileLoader(kbId.getId(), file).loadModelAsIterator();
-                    }
-                }
-        );
+        Model model = null;
+
+        try (InputStream is = new FileInputStream(file)) {
+            model = ModelFactory.createDefaultModel();
+            model.read(is, null, "N-TRIPLES");
+        } catch (Exception e) {
+            throw new StarGraphException(e);
+        } finally {
+            if (model == null) {
+                logger.error(marker, "No Graph Model instantiated for {}", dbId);
+            }
+        }
+
+        return model;
+    }
+
+    public Iterator<Model> loadModelAsIterator() {
+        return Arrays.asList(loadModel()).iterator();
     }
 }

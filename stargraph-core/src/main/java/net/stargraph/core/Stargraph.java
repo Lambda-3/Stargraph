@@ -37,9 +37,7 @@ import net.stargraph.core.index.Indexer;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.Searcher;
-import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
-import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.Processor;
 import net.stargraph.data.processor.ProcessorChain;
 import net.stargraph.model.KBId;
@@ -171,37 +169,6 @@ public final class Stargraph {
         return null;
     }
 
-    public DataProvider<? extends Holder> createDataProvider(KBId kbId) {
-        DataProviderFactory factory;
-
-        try {
-            String className = getDataProviderCfg(kbId).getString("class");
-            Class<?> providerClazz = Class.forName(className);
-            Constructor[] constructors = providerClazz.getConstructors();
-
-            if (BaseDataProviderFactory.class.isAssignableFrom(providerClazz)) {
-                // It's our internal factory hence we inject the core dependency.
-                factory = (DataProviderFactory) constructors[0].newInstance(this);
-            } else {
-                // This should be a user factory without constructor.
-                // API user should rely on configuration or other means to initialize.
-                // See TestDataProviderFactory as an example
-                factory = (DataProviderFactory) providerClazz.newInstance();
-            }
-
-            DataProvider<? extends Holder> provider = factory.create(kbId);
-
-            if (provider == null) {
-                throw new IllegalStateException("DataProvider not created!");
-            }
-
-            logger.info(marker, "Creating {} data provider", kbId);
-            return provider;
-        } catch (Exception e) {
-            throw new StarGraphException("Fail to initialize data provider: " + kbId, e);
-        }
-    }
-
     public synchronized final void initialize() {
         if (initialized) {
             throw new IllegalStateException("Core already initialized.");
@@ -223,6 +190,30 @@ public final class Stargraph {
 
         kbCoreMap.values().forEach(KBCore::terminate);
         initialized = false;
+    }
+
+    public DataProviderFactory getDataProviderFactory(KBId kbId) {
+        DataProviderFactory factory;
+
+        try {
+            String className = getDataProviderCfg(kbId).getString("class");
+            Class<?> providerClazz = Class.forName(className);
+            Constructor[] constructors = providerClazz.getConstructors();
+
+            if (BaseDataProviderFactory.class.isAssignableFrom(providerClazz)) {
+                // It's our internal factory hence we inject the core dependency.
+                factory = (DataProviderFactory) constructors[0].newInstance(this);
+            } else {
+                // This should be a user factory without constructor.
+                // API user should rely on configuration or other means to initialize.
+                // See TestDataProviderFactory as an example
+                factory = (DataProviderFactory) providerClazz.newInstance();
+            }
+
+            return factory;
+        } catch (Exception e) {
+            throw new StarGraphException("Fail to initialize data provider factory: " + kbId, e);
+        }
     }
 
     GraphModelFactory getGraphModelFactory() {
