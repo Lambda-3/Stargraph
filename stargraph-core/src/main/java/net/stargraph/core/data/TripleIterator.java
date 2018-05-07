@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,14 +26,12 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import com.google.common.collect.Iterators;
-import net.stargraph.data.Indexable;
+import net.stargraph.core.Namespace;
+import net.stargraph.core.Stargraph;
 import net.stargraph.model.KBId;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -43,74 +41,62 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import static net.stargraph.ModelUtils.createInstance;
+abstract class TripleIterator<T> implements Iterator<T> {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Marker marker = MarkerFactory.getMarker("core");
+    protected KBId kbId;
+    protected Model model;
 
-public final class EntityIterator implements Iterator<Indexable> {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private Marker marker = MarkerFactory.getMarker("core");
-    private KBId kbId;
-    private KBCore core;
+    private StmtIterator innerIt;
+    private Statement currentStmt;
     private Namespace namespace;
-    private Iterator<Node> iterator;
-    private Node currentNode;
 
-    public EntityIterator(Stargraph stargraph, KBId kbId) {
-        this.kbId = Objects.requireNonNull(kbId);
-        this.core = stargraph.getKBCore(kbId.getId());
+    TripleIterator(Stargraph stargraph, KBId kbId) {
+        this.model = stargraph.getKBCore(kbId.getId()).getGraphModel();
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
-        this.iterator = createIterator();
+        this.kbId = Objects.requireNonNull(kbId);
+        this.innerIt = Objects.requireNonNull(model).listStatements();
     }
 
-
     @Override
-    public boolean hasNext() {
-        if (currentNode != null) {
+    public final boolean hasNext() {
+        if (currentStmt != null) {
             return true;
         }
 
-        while (iterator.hasNext()) {
-            currentNode = iterator.next();
-            //skipping literals and blank nodes.
-            if ((!currentNode.isBlank() && !currentNode.isLiteral())) {
-                 if (namespace.isFromMainNS(currentNode.getURI())) {
-                     return true;
-                 }
-                 else {
-                     logger.trace(marker, "Discarded. NOT from main NS: [{}]", currentNode.getURI());
-                 }
+        while (innerIt.hasNext()) {
+            currentStmt = innerIt.next();
+            //skipping blank nodes.
+            if ((!currentStmt.getSubject().isAnon() && !currentStmt.getObject().isAnon())) {
+                return true;
             }
         }
 
-        currentNode = null;
+        currentStmt = null;
         return false;
     }
 
     @Override
-    public Indexable next() {
+    public final T next() {
         try {
-            if (currentNode == null) {
+            if (currentStmt == null) {
                 throw new NoSuchElementException();
             }
-            return new Indexable(createInstance(applyNS(currentNode.getURI())), kbId);
+            return buildNext(currentStmt);
+        } catch (Exception e) {
+            logger.error(marker, "Error parsing: {}", currentStmt);
+            throw e;
         } finally {
-            currentNode = null;
+            currentStmt = null;
         }
     }
 
-    private String applyNS(String uri) {
+    protected abstract T buildNext(Statement statement);
+
+    String applyNS(String uri) {
         if (namespace != null) {
             return namespace.shrinkURI(uri);
         }
         return uri;
-    }
-
-    private Iterator<Node> createIterator() {
-        Model model = core.getGraphModel();
-        Graph g = model.getGraph();
-        ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
-        ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);
-        exIt = g.find(null, null, Node.ANY);
-        ExtendedIterator<Node> objIt = exIt.mapWith(Triple::getObject);
-        return Iterators.concat(subjIt, objIt);
     }
 }

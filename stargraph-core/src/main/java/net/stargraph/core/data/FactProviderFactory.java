@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,23 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.Stargraph;
+import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
-import net.stargraph.model.PropertyEntity;
-import org.apache.jena.rdf.model.Statement;
 
-import static net.stargraph.ModelUtils.createProperty;
+/**
+ * Encapsulates the logic to provide a stream of facts.
+ */
+public final class FactProviderFactory extends BaseDataProviderFactory {
 
-final class PropertyIterator extends TripleIterator<Indexable> {
-
-    PropertyIterator(Stargraph core, KBId kbId) {
-        super(core, kbId);
+    public FactProviderFactory(Stargraph core) {
+        super(core);
     }
 
     @Override
-    protected Indexable buildNext(Statement statement) {
-        PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
-        return new Indexable(propertyEntity, kbId);
+    public DataProvider<Indexable> create(KBId kbId) {
+        return new DataProvider<>(new FactIterator(core, kbId));
     }
+
 }

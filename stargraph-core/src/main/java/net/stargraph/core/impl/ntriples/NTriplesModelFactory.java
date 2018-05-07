@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.impl.ntriples;
 
 /*-
  * ==========================License-Start=============================
@@ -26,15 +26,44 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.DataProviderFactory;
+import net.stargraph.StarGraphException;
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.GraphModelFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
-import java.util.Objects;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-abstract class BaseDataProviderFactory implements DataProviderFactory {
+public final class NTriplesModelFactory extends GraphModelFactory {
 
-    protected Stargraph core;
+    public NTriplesModelFactory(Stargraph core) {
+        super(core);
+    }
 
-    public BaseDataProviderFactory(Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    @Override
+    protected Model createModel(String dbId) {
+        File ntriplesFile = getNTriplesPath(dbId).toFile();
+        if (!ntriplesFile.exists()) {
+            logger.warn(marker, "Can't find NT file {}", ntriplesFile);
+        } else {
+
+            try (InputStream is = new FileInputStream(ntriplesFile)) {
+                Model model = ModelFactory.createDefaultModel();
+                model.read(is, null, "N-TRIPLES");
+                return model;
+            } catch (Exception e) {
+                throw new StarGraphException(e);
+            }
+        }
+
+        return null;
+    }
+
+    private Path getNTriplesPath(String dbId) {
+        return Paths.get(stargraph.getDataRootDir(), dbId, "facts", "triples.nt");
     }
 }

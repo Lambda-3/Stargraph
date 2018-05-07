@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,32 +26,23 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import org.apache.jena.rdf.model.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import net.stargraph.core.Stargraph;
+import net.stargraph.data.Indexable;
+import net.stargraph.model.KBId;
+import net.stargraph.model.PropertyEntity;
+import org.apache.jena.rdf.model.Statement;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import static net.stargraph.ModelUtils.createProperty;
 
-public abstract class GraphModelFactory {
-    private Map<String, Model> models;
+final class PropertyIterator extends TripleIterator<Indexable> {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
-    protected Stargraph stargraph;
-
-    public GraphModelFactory(Stargraph stargraph) {
-        this.stargraph = Objects.requireNonNull(stargraph);
-        this.models = new ConcurrentHashMap<>();
+    PropertyIterator(Stargraph core, KBId kbId) {
+        super(core, kbId);
     }
 
-    Model getModel(String dbId) {
-        return models.computeIfAbsent(dbId, (id) -> createModel(dbId));
+    @Override
+    protected Indexable buildNext(Statement statement) {
+        PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
+        return new Indexable(propertyEntity, kbId);
     }
-
-    protected abstract Model createModel(String dbId);
-
 }

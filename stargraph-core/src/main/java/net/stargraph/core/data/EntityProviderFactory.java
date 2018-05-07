@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,19 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
 
-/**
- * Encapsulates the logic to provide a stream of facts.
- */
-public final class FactProviderFactory extends BaseDataProviderFactory {
+public final class EntityProviderFactory extends BaseDataProviderFactory {
 
-    public FactProviderFactory(Stargraph core) {
+    public EntityProviderFactory(Stargraph core) {
         super(core);
     }
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new FactIterator(core, kbId));
+        return new DataProvider<>(new EntityIterator(core, kbId));
     }
-
 }

@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,16 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.DataProvider;
-import net.stargraph.data.Indexable;
-import net.stargraph.model.KBId;
+import net.stargraph.core.Stargraph;
+import net.stargraph.data.DataProviderFactory;
 
-/**
- * Encapsulates the logic to provide a stream of documents.
- */
-public final class DocumentProviderFactory extends BaseDataProviderFactory {
+import java.util.Objects;
 
-    public DocumentProviderFactory(Stargraph core) {
-        super(core);
+public abstract class BaseDataProviderFactory implements DataProviderFactory {
+
+    protected Stargraph core;
+
+    public BaseDataProviderFactory(Stargraph core) {
+        this.core = Objects.requireNonNull(core);
     }
-
-    @Override
-    public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new DocumentIterator(core, kbId));
-    }
-
 }

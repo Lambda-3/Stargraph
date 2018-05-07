@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,42 +26,23 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.StarGraphException;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
+import net.stargraph.core.Stargraph;
+import net.stargraph.data.DataProvider;
+import net.stargraph.data.Indexable;
+import net.stargraph.model.KBId;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+/**
+ * Encapsulates the logic to provide a stream of documents.
+ */
+public final class DocumentProviderFactory extends BaseDataProviderFactory {
 
-public final class NTriplesModelFactory extends GraphModelFactory {
-
-    public NTriplesModelFactory(Stargraph core) {
+    public DocumentProviderFactory(Stargraph core) {
         super(core);
     }
 
     @Override
-    protected Model createModel(String dbId) {
-        File ntriplesFile = getNTriplesPath(dbId).toFile();
-        if (!ntriplesFile.exists()) {
-            logger.warn(marker, "Can't find NT file {}", ntriplesFile);
-        } else {
-
-            try (InputStream is = new FileInputStream(ntriplesFile)) {
-                Model model = ModelFactory.createDefaultModel();
-                model.read(is, null, "N-TRIPLES");
-                return model;
-            } catch (Exception e) {
-                throw new StarGraphException(e);
-            }
-        }
-
-        return null;
+    public DataProvider<Indexable> create(KBId kbId) {
+        return new DataProvider<>(new DocumentIterator(core, kbId));
     }
 
-    private Path getNTriplesPath(String dbId) {
-        return Paths.get(stargraph.getDataRootDir(), dbId, "facts", "triples.nt");
-    }
 }

@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -28,6 +28,7 @@ package net.stargraph.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Stargraph;
 import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.Document;

@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.graph;
 
 /*-
  * ==========================License-Start=============================
@@ -26,18 +26,33 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.DataProvider;
-import net.stargraph.data.Indexable;
-import net.stargraph.model.KBId;
+import net.stargraph.core.Stargraph;
+import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-public final class EntityProviderFactory extends BaseDataProviderFactory {
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
-    public EntityProviderFactory(Stargraph core) {
-        super(core);
+public abstract class GraphModelFactory {
+    private Map<String, Model> models;
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Marker marker = MarkerFactory.getMarker("core");
+    protected Stargraph stargraph;
+
+    public GraphModelFactory(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
+        this.models = new ConcurrentHashMap<>();
     }
 
-    @Override
-    public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new EntityIterator(core, kbId));
+    public Model getModel(String dbId) {
+        return models.computeIfAbsent(dbId, (id) -> createModel(dbId));
     }
+
+    protected abstract Model createModel(String dbId);
+
 }

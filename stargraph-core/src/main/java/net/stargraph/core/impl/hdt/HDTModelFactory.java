@@ -28,7 +28,7 @@ package net.stargraph.core.impl.hdt;
 
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
-import net.stargraph.core.GraphModelFactory;
+import net.stargraph.core.graph.GraphModelFactory;
 import net.stargraph.core.Stargraph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;

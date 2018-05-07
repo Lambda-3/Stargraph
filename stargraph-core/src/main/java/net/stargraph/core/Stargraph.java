@@ -30,6 +30,8 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.data.BaseDataProviderFactory;
+import net.stargraph.core.graph.GraphModelFactory;
 import net.stargraph.core.impl.hdt.HDTModelFactory;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.processors.Processors;

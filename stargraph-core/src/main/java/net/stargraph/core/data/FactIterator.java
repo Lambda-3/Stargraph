@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,18 +26,40 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.DataProvider;
+import net.stargraph.core.Stargraph;
 import net.stargraph.data.Indexable;
-import net.stargraph.model.KBId;
+import net.stargraph.model.*;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Statement;
 
-public final class PropertyProviderFactory extends BaseDataProviderFactory {
+import static net.stargraph.ModelUtils.createInstance;
+import static net.stargraph.ModelUtils.createProperty;
 
-    public PropertyProviderFactory(Stargraph core) {
-        super(core);
+final class FactIterator extends TripleIterator<Indexable> {
+
+    FactIterator(Stargraph core, KBId kbId) {
+        super(core, kbId);
     }
 
     @Override
-    public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new PropertyIterator(core, kbId));
+    protected Indexable buildNext(Statement statement) {
+        InstanceEntity instanceEntity = createInstance(applyNS(statement.getSubject().getURI()));
+        PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
+
+        LabeledEntity labeledEntity;
+
+        if (!statement.getObject().isLiteral()) {
+            //Is created as an instance but can be changed to a class down on the workflow in EntityClassifierProcessor.
+            labeledEntity = createInstance(applyNS(statement.getObject().asResource().getURI()));
+        } else {
+            Literal literal = statement.getObject().asLiteral();
+            String dataType = literal.getDatatypeURI();
+            String langTag = literal.getLanguage();
+            String value = literal.getLexicalForm();
+            labeledEntity = new ValueEntity(value, dataType, langTag);
+        }
+
+
+        return new Indexable(new Fact(kbId, instanceEntity, propertyEntity, labeledEntity), kbId);
     }
 }

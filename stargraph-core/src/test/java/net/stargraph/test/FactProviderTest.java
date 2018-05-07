@@ -28,8 +28,8 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.core.FactProviderFactory;
-import net.stargraph.core.NTriplesModelFactory;
+import net.stargraph.core.data.FactProviderFactory;
+import net.stargraph.core.impl.ntriples.NTriplesModelFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.model.KBId;
