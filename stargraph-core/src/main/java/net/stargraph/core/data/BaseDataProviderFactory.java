@@ -33,9 +33,9 @@ import java.util.Objects;
 
 public abstract class BaseDataProviderFactory implements DataProviderFactory {
 
-    protected Stargraph core;
+    protected Stargraph stargraph;
 
-    public BaseDataProviderFactory(Stargraph core) {
-        this.core = Objects.requireNonNull(core);
+    public BaseDataProviderFactory(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
     }
 }

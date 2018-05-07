@@ -29,20 +29,30 @@ package net.stargraph.core.data;
 import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.DataSource;
 import net.stargraph.model.KBId;
+
+import java.util.Iterator;
 
 /**
  * Encapsulates the logic to provide a stream of facts.
  */
 public final class FactProviderFactory extends BaseDataProviderFactory {
 
-    public FactProviderFactory(Stargraph core) {
-        super(core);
+    public FactProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new FactIterator(core, kbId));
+        return new DataProvider<>(
+                new DataSource<Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator() {
+                        return new FactGraphIterator(stargraph, kbId);
+                    }
+                }
+        );
     }
 
 }

@@ -29,16 +29,25 @@ package net.stargraph.core.data;
 import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.DataSource;
 import net.stargraph.model.KBId;
+
+import java.util.Iterator;
 
 public final class EntityProviderFactory extends BaseDataProviderFactory {
 
-    public EntityProviderFactory(Stargraph core) {
-        super(core);
+    public EntityProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new EntityIterator(core, kbId));
+        return new DataProvider<>(
+                new DataSource<Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator() {
+                        return new EntityGraphIterator(stargraph, kbId);
+                    }
+                });
     }
 }

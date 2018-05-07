@@ -30,11 +30,15 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
+import net.stargraph.data.DataSource;
+import net.stargraph.data.Indexable;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.model.KBId;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public final class TestDataProviderFactory implements DataProviderFactory {
 
@@ -48,6 +52,13 @@ public final class TestDataProviderFactory implements DataProviderFactory {
                 .map(cfg -> new TestData(cfg.getBoolean("failOnIndexer"), cfg.getBoolean("failOnProvider"), cfg.getString("text")))
                 .collect(Collectors.toList());
 
-        return new DataProvider<>(new TestDataIterator(kbId, testData));
+        return new DataProvider<>(
+                new DataSource<Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator() {
+                        return new TestDataIterator(kbId, testData);
+                    }
+                }
+        );
     }
 }

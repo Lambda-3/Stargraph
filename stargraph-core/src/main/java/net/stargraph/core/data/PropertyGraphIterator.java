@@ -34,9 +34,9 @@ import org.apache.jena.rdf.model.Statement;
 
 import static net.stargraph.ModelUtils.createProperty;
 
-final class PropertyIterator extends TripleIterator<Indexable> {
+final class PropertyGraphIterator extends GraphIterator<Indexable> {
 
-    PropertyIterator(Stargraph core, KBId kbId) {
+    PropertyGraphIterator(Stargraph core, KBId kbId) {
         super(core, kbId);
     }
 

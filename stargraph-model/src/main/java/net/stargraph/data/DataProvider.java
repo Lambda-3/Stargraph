@@ -26,41 +26,36 @@ package net.stargraph.data;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.processor.Holder;
+import jersey.repackaged.com.google.common.collect.Iterators;
 
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
  * Primary data consumer interface.
  */
-public class DataProvider<T extends Holder> implements Iterable<T> {
+public class DataProvider<T> {
+    private List<DataSource<T>> dataSources;
 
-    private Iterator<T> dataIt;
+    public DataProvider(DataSource<T> dataSource) {
+        this(Arrays.asList(dataSource));
+    }
 
-    public DataProvider(Iterator<T> data) {
-        if (data == null) {
-            throw new IllegalArgumentException("Data can't be null.");
-        }
-
-        this.dataIt = data;
+    public DataProvider(List<DataSource<T>> dataSources) {
+        this.dataSources = Objects.requireNonNull(dataSources);
     }
 
     public Stream<T> getStream() {
-        return StreamSupport.stream(this.spliterator(), false);
+        return StreamSupport.stream(this.getSpliterator(), false);
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return dataIt;
+    public Iterator<T> getIterator() {
+        return Iterators.concat(dataSources.stream().map(s -> s.getIterator()).iterator());
     }
 
-    @Override
-    public Spliterator<T> spliterator() {
-        return Spliterators.spliteratorUnknownSize(dataIt, Spliterator.NONNULL);
+    public Spliterator<T> getSpliterator() {
+        return Spliterators.spliteratorUnknownSize(getIterator(), Spliterator.NONNULL);
     }
 
 }

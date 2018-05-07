@@ -26,77 +26,73 @@ package net.stargraph.core.data;
  * ==========================License-End===============================
  */
 
-import net.stargraph.core.Namespace;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.serializer.ObjectSerializer;
+import net.stargraph.data.Indexable;
+import net.stargraph.model.Document;
 import net.stargraph.model.KBId;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
-abstract class TripleIterator<T> implements Iterator<T> {
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
-    protected KBId kbId;
-    protected Model model;
+public final class DocumentFileIterator implements Iterator<Indexable> {
+    private static Logger logger = LoggerFactory.getLogger(DocumentFileIterator.class);
+    private static Marker marker = MarkerFactory.getMarker("core");
 
-    private StmtIterator innerIt;
-    private Statement currentStmt;
-    private Namespace namespace;
+    private final KBId kbId;
+    private final ObjectMapper mapper;
+    private final Iterator<String> lineIt;
+    private Document next;
 
-    TripleIterator(Stargraph stargraph, KBId kbId) {
-        this.model = stargraph.getKBCore(kbId.getId()).getGraphModel();
-        this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
+
+    public DocumentFileIterator(Stargraph stargraph, KBId kbId, File file) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.innerIt = Objects.requireNonNull(model).listStatements();
-    }
+        this.mapper = ObjectSerializer.createMapper(kbId);
 
-    @Override
-    public final boolean hasNext() {
-        if (currentStmt != null) {
-            return true;
-        }
-
-        while (innerIt.hasNext()) {
-            currentStmt = innerIt.next();
-            //skipping blank nodes.
-            if ((!currentStmt.getSubject().isAnon() && !currentStmt.getObject().isAnon())) {
-                return true;
-            }
-        }
-
-        currentStmt = null;
-        return false;
-    }
-
-    @Override
-    public final T next() {
         try {
-            if (currentStmt == null) {
-                throw new NoSuchElementException();
+            this.lineIt = FileUtils.lineIterator(file, "UTF-8");
+            parseNext();
+        } catch (IOException e) {
+            logger.error(marker, "Failed to load documents from file {}.", file);
+            throw new StarGraphException(e);
+        }
+    }
+
+    private void parseNext() {
+        while (lineIt.hasNext()) {
+            String line = lineIt.next();
+            if (line.length() > 0) {
+                try {
+                    Document document = mapper.readValue(line, Document.class);
+                    next = document;
+                    return;
+                } catch (IOException e) {
+                    logger.warn(marker, "Failed to deserialize document from line: {}", line);
+                }
             }
-            return buildNext(currentStmt);
-        } catch (Exception e) {
-            logger.error(marker, "Error parsing: {}", currentStmt);
-            throw e;
-        } finally {
-            currentStmt = null;
         }
+        next = null;
     }
 
-    protected abstract T buildNext(Statement statement);
-
-    String applyNS(String uri) {
-        if (namespace != null) {
-            return namespace.shrinkURI(uri);
-        }
-        return uri;
+    @Override
+    public boolean hasNext() {
+        return next != null;
     }
+
+    @Override
+    public Indexable next() {
+        Indexable indexable = new Indexable(next, kbId);
+        parseNext();
+        return indexable;
+    }
+
 }

@@ -48,7 +48,7 @@ import java.util.Objects;
 
 import static net.stargraph.ModelUtils.createInstance;
 
-public final class EntityIterator implements Iterator<Indexable> {
+public final class EntityGraphIterator implements Iterator<Indexable> {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private KBId kbId;
@@ -57,7 +57,7 @@ public final class EntityIterator implements Iterator<Indexable> {
     private Iterator<Node> iterator;
     private Node currentNode;
 
-    public EntityIterator(Stargraph stargraph, KBId kbId) {
+    public EntityGraphIterator(Stargraph stargraph, KBId kbId) {
         this.kbId = Objects.requireNonNull(kbId);
         this.core = stargraph.getKBCore(kbId.getId());
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();

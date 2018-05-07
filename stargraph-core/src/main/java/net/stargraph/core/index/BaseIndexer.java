@@ -60,7 +60,7 @@ public abstract class BaseIndexer implements Indexer {
     private ExecutorService loaderExecutor;
     private Future<?> loaderFutureTask;
     private ProgressWatcher loaderProgress;
-    private DataProvider<?> dataProvider;
+    private DataProvider dataProvider;
     private ProcessorChain processorChain;
     private boolean loading;
     private boolean running;
@@ -255,7 +255,7 @@ public abstract class BaseIndexer implements Indexer {
                 doBeforeLoad(reset);
                 loaderProgress.start(true); // now this is always true until we add a resume feature.
                 logger.info(marker, "Loader is running..");
-                Iterator<? extends Holder> iterator = dataProvider.iterator();
+                Iterator<? extends Holder> iterator = dataProvider.getIterator();
                 while (iterator.hasNext()) {
 
                     if (limit > 0 && loaderProgress.getTotalRead() >= limit) {
