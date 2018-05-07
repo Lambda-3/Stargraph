@@ -188,6 +188,7 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doAfterLoad() throws InterruptedException {
         logger.debug(marker, ".. after loading.");
+        this.loaderProgress = null;
         afterLoad();
     }
 
@@ -197,6 +198,8 @@ public abstract class BaseIndexer implements Indexer {
 
 
     private void work(Holder holder) throws ProcessorException {
+        // loaderProgress may be null (if index() is called without loading)
+
         try {
             if (processorChain != null) {
                 processorChain.run(Objects.requireNonNull(holder));
@@ -206,7 +209,7 @@ public abstract class BaseIndexer implements Indexer {
                 final Serializable data = holder.get();
 
                 if (this.loading) {
-                    if (loaderProgress.incIndexed() % 500000 == 0) {
+                    if (loaderProgress != null && loaderProgress.getTotalIndexed() % 500000 == 0) {
                         logger.info(marker, "{}: {}", loaderProgress.getTotalIndexed(), data);
                     }
                 } else {
@@ -215,6 +218,9 @@ public abstract class BaseIndexer implements Indexer {
                 }
 
                 doIndex(data, kbId);
+                if (loaderProgress != null) {
+                    loaderProgress.incIndexed();
+                }
 
             } else {
                 sink(holder);
@@ -284,11 +290,11 @@ public abstract class BaseIndexer implements Indexer {
             } finally {
                 logger.info(marker, "Loader is finishing..");
                 try {
-                    doAfterLoad();
                     loaderProgress.stop();
                     if (loaderProgress.getTotalIndexed() == 0) {
                         logger.warn(marker, "Nothing was loaded!");
                     }
+                    doAfterLoad();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.warn(marker, "Thread was interrupted.", e);
