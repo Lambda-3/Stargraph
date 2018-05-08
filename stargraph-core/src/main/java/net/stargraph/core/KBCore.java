@@ -86,8 +86,8 @@ public final class KBCore {
         final List<String> modelNames = getKBIds().stream().map(KBId::getModel).collect(Collectors.toList());
 
         for (String modelId : modelNames) {
-            logger.info(marker, "Initializing '{}'", modelId);
             final KBId kbId = KBId.of(kbName, modelId);
+            logger.info(marker, "Initializing '{}'", kbId);
             IndicesFactory factory = stargraph.getIndicesFactory(kbId);
 
             Indexer indexer = factory.createIndexer(kbId, stargraph);
