@@ -22,13 +22,13 @@ public class HDTModelFactory extends BaseGraphModelProviderFactory {
         String dataDir = stargraph.getDataRootDir();
         Config config = stargraph.getKBCore(dbId).getConfig();
 
-        final String cfgFilePath = "triple-store.hdt.file";
+        final String cfgFilePath = "graphmodel.hdt.file";
         String hdtResourcePath = "triples.hdt";
         if (config.hasPath(cfgFilePath)) {
             hdtResourcePath = config.getString(cfgFilePath);
         }
 
-        Config tripleStoreCfg = stargraph.getKBCore(dbId).getConfig("triple-store");
+        Config tripleStoreCfg = stargraph.getKBCore(dbId).getConfig("graphmodel");
         boolean useIndex = tripleStoreCfg.hasPath("hdt.use-index") && tripleStoreCfg.getBoolean("hdt.use-index");
 
         return new GraphModelProvider(

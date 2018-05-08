@@ -157,7 +157,7 @@ public final class Namespace extends TreeMap<String, String> {
     }
 
     private void readMappings() {
-        final String key = "triple-store.namespace.mapping";
+        final String key = "graphmodel.namespace.mapping";
         if (kbConfig.hasPath(key) && !kbConfig.getIsNull(key)) {
             String resource = kbConfig.getString(key);
             putAll(readNamespaceResource(resource));
