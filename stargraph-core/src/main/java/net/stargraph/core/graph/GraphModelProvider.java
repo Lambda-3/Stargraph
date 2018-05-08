@@ -27,26 +27,24 @@ package net.stargraph.core.graph;
  */
 
 import net.stargraph.data.DataSource;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class GraphModelProvider {
-    private List<DataSource<Model>> dataSources;
+    private List<DataSource<JModel>> dataSources;
 
-    public GraphModelProvider(DataSource<Model> dataSource) {
+    public GraphModelProvider(DataSource<JModel> dataSource) {
         this(Arrays.asList(dataSource));
     }
 
-    public GraphModelProvider(List<DataSource<Model>> dataSources) {
+    public GraphModelProvider(List<DataSource<JModel>> dataSources) {
         this.dataSources = Objects.requireNonNull(dataSources);
     }
 
-    public Model getModel() {
-        Model mergedModel = ModelFactory.createDefaultModel();
+    public JModel getGraphModel() {
+        JModel mergedModel =  new JModel();
         dataSources.forEach(s -> s.getIterator().forEachRemaining(m -> mergedModel.add(m)));
 
         return mergedModel;

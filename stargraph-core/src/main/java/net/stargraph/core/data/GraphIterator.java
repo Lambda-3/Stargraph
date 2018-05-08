@@ -28,8 +28,8 @@ package net.stargraph.core.data;
 
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.model.KBId;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ abstract class GraphIterator<T> implements Iterator<T> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("core");
     protected KBId kbId;
-    protected Model model;
+    protected JModel model;
 
     private StmtIterator innerIt;
     private Statement currentStmt;
@@ -55,7 +55,7 @@ abstract class GraphIterator<T> implements Iterator<T> {
         this.model = stargraph.getKBCore(kbId.getId()).getGraphModel();
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
         this.kbId = Objects.requireNonNull(kbId);
-        this.innerIt = Objects.requireNonNull(model).listStatements();
+        this.innerIt = Objects.requireNonNull(model).getModel().listStatements();
     }
 
     @Override

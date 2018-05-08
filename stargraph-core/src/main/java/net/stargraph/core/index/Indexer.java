@@ -28,6 +28,7 @@ package net.stargraph.core.index;
 
 import net.stargraph.data.Indexable;
 
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -50,6 +51,8 @@ public interface Indexer {
     void awaitLoader(long time, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException;
 
     void index(Indexable data) throws InterruptedException;
+
+    void index(Iterator<Indexable> data) throws InterruptedException;
 
     void flush();
 

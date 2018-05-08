@@ -27,8 +27,10 @@ package net.stargraph.core;
  */
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.Searcher;
+import net.stargraph.data.DataProvider;
 import net.stargraph.model.KBId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,5 +130,31 @@ public final class KBLoader {
     private boolean containsData(KBId kbId) {
         Searcher searcher = core.getSearcher(kbId.getModel());
         return searcher.countDocuments() > 0;
+    }
+
+
+    public void graphModelUpdate(JModel model) {
+        doGraphModelUpdate(core.getKBName(), model);
+    }
+
+    private void doGraphModelUpdate(String dbId, JModel model) {
+        logger.info(marker, "Indexing graph model update of '{}'. This can take some time ;) ..", dbId);
+
+        core.getKBIds().forEach(kbId -> { // why not parallel?
+            try {
+                DataProvider dataProvider = core.getDataProvider(kbId.getModel());
+                if (dataProvider.hasGraphModelUpdater()) {
+                    logger.info(marker, "Indexing graph model update for {}", kbId);
+                    Indexer indexer = core.getIndexer(kbId.getModel());
+                    indexer.index(dataProvider.getGraphModelUpdater().getIterator(model));
+                    indexer.flush();
+                } else {
+                    // Is this really a warning or info?
+                    logger.warn(marker, "No graph model updater configured for {}", kbId);
+                }
+            } catch (Exception e) {
+                logger.error(marker, "Fail to index graph model update for {}", kbId);
+            }
+        });
     }
 }

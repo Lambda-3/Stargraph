@@ -32,10 +32,10 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.data.FileDataSource;
 import net.stargraph.core.graph.BaseGraphModelProviderFactory;
 import net.stargraph.core.graph.GraphModelProvider;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.core.impl.hdt.HDTModelFileLoader;
 import net.stargraph.core.impl.ntriples.NTriplesModelFileLoader;
 import net.stargraph.model.KBId;
-import org.apache.jena.rdf.model.Model;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -97,7 +97,7 @@ public final class GraphModelProviderFactoryTest {
 
     @Test
     public void loadJointGraphModel() {
-        Model model = stargraph.getKBCore(dbId).getGraphModel();
+        JModel model = stargraph.getKBCore(dbId).getGraphModel();
 
         System.out.println(model.size());
         Assert.assertTrue(model.size() > 2000);

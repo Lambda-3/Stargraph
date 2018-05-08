@@ -59,7 +59,7 @@ public class FactProviderTest {
         KBId kbId = KBId.of("obama", "facts");
         FactProviderFactory factory = new FactProviderFactory(core);
         DataProvider<?> provider = factory.create(kbId);
-        Assert.assertEquals(provider.getStream().count(), 1877);
+        Assert.assertEquals(provider.getMergedDataSource().getStream().count(), 1877);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class FactProviderTest {
         KBId kbId = KBId.of("obama", "facts");
         FactProviderFactory factory = new FactProviderFactory(core);
         DataProvider<?> provider = factory.create(kbId);
-        Assert.assertEquals(provider.getStream().count(), 1877);
+        Assert.assertEquals(provider.getMergedDataSource().getStream().count(), 1877);
     }
 
 }

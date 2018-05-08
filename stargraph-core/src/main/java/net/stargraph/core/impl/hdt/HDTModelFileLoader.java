@@ -27,7 +27,7 @@ package net.stargraph.core.impl.hdt;
  */
 
 import net.stargraph.StarGraphException;
-import org.apache.jena.rdf.model.Model;
+import net.stargraph.core.graph.JModel;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
@@ -56,16 +56,16 @@ public final class HDTModelFileLoader {
         this.useIndex = useIndex;
     }
 
-    public Model loadModel() {
+    public JModel loadModel() {
         logger.info(marker, "Loading '{}', useIndex={}", file.getAbsolutePath(), useIndex);
 
-        Model model = null;
+        JModel model = null;
 
         try {
             String hdtFilePathStr = file.getAbsolutePath();
             HDT hdt = useIndex ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
             HDTGraph graph = new HDTGraph(hdt);
-            model = ModelFactory.createModelForGraph(graph);
+            model = new JModel(ModelFactory.createModelForGraph(graph));
         } catch (Exception e) {
             throw new StarGraphException(e);
         } finally {
@@ -77,7 +77,7 @@ public final class HDTModelFileLoader {
         return model;
     }
 
-    public Iterator<Model> loadModelAsIterator() {
+    public Iterator<JModel> loadModelAsIterator() {
         return Arrays.asList(loadModel()).iterator();
     }
 }

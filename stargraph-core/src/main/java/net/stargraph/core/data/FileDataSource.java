@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Objects;
 
-public abstract class FileDataSource implements DataSource {
+public abstract class FileDataSource extends DataSource {
     private class EmptyIterator implements Iterator {
 
         @Override

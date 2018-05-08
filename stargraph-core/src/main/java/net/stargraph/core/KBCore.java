@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.GraphSearcher;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
@@ -17,7 +18,6 @@ import net.stargraph.data.DataProviderFactory;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableIndraParams;
-import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -41,7 +41,7 @@ public final class KBCore {
     private Config kbConfig;
     private Language language;
     private String nerKbName;
-    private Model graphModel;
+    private JModel graphModel;
     private KBLoader kbLoader;
     private Namespace namespace;
     private Stargraph stargraph;
@@ -159,12 +159,12 @@ public final class KBCore {
         return typeObj.keySet().stream().map(modelName -> KBId.of(kbName, modelName)).collect(Collectors.toList());
     }
 
-    public Model getGraphModel() {
+    public JModel getGraphModel() {
         checkRunning();
         if (graphModel == null) {
             GraphModelProviderFactory factory = stargraph.getGraphModelProviderFactory(kbName);
             logger.info(marker, "Create graph model for '{}' using '{}'", kbName, factory.getClass().getSimpleName());
-            graphModel = factory.create(kbName).getModel();
+            graphModel = factory.create(kbName).getGraphModel();
             if (graphModel == null) {
                 throw new StarGraphException("Could not create graph model for: " + kbName);
             }
@@ -229,5 +229,13 @@ public final class KBCore {
         if (!running) {
             throw new IllegalStateException("KB Core not started.");
         }
+    }
+
+    public void updateGraphModel(JModel addedModel) {
+        JModel graphModel = getGraphModel();
+        graphModel.add(addedModel);
+
+        // notify KBLoader that graph model was extended
+        kbLoader.graphModelUpdate(addedModel);
     }
 }

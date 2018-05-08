@@ -108,7 +108,7 @@ public final class EntityGraphIterator implements Iterator<Indexable> {
     }
 
     private Iterator<Node> createIterator() {
-        Model model = core.getGraphModel();
+        Model model = core.getGraphModel().getModel();
         Graph g = model.getGraph();
         ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
         ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);

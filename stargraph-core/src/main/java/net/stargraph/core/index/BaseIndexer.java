@@ -108,6 +108,15 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     @Override
+    public void index(Iterator<Indexable> data) throws InterruptedException {
+        if (loading) {
+            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
+        }
+
+        data.forEachRemaining(d -> work(d));
+    }
+
+    @Override
     public final void load() {
         load(false, -1);
     }
@@ -255,7 +264,7 @@ public abstract class BaseIndexer implements Indexer {
                 doBeforeLoad(reset);
                 loaderProgress.start(true); // now this is always true until we add a resume feature.
                 logger.info(marker, "Loader is running..");
-                Iterator<? extends Holder> iterator = dataProvider.getIterator();
+                Iterator<? extends Holder> iterator = dataProvider.getMergedDataSource().getIterator();
                 while (iterator.hasNext()) {
 
                     if (limit > 0 && loaderProgress.getTotalRead() >= limit) {

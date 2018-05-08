@@ -54,7 +54,7 @@ public class DataProviderTest {
                     }
                 }
         );
-        Indexable last = provider.getStream().skip(2).findFirst().orElseThrow(() -> new RuntimeException("fail"));
+        Indexable last = provider.getMergedDataSource().getStream().skip(2).findFirst().orElseThrow(() -> new RuntimeException("fail"));
         Assert.assertEquals(last.get(), "data3");
     }
 
@@ -69,7 +69,7 @@ public class DataProviderTest {
                     }
                 }
         );
-        Stream<Indexable> stream = provider.getStream();
+        Stream<Indexable> stream = provider.getMergedDataSource().getStream();
         List<Indexable> collected = stream.collect(Collectors.toList());
         Assert.assertEquals(collected, data);
     }
@@ -85,7 +85,7 @@ public class DataProviderTest {
                     }
                 }
         );
-        Stream<Indexable> stream = provider.getStream();
+        Stream<Indexable> stream = provider.getMergedDataSource().getStream();
         List<Indexable> collected = stream.collect(Collectors.toList());
         Assert.assertEquals(collected, data);
 
@@ -97,7 +97,7 @@ public class DataProviderTest {
                     }
                 }
         );
-        stream = provider.getStream();
+        stream = provider.getMergedDataSource().getStream();
         collected = stream.collect(Collectors.toList());
         Assert.assertEquals(collected, data);
     }

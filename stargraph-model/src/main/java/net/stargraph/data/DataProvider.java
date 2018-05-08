@@ -27,35 +27,59 @@ package net.stargraph.data;
  */
 
 import jersey.repackaged.com.google.common.collect.Iterators;
+import net.stargraph.StarGraphException;
+import net.stargraph.model.GraphModel;
 
-import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
- * Primary data consumer interface.
+ * Primary data generating interface.
  */
 public class DataProvider<T> {
     private List<DataSource<T>> dataSources;
+    private DataGenerator<? extends GraphModel, T> graphModelUpdater; // optional, can be null
 
     public DataProvider(DataSource<T> dataSource) {
         this(Arrays.asList(dataSource));
     }
 
     public DataProvider(List<DataSource<T>> dataSources) {
+        this(dataSources, null);
+    }
+
+    public DataProvider(List<DataSource<T>> dataSources, DataGenerator<? extends GraphModel, T> graphModelUpdater) {
         this.dataSources = Objects.requireNonNull(dataSources);
+        this.graphModelUpdater = graphModelUpdater;
     }
 
-    public Stream<T> getStream() {
-        return StreamSupport.stream(this.getSpliterator(), false);
+
+
+    public List<DataSource<T>> getDataSources() {
+        return dataSources;
     }
 
-    public Iterator<T> getIterator() {
-        return Iterators.concat(dataSources.stream().map(s -> s.getIterator()).iterator());
+    public DataSource<T> getMergedDataSource() {
+        return new DataSource<T>() {
+            @Override
+            public Iterator<T> getIterator() {
+                return Iterators.concat(dataSources.stream().map(s -> s.getIterator()).iterator());
+            }
+        };
     }
 
-    public Spliterator<T> getSpliterator() {
-        return Spliterators.spliteratorUnknownSize(getIterator(), Spliterator.NONNULL);
+    public boolean hasGraphModelUpdater() {
+        return graphModelUpdater != null;
+    }
+
+    public DataGenerator<? extends GraphModel, T> getGraphModelUpdater() {
+        if (graphModelUpdater != null) {
+            return graphModelUpdater;
+        } else {
+            throw new StarGraphException("No graph model updater exists.");
+        }
     }
 
 }

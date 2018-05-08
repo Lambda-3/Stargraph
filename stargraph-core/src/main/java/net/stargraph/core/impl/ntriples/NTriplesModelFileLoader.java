@@ -27,6 +27,7 @@ package net.stargraph.core.impl.ntriples;
  */
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.JModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
@@ -53,14 +54,15 @@ public final class NTriplesModelFileLoader {
         this.file = file;
     }
 
-    public Model loadModel() {
+    public JModel loadModel() {
         logger.info(marker, "Loading '{}'", file.getAbsolutePath());
 
-        Model model = null;
+        JModel model = null;
 
         try (InputStream is = new FileInputStream(file)) {
-            model = ModelFactory.createDefaultModel();
-            model.read(is, null, "N-TRIPLES");
+            Model m = ModelFactory.createDefaultModel();
+            m.read(is, null, "N-TRIPLES");
+            model = new JModel(m);
         } catch (Exception e) {
             throw new StarGraphException(e);
         } finally {
@@ -72,7 +74,7 @@ public final class NTriplesModelFileLoader {
         return model;
     }
 
-    public Iterator<Model> loadModelAsIterator() {
+    public Iterator<JModel> loadModelAsIterator() {
         return Arrays.asList(loadModel()).iterator();
     }
 }
