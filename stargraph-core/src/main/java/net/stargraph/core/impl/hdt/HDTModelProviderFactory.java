@@ -10,16 +10,15 @@ import net.stargraph.model.KBId;
 import java.io.File;
 import java.util.Iterator;
 
-public class HDTModelFactory extends BaseGraphModelProviderFactory {
+public class HDTModelProviderFactory extends BaseGraphModelProviderFactory {
 
-    public HDTModelFactory(Stargraph stargraph) {
+    public HDTModelProviderFactory(Stargraph stargraph) {
         super(stargraph);
     }
 
     @Override
     public GraphModelProvider create(String dbId) {
         final KBId kbId = KBId.of(dbId, "facts");
-        String dataDir = stargraph.getDataRootDir();
         Config config = stargraph.getKBCore(dbId).getConfig();
 
         final String cfgFilePath = "graphmodel.hdt.file";

@@ -26,7 +26,7 @@ package net.stargraph.core.graph;
  * ==========================License-End===============================
  */
 
-public interface GraphModelFactory {
+public interface GraphModelProviderFactory {
 
     GraphModelProvider create(String dbId);
 }

@@ -30,7 +30,7 @@ import net.stargraph.core.Stargraph;
 
 import java.util.Objects;
 
-public abstract class BaseGraphModelProviderFactory implements GraphModelFactory {
+public abstract class BaseGraphModelProviderFactory implements GraphModelProviderFactory {
 
     protected Stargraph stargraph;
 

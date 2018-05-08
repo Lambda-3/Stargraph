@@ -31,8 +31,9 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.data.BaseDataProviderFactory;
-import net.stargraph.core.graph.GraphModelFactory;
-import net.stargraph.core.impl.hdt.HDTModelFactory;
+import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.GraphModelProviderFactory;
+import net.stargraph.core.impl.hdt.HDTModelProviderFactory;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.EntitySearcher;
@@ -62,7 +63,7 @@ public final class Stargraph {
     private Config mainConfig;
     private String dataRootDir;
     private IndicesFactory indicesFactory;
-    private GraphModelFactory graphModelFactory;
+    private GraphModelProviderFactory defaultGraphModelProviderFactory;
     private Map<String, KBCore> kbCoreMap;
     private Set<String> kbInitSet;
     private EntitySearcher entitySearcher;
@@ -94,7 +95,7 @@ public final class Stargraph {
         // Configurable defaults
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
-        setGraphModelFactory(new HDTModelFactory(this));
+        setDefaultGraphModelProviderFactory(new HDTModelProviderFactory(this));
 
         if (initKBs) {
             initialize();
@@ -108,12 +109,20 @@ public final class Stargraph {
         throw new StarGraphException("KB not found: '" + dbId + "'");
     }
 
+    public String getGraphModelPath(String dbid) {
+        return String.format("kb.%s.graphmodel", dbid);
+    }
+
     public Config getMainConfig() {
         return mainConfig;
     }
 
     public Config getModelConfig(KBId kbId) {
         return mainConfig.getConfig(kbId.getModelPath());
+    }
+
+    public Config getGraphModelConfig(String dbid) {
+        return mainConfig.getConfig(getGraphModelPath(dbid));
     }
 
     public Collection<KBCore> getKBs() {
@@ -152,8 +161,8 @@ public final class Stargraph {
         this.indicesFactory = Objects.requireNonNull(indicesFactory);
     }
 
-    public void setGraphModelFactory(GraphModelFactory modelFactory) {
-        this.graphModelFactory = Objects.requireNonNull(modelFactory);
+    public void setDefaultGraphModelProviderFactory(GraphModelProviderFactory graphModelProviderFactory) {
+        this.defaultGraphModelProviderFactory = Objects.requireNonNull(graphModelProviderFactory);
     }
 
     public ProcessorChain createProcessorChain(KBId kbId) {
@@ -193,13 +202,12 @@ public final class Stargraph {
     }
 
     public DataProviderFactory getDataProviderFactory(KBId kbId) {
-        DataProviderFactory factory;
-
         try {
             String className = getDataProviderCfg(kbId).getString("class");
             Class<?> providerClazz = Class.forName(className);
             Constructor[] constructors = providerClazz.getConstructors();
 
+            DataProviderFactory factory;
             if (BaseDataProviderFactory.class.isAssignableFrom(providerClazz)) {
                 // It's our internal factory hence we inject the core dependency.
                 factory = (DataProviderFactory) constructors[0].newInstance(this);
@@ -216,8 +224,33 @@ public final class Stargraph {
         }
     }
 
-    GraphModelFactory getGraphModelFactory() {
-        return graphModelFactory;
+    public GraphModelProviderFactory getGraphModelProviderFactory(String dbid) {
+        String className;
+        try {
+            className = getGraphModelProviderCfg(dbid).getString("class");
+        } catch (Exception e) {
+            return defaultGraphModelProviderFactory;
+        }
+
+        try {
+            Class<?> providerClazz = Class.forName(className);
+            Constructor[] constructors = providerClazz.getConstructors();
+
+            GraphModelProviderFactory factory;
+            if (BaseGraphModelProviderFactory.class.isAssignableFrom(providerClazz)) {
+                // It's our internal factory hence we inject the core dependency.
+                factory = (GraphModelProviderFactory) constructors[0].newInstance(this);
+            } else {
+                // This should be a user factory without constructor.
+                // API user should rely on configuration or other means to initialize.
+                // See TestDataProviderFactory as an example
+                factory = (GraphModelProviderFactory) providerClazz.newInstance();
+            }
+
+            return factory;
+        } catch (Exception e) {
+            throw new StarGraphException("Fail to initialize graph model provider factory: " + dbid, e);
+        }
     }
 
     IndicesFactory getIndicesFactory(KBId kbId) {
@@ -284,6 +317,11 @@ public final class Stargraph {
             return mainConfig.getConfigList(path);
         }
         return null;
+    }
+
+    private Config getGraphModelProviderCfg(String dbid) {
+        String path = String.format("%s.provider", getGraphModelPath(dbid));
+        return mainConfig.getConfig(path);
     }
 
     private Config getDataProviderCfg(KBId kbId) {

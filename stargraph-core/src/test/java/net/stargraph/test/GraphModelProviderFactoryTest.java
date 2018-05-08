@@ -79,7 +79,7 @@ public final class GraphModelProviderFactoryTest {
         }
     }
 
-    private String dbId = "obama";
+    private String dbId = "mytest";
     private Stargraph stargraph;
 
     @BeforeClass
@@ -91,7 +91,7 @@ public final class GraphModelProviderFactoryTest {
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
-        stargraph.setGraphModelFactory(new TestGraphModelProviderFactory(stargraph));
+        stargraph.setDefaultGraphModelProviderFactory(new TestGraphModelProviderFactory(stargraph));
         stargraph.initialize();
     }
 

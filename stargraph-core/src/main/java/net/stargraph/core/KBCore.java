@@ -3,6 +3,7 @@ package net.stargraph.core;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
@@ -12,6 +13,7 @@ import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
+import net.stargraph.data.DataProviderFactory;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableIndraParams;
@@ -160,7 +162,9 @@ public final class KBCore {
     public Model getGraphModel() {
         checkRunning();
         if (graphModel == null) {
-            graphModel = stargraph.getGraphModelFactory().create(kbName).getModel();
+            GraphModelProviderFactory factory = stargraph.getGraphModelProviderFactory(kbName);
+            logger.info(marker, "Create graph model for '{}' using '{}'", kbName, factory.getClass().getSimpleName());
+            graphModel = factory.create(kbName).getModel();
             if (graphModel == null) {
                 throw new StarGraphException("Could not create graph model for: " + kbName);
             }
@@ -170,7 +174,9 @@ public final class KBCore {
 
     public DataProvider getDataProvider(String modelId) {
         checkRunning();
-        return stargraph.getDataProviderFactory(KBId.of(kbName, modelId)).create(KBId.of(kbName, modelId));
+        DataProviderFactory factory = stargraph.getDataProviderFactory(KBId.of(kbName, modelId));
+        logger.info(marker, "Create data provider for '{}' using '{}'", KBId.of(kbName, modelId), factory.getClass().getSimpleName());
+        return factory.create(KBId.of(kbName, modelId));
     }
 
     public Indexer getIndexer(String modelId) {

@@ -35,9 +35,9 @@ import net.stargraph.model.KBId;
 import java.io.File;
 import java.util.Iterator;
 
-public final class NTriplesModelFactory extends BaseGraphModelProviderFactory {
+public final class NTriplesModelProviderFactory extends BaseGraphModelProviderFactory {
 
-    public NTriplesModelFactory(Stargraph stargraph) {
+    public NTriplesModelProviderFactory(Stargraph stargraph) {
         super(stargraph);
     }
 
