@@ -46,6 +46,10 @@ public class DataProvider<T> {
         this(Arrays.asList(dataSource));
     }
 
+    public DataProvider(DataSource<T> dataSource, DataGenerator<? extends GraphModel, T> graphModelUpdater) {
+        this(Arrays.asList(dataSource), graphModelUpdater);
+    }
+
     public DataProvider(List<DataSource<T>> dataSources) {
         this(dataSources, null);
     }

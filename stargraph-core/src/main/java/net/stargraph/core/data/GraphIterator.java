@@ -45,17 +45,19 @@ abstract class GraphIterator<T> implements Iterator<T> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("core");
     protected KBId kbId;
-    protected JModel model;
 
     private StmtIterator innerIt;
     private Statement currentStmt;
     private Namespace namespace;
 
-    GraphIterator(Stargraph stargraph, KBId kbId) {
-        this.model = stargraph.getKBCore(kbId.getId()).getGraphModel();
+    GraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
         this.kbId = Objects.requireNonNull(kbId);
         this.innerIt = Objects.requireNonNull(model).getModel().listStatements();
+    }
+
+    GraphIterator(Stargraph stargraph, KBId kbId) {
+        this(stargraph, kbId, stargraph.getKBCore(kbId.getId()).getGraphModel());
     }
 
     @Override

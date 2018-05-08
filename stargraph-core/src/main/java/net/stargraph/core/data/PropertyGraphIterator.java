@@ -27,6 +27,7 @@ package net.stargraph.core.data;
  */
 
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
 import net.stargraph.model.PropertyEntity;
@@ -36,8 +37,12 @@ import static net.stargraph.ModelUtils.createProperty;
 
 final class PropertyGraphIterator extends GraphIterator<Indexable> {
 
-    PropertyGraphIterator(Stargraph core, KBId kbId) {
-        super(core, kbId);
+    public PropertyGraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
+        super(stargraph, kbId, model);
+    }
+
+    public PropertyGraphIterator(Stargraph stargraph, KBId kbId) {
+        super(stargraph, kbId);
     }
 
     @Override

@@ -27,9 +27,11 @@ package net.stargraph.core.data;
  */
 
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
+import net.stargraph.data.DataGenerator;
 import net.stargraph.data.DataProvider;
-import net.stargraph.data.Indexable;
 import net.stargraph.data.DataSource;
+import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
 
 import java.util.Iterator;
@@ -48,6 +50,13 @@ public final class EntityProviderFactory extends BaseDataProviderFactory {
                     public Iterator<Indexable> getIterator() {
                         return new EntityGraphIterator(stargraph, kbId);
                     }
-                });
+                },
+                new DataGenerator<JModel, Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator(JModel data) {
+                        return new EntityGraphIterator(stargraph, kbId, data);
+                    }
+                }
+        );
     }
 }
