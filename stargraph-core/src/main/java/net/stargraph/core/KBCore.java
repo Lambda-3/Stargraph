@@ -230,12 +230,4 @@ public final class KBCore {
             throw new IllegalStateException("KB Core not started.");
         }
     }
-
-    public void updateGraphModel(JModel addedModel) {
-        JModel graphModel = getGraphModel();
-        graphModel.add(addedModel);
-
-        // notify KBLoader that graph model was extended
-        kbLoader.graphModelUpdate(addedModel);
-    }
 }

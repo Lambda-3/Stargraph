@@ -137,19 +137,19 @@ public final class IndexerIT {
     private void loadFacts() throws Exception {
         Indexer indexer = core.getIndexer(factsId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     private void loadProperties() throws Exception {
         Indexer indexer = core.getIndexer(propsId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     private void loadEntities() throws Exception {
         Indexer indexer = core.getIndexer(entitiesId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
 }

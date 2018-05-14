@@ -43,8 +43,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -53,24 +52,38 @@ import java.util.concurrent.*;
 public abstract class BaseIndexer implements Indexer {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("index");
+    protected Stargraph stargraph;
     protected KBId kbId;
     protected ObjectMapper mapper;
-    protected Stargraph stargraph;
 
-    private ExecutorService loaderExecutor;
-    private Future<?> loaderFutureTask;
-    private ProgressWatcher loaderProgress;
-    private DataProvider dataProvider;
+    private ExecutorService executor;
+    private List<Future<?>> futures;
+
     private ProcessorChain processorChain;
-    private boolean loading;
+
     private boolean running;
+    private boolean loading;
+    private boolean loaderScheduled;
+    private boolean updating;
 
     public BaseIndexer(KBId kbId, Stargraph stargraph) {
         this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
-        this.loading = false;
         this.mapper = ObjectSerializer.createMapper(kbId);
+
+        this.executor = createExecutor();
+        this.futures = new ArrayList<>();
+
         this.processorChain = stargraph.createProcessorChain(kbId);
+
+        this.running = false;
+        this.loading = false;
+        this.loaderScheduled = false;
+        this.updating = false;
+    }
+
+    private static ExecutorService createExecutor() {
+        return Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -78,8 +91,11 @@ public abstract class BaseIndexer implements Indexer {
         if (running) {
             throw new IllegalStateException("Already started!");
         }
+        this.running = true;
+        this.loading = false;
+        this.loaderScheduled = false;
+        this.updating = false;
         onStart();
-        running = true;
     }
 
     @Override
@@ -89,31 +105,28 @@ public abstract class BaseIndexer implements Indexer {
         } else {
             try {
                 onStop();
+                await();
                 running = false;
             }
             catch (Exception e) {
                 logger.error(marker, "Fail to stop.", e);
             }
-
         }
     }
 
     @Override
-    public final void index(Indexable data) throws InterruptedException {
-        if (loading) {
-            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
-        }
-
-        work(data);
+    public void update(Indexable data) throws InterruptedException {
+        update(Arrays.asList(data).iterator());
     }
 
     @Override
-    public void index(Iterator<Indexable> data) throws InterruptedException {
-        if (loading) {
-            throw new IllegalStateException("Loader in progress. Incremental update is forbidden.");
-        }
+    public void update(Iterator<Indexable> data) throws InterruptedException {
+        update(data, -1);
+    }
 
-        data.forEachRemaining(d -> work(d));
+    @Override
+    public void update(Iterator<Indexable> data, long limit) throws InterruptedException {
+        doUpdate(data, limit);
     }
 
     @Override
@@ -122,7 +135,7 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     @Override
-    public final void load(boolean reset, int limit) {
+    public final void load(boolean reset, long limit) {
         doLoad(reset, limit);
     }
 
@@ -140,28 +153,34 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     @Override
-    public final void awaitLoader() throws InterruptedException, TimeoutException, ExecutionException {
-        awaitLoader(Long.MAX_VALUE, TimeUnit.DAYS); // pretty much forever ;)
+    public final void await() throws InterruptedException, ExecutionException {
+        await(Long.MAX_VALUE, TimeUnit.DAYS); // pretty much forever ;)
     }
 
     @Override
-    public final void awaitLoader(long time, TimeUnit unit)
-            throws InterruptedException, TimeoutException, ExecutionException {
+    public final void await(long time, TimeUnit unit)
+            throws InterruptedException, ExecutionException {
+        logger.info(marker, "Awaiting finalization for {} {}..", time, unit);
 
-        if (!loading && loaderFutureTask == null) {
-            throw new IllegalStateException("Loader was not called.");
+        if (executor == null) {
+            logger.info(marker, "Executor is already finalized.");
+            return;
         }
 
-        logger.info(marker, "Awaiting Loader finalization..");
-        loaderExecutor.shutdown();
-        if (!loaderExecutor.awaitTermination(time, unit)) {
-            logger.info(marker, "Time Out. Forcing termination.");
-            loaderExecutor.shutdownNow();
+        // shutdown
+        executor.shutdown();
+        if (executor.awaitTermination(time, unit)) {
+            for (Future<?> future : futures) {
+                future.get();
+            }
         } else {
-            loaderFutureTask.get();
+            logger.info(marker, "Time Out. Forcing finalization.");
+            executor.shutdownNow();
         }
-
+        futures.clear();
+        executor = null;
     }
+
 
     protected abstract void beforeLoad(boolean reset);
 
@@ -172,6 +191,14 @@ public abstract class BaseIndexer implements Indexer {
     }
 
     protected void afterLoad() throws InterruptedException {
+        // Specific implementation detail
+    }
+
+    protected void beforeUpdate() {
+        // Specific implementation detail
+    }
+
+    protected void afterUpdate() {
         // Specific implementation detail
     }
 
@@ -189,26 +216,159 @@ public abstract class BaseIndexer implements Indexer {
 
     private void doBeforeLoad(boolean reset) {
         logger.debug(marker, "Before loading..");
-        boolean logStats = stargraph.getMainConfig().getBoolean("progress-watcher.log-stats");
-        this.loaderProgress = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
-        this.dataProvider = stargraph.getKBCore(kbId.getId()).getDataProvider(kbId.getModel());
+        if (reset) {
+            logger.warn(marker, "Old data will be DELETED!");
+        }
         beforeLoad(reset);
     }
 
     private void doAfterLoad() throws InterruptedException {
-        logger.debug(marker, ".. after loading.");
-        this.loaderProgress = null;
+        logger.debug(marker, "After loading..");
         afterLoad();
     }
 
-    private void sink(Holder h) {
-        logger.trace(marker, "Sunk:{}", h);
+    private void doBeforeUpdate() {
+        logger.debug(marker, "Before incremental updating..");
+        beforeUpdate();
+    }
+
+    private void doAfterUpdate() throws InterruptedException {
+        logger.debug(marker, "After incremental updating..");
+        afterUpdate();
     }
 
 
-    private void work(Holder holder) throws ProcessorException {
-        // loaderProgress may be null (if index() is called without loading)
 
+
+
+
+
+
+
+
+
+
+
+    private synchronized void doLoad(boolean reset, long limit) {
+        if (loaderScheduled) {
+            throw new IllegalStateException("Loader is already scheduled.");
+        }
+        loaderScheduled = true;
+
+        if (executor == null) {
+            executor = createExecutor();
+        }
+
+        logger.info(marker, "Queue new loading task for {}", kbId);
+
+        DataProvider dataProvider = stargraph.getKBCore(kbId.getId()).getDataProvider(kbId.getModel());
+        futures.add(
+                executor.submit(() -> {
+                    runnableTask(dataProvider.getMergedDataSource().getIterator(), limit, true, reset);
+                })
+        );
+    }
+
+    private synchronized void doUpdate(Iterator<Indexable> dataIt, long limit) {
+        if (loaderScheduled) {
+            throw new IllegalStateException("Loader is still scheduled.");
+        }
+
+        if (executor == null) {
+            executor = createExecutor();
+        }
+
+        logger.info(marker, "Queue new incremental update task for {}", kbId);
+        futures.add(
+                executor.submit(() -> {
+                    runnableTask(dataIt, limit, false, false);
+                })
+        );
+    }
+
+    private synchronized void runnableTask(Iterator<Indexable> iterator, long limit, boolean useLoader, boolean reset) {
+        String label = (useLoader)? "Loader" : "Incremental Update";
+
+        if (useLoader) {
+            this.loading = true;
+        } else {
+            this.updating = true;
+        }
+
+        logger.info(marker, "### Started {} task for {}, [reset={}, limit={}] ###", label, kbId, reset, limit);
+
+        boolean logStats = stargraph.getMainConfig().getBoolean("progress-watcher.log-stats");
+        ProgressWatcher progressWatcher = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
+
+        try {
+            progressWatcher.start(true);
+            logger.info(marker, label + " is running..");
+
+            if (useLoader) {
+                doBeforeLoad(reset);
+            } else {
+                doBeforeUpdate();
+            }
+
+            while (iterator.hasNext()) {
+                if (limit > 0 && progressWatcher.getTotalRead() >= limit) {
+                    logger.info(marker, "Limit set to {} reached.", limit);
+                    break;
+                }
+
+                try {
+                    Holder data = iterator.next();
+                    if (Thread.currentThread().isInterrupted()) {
+                        break;
+                    }
+
+                    if (!data.getKBId().equals(kbId)) {
+                        throw new StarGraphException("Can't consume data from '{}" + data.getKBId() + "'");
+                    }
+
+                    processAndIndex(data, progressWatcher); // delegates heavy work
+
+                } catch (FatalProcessorException e) {
+                    logger.error(marker, "Aborting.", e);
+                    break;
+                } catch (Exception e) {
+                    logger.error(marker, "Error reading data.", e);
+                } finally {
+                    progressWatcher.incRead();
+                }
+            }
+        } catch (Exception e) {
+            logger.error(marker, label + " failure.", e);
+            throw e;
+        } finally {
+            logger.info(marker, label + " is finishing..");
+            try {
+                progressWatcher.stop();
+                if (progressWatcher.getTotalIndexed() == 0) {
+                    logger.warn(marker, "Nothing was indexed!");
+                }
+                if (useLoader) {
+                    doAfterLoad();
+                } else {
+                    doAfterUpdate();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.warn(marker, "Thread was interrupted.", e);
+            }
+            finally {
+                if (useLoader) {
+                    this.loading = false;
+                    this.loaderScheduled = false;
+                } else {
+                    this.updating = false;
+                }
+                logger.info(marker, "### {} is done. ###", label);
+            }
+        }
+    }
+
+    private void processAndIndex(Holder holder, ProgressWatcher progressWatcher) throws ProcessorException {
         try {
             if (processorChain != null) {
                 processorChain.run(Objects.requireNonNull(holder));
@@ -218,21 +378,20 @@ public abstract class BaseIndexer implements Indexer {
                 final Serializable data = holder.get();
 
                 if (this.loading) {
-                    if (loaderProgress != null && loaderProgress.getTotalIndexed() % 500000 == 0) {
-                        logger.info(marker, "{}: {}", loaderProgress.getTotalIndexed(), data);
+                    if (progressWatcher.getTotalIndexed() % 500000 == 0) {
+                        logger.info(marker, "{}: {}", progressWatcher.getTotalIndexed(), data);
                     }
-                } else {
+                }
+                if (this.updating) {
                     // During incremental mode we log every attempt to index.
                     logger.info(marker, "Indexing {}", data);
                 }
 
                 doIndex(data, kbId);
-                if (loaderProgress != null) {
-                    loaderProgress.incIndexed();
-                }
+                progressWatcher.incIndexed();
 
             } else {
-                sink(holder);
+                logger.trace(marker, "Sunk:{}", holder);
             }
         } catch (FatalProcessorException e) {
             throw e;
@@ -241,79 +400,6 @@ public abstract class BaseIndexer implements Indexer {
         } catch (Exception e) {
             logger.error(marker, "Fail to process {}", holder, e);
         }
-    }
-
-    private synchronized void doLoad(boolean reset, long limit) {
-        if (loading) {
-            throw new IllegalStateException("Loader is already in progress. ");
-        }
-
-        logger.info(marker, "Loading {}, [reset={}, limit={}]", kbId, reset, limit);
-        loading = true;
-
-        if (reset) {
-            logger.warn(marker, "Old data will be DELETED!");
-        }
-
-        if (loaderExecutor == null || loaderExecutor.isTerminated()) {
-            this.loaderExecutor = Executors.newSingleThreadExecutor();
-        }
-
-        loaderFutureTask = loaderExecutor.submit(() -> {
-            try {
-                doBeforeLoad(reset);
-                loaderProgress.start(true); // now this is always true until we add a resume feature.
-                logger.info(marker, "Loader is running..");
-                Iterator<? extends Holder> iterator = dataProvider.getMergedDataSource().getIterator();
-                while (iterator.hasNext()) {
-
-                    if (limit > 0 && loaderProgress.getTotalRead() >= limit) {
-                        logger.info(marker, "Limit set to {} reached.", limit);
-                        break;
-                    }
-
-                    try {
-                        Holder data = iterator.next();
-                        if (Thread.currentThread().isInterrupted()) {
-                            break;
-                        }
-
-                        if (!data.getKBId().equals(kbId)) {
-                            throw new StarGraphException("Can't consume data from '{}" + data.getKBId() + "'");
-                        }
-
-                        work(data); // delegates heavy work
-
-                    } catch (FatalProcessorException e) {
-                        logger.error(marker, "Aborting.", e);
-                        break;
-                    } catch (Exception e) {
-                        logger.error(marker, "Error reading from provider.", e);
-                    } finally {
-                        loaderProgress.incRead();
-                    }
-                }
-            } catch (Exception e) {
-                logger.error(marker, "Loader failure.", e);
-                throw e;
-            } finally {
-                logger.info(marker, "Loader is finishing..");
-                try {
-                    loaderProgress.stop();
-                    if (loaderProgress.getTotalIndexed() == 0) {
-                        logger.warn(marker, "Nothing was loaded!");
-                    }
-                    doAfterLoad();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    logger.warn(marker, "Thread was interrupted.", e);
-                }
-                finally {
-                    this.loading = false;
-                    logger.info(marker, "Loader is done.");
-                }
-            }
-        });
     }
 
 }

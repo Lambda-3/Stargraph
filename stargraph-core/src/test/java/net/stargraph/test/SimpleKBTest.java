@@ -68,14 +68,14 @@ public final class SimpleKBTest {
     public void factLoadTest() throws Exception {
         Indexer indexer = stargraph.getIndexer(factsId);
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     @Test
     public void entitiesLoadTest() throws Exception {
         Indexer indexer = stargraph.getIndexer(entitiesId);
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
 }

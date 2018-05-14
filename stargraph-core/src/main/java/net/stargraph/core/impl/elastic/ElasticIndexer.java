@@ -79,8 +79,7 @@ public final class ElasticIndexer extends BaseIndexer {
         }
     }
 
-    @Override
-    protected void afterLoad() throws InterruptedException {
+    private void afterOperation() {
         if (bulkProcessor != null) {
             doFlush();
         }
@@ -91,6 +90,16 @@ public final class ElasticIndexer extends BaseIndexer {
             logger.error(marker, "Still pending {} index requests!?", indexRequests.size()); // should not happen
             indexRequests.clear();
         }
+    }
+
+    @Override
+    protected void afterLoad() throws InterruptedException {
+        afterOperation();
+    }
+
+    @Override
+    protected void afterUpdate() {
+        afterOperation();
     }
 
     @Override

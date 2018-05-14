@@ -60,7 +60,7 @@ public final class LuceneIndexerTest {
     public void bulkLoadTest() throws Exception {
         Indexer indexer = stargraph.getIndexer(kbId);
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
         Searcher searcher = stargraph.getSearcher(kbId);
         Assert.assertEquals(searcher.countDocuments(), 756);
     }

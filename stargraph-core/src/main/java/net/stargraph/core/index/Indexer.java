@@ -44,15 +44,17 @@ public interface Indexer {
 
     void load();
 
-    void load(boolean reset, int limit);
+    void load(boolean reset, long limit);
 
-    void awaitLoader() throws InterruptedException, TimeoutException, ExecutionException;
+    void update(Indexable data) throws InterruptedException;
 
-    void awaitLoader(long time, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException;
+    void update(Iterator<Indexable> data) throws InterruptedException;
 
-    void index(Indexable data) throws InterruptedException;
+    void update(Iterator<Indexable> data, long limit) throws InterruptedException;
 
-    void index(Iterator<Indexable> data) throws InterruptedException;
+    void await() throws InterruptedException, TimeoutException, ExecutionException;
+
+    void await(long time, TimeUnit unit) throws InterruptedException, TimeoutException, ExecutionException;
 
     void flush();
 
