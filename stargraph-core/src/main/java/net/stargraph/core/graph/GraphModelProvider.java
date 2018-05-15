@@ -29,6 +29,7 @@ package net.stargraph.core.graph;
 import net.stargraph.data.DataSource;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,8 +45,24 @@ public class GraphModelProvider {
     }
 
     public JModel getGraphModel() {
-        JModel mergedModel =  new JModel();
-        dataSources.forEach(s -> s.getIterator().forEachRemaining(m -> mergedModel.add(m)));
+        JModel mergedModel = null;
+
+        // adding large graph models (even to an empty "createDefaultModel") is very expensive,
+        // therefore avoid model.add() and avoid using multiple data sources for a graph model
+        for (DataSource<JModel> dataSource : dataSources) {
+            for (Iterator<JModel> iterator = dataSource.getIterator(); iterator.hasNext(); ) {
+                JModel model = iterator.next();
+                if (mergedModel == null) {
+                    mergedModel = model;
+                } else {
+                    mergedModel.add(model);
+                }
+            }
+        }
+
+        if (mergedModel == null) {
+            mergedModel = new JModel();
+        }
 
         return mergedModel;
     }
