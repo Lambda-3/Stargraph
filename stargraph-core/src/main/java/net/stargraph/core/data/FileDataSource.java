@@ -4,6 +4,7 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataSource;
 import net.stargraph.model.KBId;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -36,19 +37,27 @@ public abstract class FileDataSource extends DataSource {
 
     private final Stargraph stargraph;
     private final KBId kbId;
-    private final String defaultFilename;
+    private final String storeFilename; // optional
     private final String resourcePath;
     private final boolean required;
 
-    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath, String defaultFilename) {
-        this(stargraph, kbId, resourcePath, defaultFilename, true);
+    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath) {
+        this(stargraph, kbId, resourcePath, null, true);
     }
 
-    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath, String defaultFilename, boolean required) {
+    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath, boolean required) {
+        this(stargraph, kbId, resourcePath, null, required);
+    }
+
+    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath, String storeFilename) {
+        this(stargraph, kbId, resourcePath, storeFilename, true);
+    }
+
+    public FileDataSource(Stargraph stargraph, KBId kbId, String resourcePath, String storeFilename, boolean required) {
         this.stargraph = Objects.requireNonNull(stargraph);
         this.kbId = Objects.requireNonNull(kbId);
         this.resourcePath = Objects.requireNonNull(resourcePath);
-        this.defaultFilename = Objects.requireNonNull(defaultFilename);
+        this.storeFilename = storeFilename;
         this.required = required;
     }
 
@@ -76,17 +85,19 @@ public abstract class FileDataSource extends DataSource {
 
     private Path getFilePath() throws IOException {
         String dataDir = stargraph.getDataRootDir();
-        Path defaultPath = Paths.get(dataDir, kbId.getId(), kbId.getModel(), defaultFilename);
 
         // web resource
         if (resourcePath.startsWith("http://")) {
-            if (defaultPath.toFile().exists()) {
+            String stFilename = (storeFilename != null)? storeFilename : FilenameUtils.getName(resourcePath);
+            Path storePath = Paths.get(dataDir, kbId.getId(), kbId.getModel(), stFilename);
+
+            if (storePath.toFile().exists()) {
                 // already downloaded
-                return defaultPath;
+                return storePath;
             } else {
                 // download
-                download(resourcePath, defaultPath.toFile());
-                return defaultPath;
+                download(resourcePath, storePath.toFile());
+                return storePath;
             }
         } else
         // It's an absolute path to file

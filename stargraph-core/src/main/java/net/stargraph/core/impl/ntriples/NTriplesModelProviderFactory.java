@@ -26,9 +26,11 @@ package net.stargraph.core.impl.ntriples;
  * ==========================License-End===============================
  */
 
+import com.typesafe.config.Config;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.data.FileDataSource;
 import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultModelFileLoader;
 import net.stargraph.core.graph.GraphModelProvider;
 import net.stargraph.model.KBId;
 
@@ -44,12 +46,19 @@ public final class NTriplesModelProviderFactory extends BaseGraphModelProviderFa
     @Override
     public GraphModelProvider create(String dbId) {
         final KBId kbId = KBId.of(dbId, "facts");
+        Config config = stargraph.getKBCore(dbId).getConfig();
+
+        final String cfgFilePath = "graphmodel.ntriples.file";
+        String resourcePath = "triples.nt";
+        if (config.hasPath(cfgFilePath)) {
+            resourcePath = config.getString(cfgFilePath);
+        }
 
         return new GraphModelProvider(
-                new FileDataSource(stargraph, kbId, "triples.nt", "triples.nt") {
+                new FileDataSource(stargraph, kbId, "triples.nt") {
                     @Override
                     protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
-                        return new NTriplesModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                        return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
                     }
                 }
         );

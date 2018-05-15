@@ -31,10 +31,10 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.data.FileDataSource;
 import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultModelFileLoader;
 import net.stargraph.core.graph.GraphModelProvider;
 import net.stargraph.core.graph.JModel;
 import net.stargraph.core.impl.hdt.HDTModelFileLoader;
-import net.stargraph.core.impl.ntriples.NTriplesModelFileLoader;
 import net.stargraph.model.KBId;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -61,17 +61,17 @@ public final class GraphModelProviderFactoryTest {
 
             return new GraphModelProvider(
                     Arrays.asList(
-                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath(), "triples.hdt") {
+                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath()) {
                                 @Override
                                 protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
                                     return new HDTModelFileLoader(kbId.getId(), file, false).loadModelAsIterator();
                                 }
                             }
                             ,
-                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath(), "triples.nt") {
+                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath()) {
                                 @Override
                                 protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
-                                    return new NTriplesModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
                                 }
                             }
                     )

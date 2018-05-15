@@ -1,4 +1,4 @@
-package net.stargraph.core.impl.ntriples;
+package net.stargraph.core.impl.turtle;
 
 /*-
  * ==========================License-Start=============================
@@ -26,55 +26,41 @@ package net.stargraph.core.impl.ntriples;
  * ==========================License-End===============================
  */
 
-import net.stargraph.StarGraphException;
-import net.stargraph.core.graph.JModel;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import com.typesafe.config.Config;
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.data.FileDataSource;
+import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultModelFileLoader;
+import net.stargraph.core.graph.GraphModelProvider;
+import net.stargraph.model.KBId;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Iterator;
 
-public final class NTriplesModelFileLoader {
-    private static Logger logger = LoggerFactory.getLogger(NTriplesModelFileLoader.class);
-    private static Marker marker = MarkerFactory.getMarker("core");
+public final class TurtleModelProviderFactory extends BaseGraphModelProviderFactory {
 
-    private final String dbId;
-    private final File file;
-
-
-    public NTriplesModelFileLoader(String dbid, File file) {
-        this.dbId = dbid;
-        this.file = file;
+    public TurtleModelProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
-    public JModel loadModel() {
-        logger.info(marker, "Loading '{}'", file.getAbsolutePath());
+    @Override
+    public GraphModelProvider create(String dbId) {
+        final KBId kbId = KBId.of(dbId, "facts");
+        Config config = stargraph.getKBCore(dbId).getConfig();
 
-        JModel model = null;
-
-        try (InputStream is = new FileInputStream(file)) {
-            Model m = ModelFactory.createDefaultModel();
-            m.read(is, null, "N-TRIPLES");
-            model = new JModel(m);
-        } catch (Exception e) {
-            throw new StarGraphException(e);
-        } finally {
-            if (model == null) {
-                logger.error(marker, "No Graph Model instantiated for {}", dbId);
-            }
+        final String cfgFilePath = "graphmodel.turtle.file";
+        String resourcePath = "triples.ttl";
+        if (config.hasPath(cfgFilePath)) {
+            resourcePath = config.getString(cfgFilePath);
         }
 
-        return model;
-    }
-
-    public Iterator<JModel> loadModelAsIterator() {
-        return Arrays.asList(loadModel()).iterator();
+        return new GraphModelProvider(
+                new FileDataSource(stargraph, kbId, resourcePath) {
+                    @Override
+                    protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                        return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                    }
+                }
+        );
     }
 }

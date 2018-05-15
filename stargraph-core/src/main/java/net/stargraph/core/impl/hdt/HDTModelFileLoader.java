@@ -28,34 +28,24 @@ package net.stargraph.core.impl.hdt;
 
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.DefaultModelFileLoader;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.rdfhdt.hdt.hdt.HDT;
 import org.rdfhdt.hdt.hdt.HDTManager;
 import org.rdfhdt.hdtjena.HDTGraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Iterator;
 
-public final class HDTModelFileLoader {
-    private static Logger logger = LoggerFactory.getLogger(HDTModelFileLoader.class);
-    private static Marker marker = MarkerFactory.getMarker("core");
-
-    private final String dbId;
-    private final File file;
+public final class HDTModelFileLoader extends DefaultModelFileLoader {
     private final boolean useIndex;
 
 
     public HDTModelFileLoader(String dbid, File file, boolean useIndex) {
-        this.dbId = dbid;
-        this.file = file;
+        super(dbid, file, null);
         this.useIndex = useIndex;
     }
 
+    @Override
     public JModel loadModel() {
         logger.info(marker, "Loading '{}', useIndex={}", file.getAbsolutePath(), useIndex);
 
@@ -75,9 +65,5 @@ public final class HDTModelFileLoader {
         }
 
         return model;
-    }
-
-    public Iterator<JModel> loadModelAsIterator() {
-        return Arrays.asList(loadModel()).iterator();
     }
 }
