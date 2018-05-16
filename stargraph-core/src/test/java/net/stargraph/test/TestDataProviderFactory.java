@@ -55,7 +55,7 @@ public final class TestDataProviderFactory implements DataProviderFactory {
         return new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return new TestDataIterator(kbId, testData);
                     }
                 }

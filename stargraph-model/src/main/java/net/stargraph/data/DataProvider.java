@@ -30,10 +30,7 @@ import jersey.repackaged.com.google.common.collect.Iterators;
 import net.stargraph.StarGraphException;
 import net.stargraph.model.GraphModel;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Primary data generating interface.
@@ -68,8 +65,14 @@ public class DataProvider<T> {
     public DataSource<T> getMergedDataSource() {
         return new DataSource<T>() {
             @Override
-            public Iterator<T> getIterator() {
-                return Iterators.concat(dataSources.stream().map(s -> s.getIterator()).iterator());
+            public Iterator<T> createIterator() {
+
+                // create iterators
+                List<Iterator<T>> iterators = new ArrayList<>();
+                dataSources.forEach(d -> iterators.add(d.createIterator()));
+                Iterator<T> mergedIt = Iterators.concat(iterators.iterator());
+
+                return mergedIt;
             }
         };
     }

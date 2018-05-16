@@ -63,14 +63,14 @@ public final class GraphModelProviderFactoryTest {
                     Arrays.asList(
                             new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath()) {
                                 @Override
-                                protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                                     return new HDTModelFileLoader(kbId.getId(), file, false).loadModelAsIterator();
                                 }
                             }
                             ,
                             new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath()) {
                                 @Override
-                                protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                                     return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
                                 }
                             }

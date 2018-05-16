@@ -50,7 +50,7 @@ public class GraphModelProvider {
         // adding large graph models (even to an empty "createDefaultModel") is very expensive,
         // therefore avoid model.add() and avoid using multiple data sources for a graph model
         for (DataSource<JModel> dataSource : dataSources) {
-            for (Iterator<JModel> iterator = dataSource.getIterator(); iterator.hasNext(); ) {
+            for (Iterator<JModel> iterator = dataSource.createIterator(); iterator.hasNext(); ) {
                 JModel model = iterator.next();
                 if (mergedModel == null) {
                     mergedModel = model;

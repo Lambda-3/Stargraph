@@ -61,10 +61,10 @@ public abstract class FileDataSource extends DataSource {
         this.required = required;
     }
 
-    protected abstract Iterator getIterator(Stargraph stargraph, KBId kbId, File file);
+    protected abstract Iterator createIterator(Stargraph stargraph, KBId kbId, File file);
 
     @Override
-    public Iterator getIterator() {
+    public Iterator createIterator() {
         try {
             // get/download file
             File file = getFilePath().toFile();
@@ -76,7 +76,7 @@ public abstract class FileDataSource extends DataSource {
                     return new EmptyIterator();
                 }
             } else {
-                return getIterator(stargraph, kbId, file);
+                return createIterator(stargraph, kbId, file);
             }
         } catch (Exception e) {
             throw new StarGraphException(e);

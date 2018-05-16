@@ -47,7 +47,7 @@ public final class PropertyProviderFactory extends BaseDataProviderFactory {
         return new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return new PropertyGraphIterator(stargraph, kbId);
                     }
                 },

@@ -57,7 +57,7 @@ public final class TurtleModelProviderFactory extends BaseGraphModelProviderFact
         return new GraphModelProvider(
                 new FileDataSource(stargraph, kbId, resourcePath) {
                     @Override
-                    protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                    protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                         return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
                     }
                 }

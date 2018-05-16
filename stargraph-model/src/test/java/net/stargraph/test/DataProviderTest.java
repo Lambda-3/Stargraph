@@ -49,7 +49,7 @@ public class DataProviderTest {
         DataProvider<Indexable> provider = new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return data.iterator();
                     }
                 }
@@ -64,7 +64,7 @@ public class DataProviderTest {
         DataProvider<Indexable> provider = new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return data.iterator();
                     }
                 }
@@ -80,7 +80,7 @@ public class DataProviderTest {
         DataProvider<Indexable> provider = new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return data.iterator();
                     }
                 }
@@ -92,7 +92,7 @@ public class DataProviderTest {
         provider = new DataProvider<>(
                 new DataSource<Indexable>() {
                     @Override
-                    public Iterator<Indexable> getIterator() {
+                    public Iterator<Indexable> createIterator() {
                         return data.iterator();
                     }
                 }

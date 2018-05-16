@@ -32,7 +32,7 @@ public class HDTModelProviderFactory extends BaseGraphModelProviderFactory {
         return new GraphModelProvider(
                 new FileDataSource(stargraph, kbId, resourcePath) {
                     @Override
-                    protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                    protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                         return new HDTModelFileLoader(kbId.getId(), file, useIndex).loadModelAsIterator();
                     }
                 }

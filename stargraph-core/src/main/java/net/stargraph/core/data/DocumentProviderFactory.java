@@ -50,7 +50,7 @@ public final class DocumentProviderFactory extends BaseDataProviderFactory {
                 Arrays.asList(
                     new FileDataSource(stargraph, kbId, "documents.json", "documents.json", false) {
                         @Override
-                        protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                        protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                             return new DocumentFileIterator(stargraph, kbId, file);
                         }
                     }

@@ -57,7 +57,7 @@ public final class NTriplesModelProviderFactory extends BaseGraphModelProviderFa
         return new GraphModelProvider(
                 new FileDataSource(stargraph, kbId, "triples.nt") {
                     @Override
-                    protected Iterator getIterator(Stargraph stargraph, KBId kbId, File file) {
+                    protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
                         return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
                     }
                 }

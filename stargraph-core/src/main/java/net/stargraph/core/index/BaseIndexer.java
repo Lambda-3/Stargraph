@@ -262,9 +262,10 @@ public abstract class BaseIndexer implements Indexer {
         logger.info(marker, "Queue new loading task for {}", kbId);
 
         DataProvider dataProvider = stargraph.getKBCore(kbId.getId()).getDataProvider(kbId.getModel());
+        Iterator dataIt = dataProvider.getMergedDataSource().createIterator();
         futures.add(
                 executor.submit(() -> {
-                    runnableTask(dataProvider.getMergedDataSource().getIterator(), limit, true, reset);
+                    runnableTask(dataIt, limit, true, reset);
                 })
         );
     }
