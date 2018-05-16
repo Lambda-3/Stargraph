@@ -31,13 +31,18 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.KBCore;
 import net.stargraph.core.KBLoader;
 import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.JModel;
+import net.stargraph.core.impl.hdt.HDTModelProviderFactory;
+import net.stargraph.core.impl.ntriples.NTriplesModelProviderFactory;
+import net.stargraph.core.impl.turtle.TurtleModelProviderFactory;
 import net.stargraph.model.KBId;
 import org.apache.jena.rdf.model.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
@@ -66,23 +71,56 @@ public final class UpdateBKIT {
     private KBLoader loader;
     private KBId kbId = KBId.of("simple", "facts");
 
-    @BeforeClass
-    public void before() throws Exception {
+    private void setup(String type) throws IOException {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
-        Path hdtPath = createPath(root, kbId).resolve("triples.hdt");
-        copyResource("dataSets/simple/facts/triples.hdt", hdtPath);
+
+        Path path;
+        switch (type) {
+            case "hdt":
+                path = createPath(root, kbId).resolve("triples.hdt");
+                copyResource("dataSets/simple/facts/triples.hdt", path);
+                break;
+            case "nt":
+                path = createPath(root, kbId).resolve("triples.nt");
+                copyResource("dataSets/simple/facts/triples.nt", path);
+                break;
+            case "ttl":
+                path = createPath(root, kbId).resolve("triples.ttl");
+                copyResource("dataSets/simple/facts/triples.ttl", path);
+                break;
+            default:
+                throw new AssertionError("Unknown type");
+        }
+
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
+
+        GraphModelProviderFactory factory;
+        switch (type) {
+            case "hdt":
+                factory = new HDTModelProviderFactory(stargraph);
+                break;
+            case "nt":
+                factory = new NTriplesModelProviderFactory(stargraph);
+                break;
+            case "ttl":
+                factory = new TurtleModelProviderFactory(stargraph);
+                break;
+            default:
+                throw new AssertionError("Unknown type");
+        }
+        stargraph.setDefaultGraphModelProviderFactory(factory);
+
         stargraph.initialize();
         core = stargraph.getKBCore("simple");
         loader = core.getLoader();
     }
 
+    private void updateTest(String type) throws InterruptedException, ExecutionException, IOException {
+        setup(type);
 
-    @Test
-    public void updateTest() throws InterruptedException, ExecutionException, TimeoutException {
         loader.loadAll();
         loader.await();
 
@@ -101,6 +139,27 @@ public final class UpdateBKIT {
         Assert.assertTrue(factsSizeAfter > factsSizeBefore);
         Assert.assertTrue(entitiesSizeAfter > entitiesSizeBefore);
     }
+
+    @BeforeClass
+    public void before() throws Exception {
+        setup("nt");
+    }
+
+    @Test
+    public void updateHDTTest() throws Exception {
+        updateTest("hdt");
+    }
+
+    @Test
+    public void updateNTriplesTest() throws Exception {
+        updateTest("nt");
+    }
+
+    @Test
+    public void updateTurtleTest() throws Exception {
+        updateTest("ttl");
+    }
+
 
     @Test(timeOut = 15000)
     public void loadAll() throws Exception {

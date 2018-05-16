@@ -3,6 +3,7 @@ package net.stargraph.core.graph;
 import net.stargraph.model.GraphModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.shared.AddDeniedException;
 
 /**
  * A simple wrapper for Jena's graph model
@@ -19,7 +20,12 @@ public class JModel implements GraphModel {
     }
 
     public void add(JModel graphModel) {
-        model.add(graphModel.model);
+        try {
+            model.add(graphModel.model);
+        } catch (AddDeniedException e) {
+            // currently, this is the case for HDT graph models
+            throw new UnsupportedOperationException("Failed to extend graph model.");
+        }
     }
 
     public long size() {

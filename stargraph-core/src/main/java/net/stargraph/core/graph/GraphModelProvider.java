@@ -26,8 +26,10 @@ package net.stargraph.core.graph;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
 import net.stargraph.data.DataSource;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -47,17 +49,21 @@ public class GraphModelProvider {
     public JModel getGraphModel() {
         JModel mergedModel = null;
 
-        // adding large graph models (even to an empty "createDefaultModel") is very expensive,
-        // therefore avoid model.add() and avoid using multiple data sources for a graph model
-        for (DataSource<JModel> dataSource : dataSources) {
-            for (Iterator<JModel> iterator = dataSource.createIterator(); iterator.hasNext(); ) {
-                JModel model = iterator.next();
-                if (mergedModel == null) {
-                    mergedModel = model;
-                } else {
-                    mergedModel.add(model);
+        try {
+            // adding large graph models (even to an empty "createDefaultModel") is very expensive,
+            // therefore avoid model.add() and avoid using multiple data sources for a graph model
+            for (DataSource<JModel> dataSource : dataSources) {
+                for (Iterator<JModel> iterator = dataSource.createIterator(); iterator.hasNext(); ) {
+                    JModel model = iterator.next();
+                    if (mergedModel == null) {
+                        mergedModel = model;
+                    } else {
+                        mergedModel.add(model);
+                    }
                 }
             }
+        } catch (Exception e) {
+            throw new StarGraphException(e);
         }
 
         if (mergedModel == null) {
