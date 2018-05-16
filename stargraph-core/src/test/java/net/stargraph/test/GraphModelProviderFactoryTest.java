@@ -30,11 +30,9 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.data.FileDataSource;
-import net.stargraph.core.graph.BaseGraphModelProviderFactory;
-import net.stargraph.core.graph.DefaultModelFileLoader;
-import net.stargraph.core.graph.GraphModelProvider;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.*;
 import net.stargraph.core.impl.hdt.HDTModelFileLoader;
+import net.stargraph.data.DataSource;
 import net.stargraph.model.KBId;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -49,57 +47,134 @@ import java.util.Iterator;
 import static net.stargraph.test.TestUtils.createPath;
 
 public final class GraphModelProviderFactoryTest {
-    private class TestGraphModelProviderFactory extends BaseGraphModelProviderFactory {
+    private class DataSourceGenerator {
+        private Stargraph stargraph;
+        private KBId kbId;
 
-        public TestGraphModelProviderFactory(Stargraph stargraph) {
-            super(stargraph);
+        public DataSourceGenerator(Stargraph stargraph, KBId kbId) {
+            this.stargraph = stargraph;
+            this.kbId = kbId;
         }
 
-        @Override
-        public GraphModelProvider create(String dbId) {
-            final KBId kbId = KBId.of(dbId, "facts");
+        public DataSource getHDTDataSource() {
+            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath()) {
+                @Override
+                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                    return new HDTModelFileLoader(kbId.getId(), file, false).loadModelAsIterator();
+                }
+            };
+        }
 
-            return new GraphModelProvider(
-                    Arrays.asList(
-                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath()) {
-                                @Override
-                                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                                    return new HDTModelFileLoader(kbId.getId(), file, false).loadModelAsIterator();
-                                }
-                            }
-                            ,
-                            new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath()) {
-                                @Override
-                                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
-                                }
-                            }
-                    )
-            );
+        public DataSource getNTDataSource() {
+            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.nt").getPath()) {
+                @Override
+                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                }
+            };
+        }
+
+        public DataSource getTurtleDataSource() {
+            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.ttl").getPath()) {
+                @Override
+                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                }
+            };
+        }
+
+        public DataSource getNewDataSource() {
+            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath()) {
+                @Override
+                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                }
+            };
         }
     }
 
-    private String dbId = "mytest";
+    private interface FactoryGenerator {
+        GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId);
+    }
+
+
+    private KBId kbId = KBId.of("mytest", "facts");
     private Stargraph stargraph;
 
-    @BeforeClass
-    public void beforeClass() throws IOException {
+    private void loadJointGraphModelTest(FactoryGenerator factoryGenerator) throws IOException {
         Path root = java.nio.file.Files.createTempFile("stargraph-", "-dataDir");
-        createPath(root, KBId.of(dbId, "facts"));
+        createPath(root, kbId);
 
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
-        stargraph.setDefaultGraphModelProviderFactory(new TestGraphModelProviderFactory(stargraph));
+        stargraph.setDefaultGraphModelProviderFactory(factoryGenerator.generate(stargraph, kbId));
         stargraph.initialize();
+
+        JModel model = stargraph.getKBCore(kbId.getId()).getGraphModel();
+        Assert.assertTrue(model.size() > 2000);
     }
 
     @Test
-    public void loadJointGraphModel() {
-        JModel model = stargraph.getKBCore(dbId).getGraphModel();
+    public void loadJointGraphModelHDTNEWTest() throws Exception {
 
-        System.out.println(model.size());
-        Assert.assertTrue(model.size() > 2000);
+        loadJointGraphModelTest(new FactoryGenerator() {
+            @Override
+            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
+                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+                return new BaseGraphModelProviderFactory(stargraph) {
+                    @Override
+                    public GraphModelProvider create(String dbId) {
+                        return new GraphModelProvider(Arrays.asList(
+                                generator.getHDTDataSource(),
+                                generator.getNewDataSource()
+                        ));
+                    }
+                };
+            }
+        });
+    }
+
+    @Test
+    public void loadJointGraphModelNEWHDTTest() throws Exception {
+
+        loadJointGraphModelTest(new FactoryGenerator() {
+            @Override
+            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
+                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+                return new BaseGraphModelProviderFactory(stargraph) {
+                    @Override
+                    public GraphModelProvider create(String dbId) {
+                        return new GraphModelProvider(Arrays.asList(
+                                generator.getNewDataSource(),
+                                generator.getHDTDataSource()
+                                ));
+                    }
+                };
+            }
+        });
+    }
+
+    @Test
+    public void loadJointGraphModelAllTest() throws Exception {
+
+        loadJointGraphModelTest(new FactoryGenerator() {
+            @Override
+            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
+                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+                return new BaseGraphModelProviderFactory(stargraph) {
+                    @Override
+                    public GraphModelProvider create(String dbId) {
+                        return new GraphModelProvider(Arrays.asList(
+                                generator.getNTDataSource(),
+                                generator.getHDTDataSource(),
+                                generator.getTurtleDataSource(),
+                                generator.getNewDataSource()
+                        ));
+                    }
+                };
+            }
+        });
     }
 }
