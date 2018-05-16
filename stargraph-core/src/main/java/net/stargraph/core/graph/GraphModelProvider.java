@@ -12,10 +12,10 @@ package net.stargraph.core.graph;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,9 +29,7 @@ package net.stargraph.core.graph;
 import net.stargraph.StarGraphException;
 import net.stargraph.data.DataSource;
 
-import javax.naming.OperationNotSupportedException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,29 +45,16 @@ public class GraphModelProvider {
     }
 
     public JModel getGraphModel() {
-        JModel mergedModel = null;
+        // Attention: when a large HDT file is added to a model (even if it is an empty default model), it takes forever.
+        // If a single HDT file is the only data source, one may consider directly returning the HDT model, but then extending the model (model.add()) does not work.
 
         try {
-            // adding large graph models (even to an empty "createDefaultModel") is very expensive,
-            // therefore avoid model.add() and avoid using multiple data sources for a graph model
-            for (DataSource<JModel> dataSource : dataSources) {
-                for (Iterator<JModel> iterator = dataSource.createIterator(); iterator.hasNext(); ) {
-                    JModel model = iterator.next();
-                    if (mergedModel == null) {
-                        mergedModel = model;
-                    } else {
-                        mergedModel.add(model);
-                    }
-                }
-            }
+            JModel mergedModel =  new JModel();
+            dataSources.forEach(s -> s.createIterator().forEachRemaining(m -> mergedModel.add(m)));
+
+            return mergedModel;
         } catch (Exception e) {
             throw new StarGraphException(e);
         }
-
-        if (mergedModel == null) {
-            mergedModel = new JModel();
-        }
-
-        return mergedModel;
     }
 }
