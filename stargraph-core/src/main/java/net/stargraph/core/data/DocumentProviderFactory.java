@@ -1,4 +1,4 @@
-package net.stargraph.test.it;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,48 +26,36 @@ package net.stargraph.test.it;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.ConfigFactory;
-import net.stargraph.ModelUtils;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.impl.elastic.ElasticIndexer;
-import net.stargraph.core.impl.elastic.ElasticSearcher;
-import net.stargraph.core.index.Indexer;
+import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
-import net.stargraph.model.Fact;
 import net.stargraph.model.KBId;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
- * Aims to test the incremental indexing features.
+ * Encapsulates the logic to provide a stream of documents.
  */
-public final class IndexUpdateIT {
+public final class DocumentProviderFactory extends BaseDataProviderFactory {
 
-    private Stargraph core;
-    private Indexer indexer;
-    private ElasticSearcher searcher;
-    private KBId kbId = KBId.of("simple", "facts");
-
-    @BeforeClass
-    public void before() throws Exception {
-        ConfigFactory.invalidateCaches();
-        core = new Stargraph();
-        searcher = new ElasticSearcher(kbId, core);
-        searcher.start();
-        indexer = new ElasticIndexer(kbId, core);
-        indexer.start();
-        indexer.deleteAll();
+    public DocumentProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
-    @Test
-    public void updateTest() throws InterruptedException, TimeoutException, ExecutionException {
-        Fact oneFact = ModelUtils.createFact(kbId, "dbr:Barack_Obama", "dbp:spouse", "dbr:Michelle_Obama");
-        indexer.index(new Indexable(oneFact, kbId));
-        indexer.flush();
-        Assert.assertEquals(searcher.countDocuments(), 1);
+    @Override
+    public DataProvider<Indexable> create(KBId kbId) {
+        return new DataProvider<Indexable>(
+                Arrays.asList(
+                    new FileDataSource(stargraph, kbId, "documents.json", "documents.json", false) {
+                        @Override
+                        protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                            return new DocumentFileIterator(stargraph, kbId, file);
+                        }
+                    }
+                )
+        );
     }
+
 }

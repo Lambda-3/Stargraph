@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,8 +26,10 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.Namespace;
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.model.KBId;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
@@ -39,21 +41,23 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-abstract class TripleIterator<T> implements Iterator<T> {
+abstract class GraphIterator<T> implements Iterator<T> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Marker marker = MarkerFactory.getMarker("core");
     protected KBId kbId;
-    protected Model model;
 
     private StmtIterator innerIt;
     private Statement currentStmt;
     private Namespace namespace;
 
-    TripleIterator(Stargraph stargraph, KBId kbId) {
-        this.model = stargraph.getKBCore(kbId.getId()).getGraphModel();
+    GraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
         this.kbId = Objects.requireNonNull(kbId);
-        this.innerIt = Objects.requireNonNull(model).listStatements();
+        this.innerIt = Objects.requireNonNull(model).getModel().listStatements();
+    }
+
+    GraphIterator(Stargraph stargraph, KBId kbId) {
+        this(stargraph, kbId, stargraph.getKBCore(kbId.getId()).getGraphModel());
     }
 
     @Override

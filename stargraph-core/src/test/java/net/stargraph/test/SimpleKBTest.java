@@ -28,7 +28,7 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.core.NTriplesModelFactory;
+import net.stargraph.core.impl.ntriples.NTriplesModelProviderFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.index.NullIndicesFactory;
@@ -59,7 +59,7 @@ public final class SimpleKBTest {
         stargraph = new Stargraph(config, false);
         stargraph.setKBInitSet(kbName);
         stargraph.setDefaultIndicesFactory(new NullIndicesFactory());
-        stargraph.setGraphModelFactory(new NTriplesModelFactory(stargraph));
+        stargraph.setDefaultGraphModelProviderFactory(new NTriplesModelProviderFactory(stargraph));
         stargraph.setDataRootDir(root.toFile());
         stargraph.initialize();
     }
@@ -68,14 +68,14 @@ public final class SimpleKBTest {
     public void factLoadTest() throws Exception {
         Indexer indexer = stargraph.getIndexer(factsId);
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     @Test
     public void entitiesLoadTest() throws Exception {
         Indexer indexer = stargraph.getIndexer(entitiesId);
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
 }

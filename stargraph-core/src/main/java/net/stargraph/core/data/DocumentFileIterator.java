@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -28,6 +28,7 @@ package net.stargraph.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Stargraph;
 import net.stargraph.core.serializer.ObjectSerializer;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.Document;
@@ -40,29 +41,23 @@ import org.slf4j.MarkerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Objects;
 
-public final class DocumentIterator implements Iterator<Indexable> {
-    private static Logger logger = LoggerFactory.getLogger(DocumentIterator.class);
+public final class DocumentFileIterator implements Iterator<Indexable> {
+    private static Logger logger = LoggerFactory.getLogger(DocumentFileIterator.class);
     private static Marker marker = MarkerFactory.getMarker("core");
 
-    private Stargraph core;
     private final KBId kbId;
     private final ObjectMapper mapper;
     private final Iterator<String> lineIt;
     private Document next;
 
 
-    public DocumentIterator(Stargraph core, KBId kbId) {
-        this.core = Objects.requireNonNull(core);
+    public DocumentFileIterator(Stargraph stargraph, KBId kbId, File file) {
         this.kbId = Objects.requireNonNull(kbId);
         this.mapper = ObjectSerializer.createMapper(kbId);
 
-        Path filePath = getFilePath(kbId.getId());
-        File file = filePath.toFile();
         try {
             this.lineIt = FileUtils.lineIterator(file, "UTF-8");
             parseNext();
@@ -86,11 +81,6 @@ public final class DocumentIterator implements Iterator<Indexable> {
             }
         }
         next = null;
-    }
-
-    private Path getFilePath(String  dbId) {
-        String dataDir = core.getDataRootDir();
-        return Paths.get(dataDir, dbId, "documents", "documents.json");
     }
 
     @Override

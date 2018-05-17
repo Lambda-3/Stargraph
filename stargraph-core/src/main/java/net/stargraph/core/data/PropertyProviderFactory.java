@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,37 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
+import net.stargraph.data.DataGenerator;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.Indexable;
+import net.stargraph.data.DataSource;
 import net.stargraph.model.KBId;
 
-/**
- * Encapsulates the logic to provide a stream of facts.
- */
-public final class FactProviderFactory extends BaseDataProviderFactory {
+import java.util.Iterator;
 
-    public FactProviderFactory(Stargraph core) {
-        super(core);
+public final class PropertyProviderFactory extends BaseDataProviderFactory {
+
+    public PropertyProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
     @Override
     public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(new FactIterator(core, kbId));
+        return new DataProvider<>(
+                new DataSource<Indexable>() {
+                    @Override
+                    public Iterator<Indexable> createIterator() {
+                        return new PropertyGraphIterator(stargraph, kbId);
+                    }
+                },
+                new DataGenerator<JModel, Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator(JModel data) {
+                        return new PropertyGraphIterator(stargraph, kbId, data);
+                    }
+                }
+        );
     }
-
 }

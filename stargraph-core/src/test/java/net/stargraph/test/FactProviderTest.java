@@ -28,8 +28,8 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.core.FactProviderFactory;
-import net.stargraph.core.NTriplesModelFactory;
+import net.stargraph.core.data.FactProviderFactory;
+import net.stargraph.core.impl.ntriples.NTriplesModelProviderFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.model.KBId;
@@ -59,20 +59,20 @@ public class FactProviderTest {
         KBId kbId = KBId.of("obama", "facts");
         FactProviderFactory factory = new FactProviderFactory(core);
         DataProvider<?> provider = factory.create(kbId);
-        Assert.assertEquals(provider.getStream().count(), 1877);
+        Assert.assertEquals(provider.getMergedDataSource().getStream().count(), 1877);
     }
 
     @Test
     public void factFromNTriplesTest() throws IOException {
         Stargraph core = new Stargraph(config, false);
         core.setDataRootDir(root.toFile());
-        core.setGraphModelFactory(new NTriplesModelFactory(core));
+        core.setDefaultGraphModelProviderFactory(new NTriplesModelProviderFactory(core));
         core.initialize();
 
         KBId kbId = KBId.of("obama", "facts");
         FactProviderFactory factory = new FactProviderFactory(core);
         DataProvider<?> provider = factory.create(kbId);
-        Assert.assertEquals(provider.getStream().count(), 1877);
+        Assert.assertEquals(provider.getMergedDataSource().getStream().count(), 1877);
     }
 
 }

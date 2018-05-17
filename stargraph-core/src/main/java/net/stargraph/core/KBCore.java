@@ -3,19 +3,21 @@ package net.stargraph.core;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.GraphSearcher;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.ner.NER;
 import net.stargraph.core.search.BaseSearcher;
-import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.Searcher;
+import net.stargraph.data.DataProvider;
+import net.stargraph.data.DataProviderFactory;
 import net.stargraph.model.KBId;
 import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableIndraParams;
-import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -39,8 +41,8 @@ public final class KBCore {
     private Config kbConfig;
     private Language language;
     private String nerKbName;
+    private JModel graphModel;
     private KBLoader kbLoader;
-    private Model graphModel;
     private Namespace namespace;
     private Stargraph stargraph;
     private NER ner;
@@ -84,8 +86,8 @@ public final class KBCore {
         final List<String> modelNames = getKBIds().stream().map(KBId::getModel).collect(Collectors.toList());
 
         for (String modelId : modelNames) {
-            logger.info(marker, "Initializing '{}'", modelId);
             final KBId kbId = KBId.of(kbName, modelId);
+            logger.info(marker, "Initializing '{}'", kbId);
             IndicesFactory factory = stargraph.getIndicesFactory(kbId);
 
             Indexer indexer = factory.createIndexer(kbId, stargraph);
@@ -157,9 +159,24 @@ public final class KBCore {
         return typeObj.keySet().stream().map(modelName -> KBId.of(kbName, modelName)).collect(Collectors.toList());
     }
 
-    public Model getGraphModel() {
+    public JModel getGraphModel() {
         checkRunning();
-        return stargraph.getGraphModelFactory().getModel(kbName);
+        if (graphModel == null) {
+            GraphModelProviderFactory factory = stargraph.getGraphModelProviderFactory(kbName);
+            logger.info(marker, "Create graph model for '{}' using '{}'", kbName, factory.getClass().getSimpleName());
+            graphModel = factory.create(kbName).getGraphModel();
+            if (graphModel == null) {
+                throw new StarGraphException("Could not create graph model for: " + kbName);
+            }
+        }
+        return graphModel;
+    }
+
+    public DataProvider getDataProvider(String modelId) {
+        checkRunning();
+        DataProviderFactory factory = stargraph.getDataProviderFactory(KBId.of(kbName, modelId));
+        logger.info(marker, "Create data provider for '{}' using '{}'", KBId.of(kbName, modelId), factory.getClass().getSimpleName());
+        return factory.create(KBId.of(kbName, modelId));
     }
 
     public Indexer getIndexer(String modelId) {

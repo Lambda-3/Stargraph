@@ -42,7 +42,6 @@ import org.apache.lucene.store.Directory;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.Objects;
 
 public final class LuceneIndexer extends BaseIndexer {
@@ -80,15 +79,25 @@ public final class LuceneIndexer extends BaseIndexer {
         }
     }
 
-    @Override
-    protected void afterLoad() throws InterruptedException {
+    private void afterOperation(boolean loading) {
+        String label = (loading)? "loading" : "incremental update";
         try {
             writer.commit();
             writer.flush();
             writer.forceMerge(1, true);
         } catch (IOException e) {
-           throw new StarGraphException("After loading error.", e);
+            throw new StarGraphException("After " + label + " error.", e);
         }
+    }
+
+    @Override
+    protected void afterLoad() {
+        afterOperation(true);
+    }
+
+    @Override
+    protected void afterUpdate() {
+        afterOperation(false);
     }
 
     @Override

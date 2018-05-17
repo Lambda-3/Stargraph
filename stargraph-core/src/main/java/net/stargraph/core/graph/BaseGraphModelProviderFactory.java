@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.graph;
 
 /*-
  * ==========================License-Start=============================
@@ -26,39 +26,15 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.Indexable;
-import net.stargraph.model.*;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Statement;
+import net.stargraph.core.Stargraph;
 
-import static net.stargraph.ModelUtils.createInstance;
-import static net.stargraph.ModelUtils.createProperty;
+import java.util.Objects;
 
-final class FactIterator extends TripleIterator<Indexable> {
+public abstract class BaseGraphModelProviderFactory implements GraphModelProviderFactory {
 
-    FactIterator(Stargraph core, KBId kbId) {
-        super(core, kbId);
-    }
+    protected Stargraph stargraph;
 
-    @Override
-    protected Indexable buildNext(Statement statement) {
-        InstanceEntity instanceEntity = createInstance(applyNS(statement.getSubject().getURI()));
-        PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
-
-        LabeledEntity labeledEntity;
-
-        if (!statement.getObject().isLiteral()) {
-            //Is created as an instance but can be changed to a class down on the workflow in EntityClassifierProcessor.
-            labeledEntity = createInstance(applyNS(statement.getObject().asResource().getURI()));
-        } else {
-            Literal literal = statement.getObject().asLiteral();
-            String dataType = literal.getDatatypeURI();
-            String langTag = literal.getLanguage();
-            String value = literal.getLexicalForm();
-            labeledEntity = new ValueEntity(value, dataType, langTag);
-        }
-
-
-        return new Indexable(new Fact(kbId, instanceEntity, propertyEntity, labeledEntity), kbId);
+    public BaseGraphModelProviderFactory(Stargraph stargraph) {
+        this.stargraph = Objects.requireNonNull(stargraph);
     }
 }

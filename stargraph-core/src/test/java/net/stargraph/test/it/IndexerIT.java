@@ -46,9 +46,9 @@ import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
 
 /**
- * Exercises the Elastic backend in a controlled environment.
+ *
  */
-public final class ElasticIndexerIT {
+public final class IndexerIT {
 
     private KBCore core;
     private EntitySearcher entitySearcher;
@@ -137,19 +137,19 @@ public final class ElasticIndexerIT {
     private void loadFacts() throws Exception {
         Indexer indexer = core.getIndexer(factsId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     private void loadProperties() throws Exception {
         Indexer indexer = core.getIndexer(propsId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
     private void loadEntities() throws Exception {
         Indexer indexer = core.getIndexer(entitiesId.getModel());
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
     }
 
 }

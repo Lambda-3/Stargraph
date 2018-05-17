@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.graph;
 
 /*-
  * ==========================License-Start=============================
@@ -26,15 +26,7 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.DataProviderFactory;
+public interface GraphModelProviderFactory {
 
-import java.util.Objects;
-
-abstract class BaseDataProviderFactory implements DataProviderFactory {
-
-    protected Stargraph core;
-
-    public BaseDataProviderFactory(Stargraph core) {
-        this.core = Objects.requireNonNull(core);
-    }
+    GraphModelProvider create(String dbId);
 }

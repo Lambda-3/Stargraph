@@ -42,9 +42,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class IndexerTest {
+    private static final TestData ADD_DATA = new TestData("4th");
+    private static final List<TestData> EXP_AFTER_LOAD = Arrays.asList("first", "second", "third").stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
+    private static final List<TestData> EXP_AFTER_LOAD_UPDATE = Arrays.asList("first", "second", "third", "4th").stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
+
 
     private KBId kbId = KBId.of("mytest", "mytype");
-    private List<TestData> expected;
     private Stargraph stargraph;
     private Indexer indexer;
 
@@ -57,75 +60,78 @@ public final class IndexerTest {
         this.stargraph.setDefaultIndicesFactory(new TestDataIndexer.Factory());
         this.stargraph.initialize();
         this.indexer = stargraph.getIndexer(kbId);
-        List<String> expected = Arrays.asList("first", "second", "third");
-        this.expected = expected.stream().map(s -> new TestData(false, false, s)).collect(Collectors.toList());
     }
 
     @Test(timeOut = 15000)
     public void bulkLoadTest() throws Exception {
         indexer.load(true, -1);
-        indexer.awaitLoader();
-        Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
-    }
-
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void doubleLoadFailTest() throws Exception {
-        try {
-            indexer.load(true, -1);
-            Thread.sleep(1000);
-            indexer.load();
-        }
-        finally {
-            indexer.awaitLoader();
-            Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
-        }
-    }
-
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void updateWhileLoadingFailTest() throws Exception {
-        try {
-            indexer.load(true, -1);
-            indexer.index(new Indexable(new TestData("4th"), kbId));
-        }
-        finally {
-            indexer.awaitLoader();
-            Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
-        }
-    }
-
-    @Test(expectedExceptions = IllegalStateException.class)
-    public void loadTwiceWithoutWaitingTest() throws Exception {
-        try {
-            indexer.load(true, -1);
-            indexer.load();
-        }
-        finally {
-            indexer.awaitLoader();
-        }
+        indexer.await();
+        Assert.assertEquals(EXP_AFTER_LOAD, ((TestDataIndexer) indexer).getIndexed());
     }
 
     @Test
     public void loadTwiceTest() throws Exception {
         indexer.load(true, -1);
-        indexer.awaitLoader();
+        indexer.await();
         indexer.load();
-        indexer.awaitLoader();
-        Assert.assertEquals(2 * expected.size(), ((TestDataIndexer) indexer).getIndexed().size());
+        indexer.await();
+        Assert.assertEquals(2 * EXP_AFTER_LOAD.size(), ((TestDataIndexer) indexer).getIndexed().size());
+    }
+
+    @Test
+    public void loadAndUpdateTest() throws Exception {
+        indexer.load(true, -1);
+        indexer.await();
+        indexer.update(new Indexable(ADD_DATA, kbId));
+        indexer.await();
+        Assert.assertEquals(EXP_AFTER_LOAD_UPDATE, ((TestDataIndexer) indexer).getIndexed());
+    }
+
+    @Test
+    public void loadAndDoubleUpdateTest() throws Exception {
+        indexer.load(true, -1);
+        indexer.await();
+        indexer.update(new Indexable(ADD_DATA, kbId));
+        indexer.update(new Indexable(ADD_DATA, kbId));
+        indexer.await();
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void loadingWhileLoadingTest() throws Exception {
+        try {
+            indexer.load(true, -1);
+            indexer.load();
+        }
+        finally {
+            indexer.await();
+            Assert.assertEquals(EXP_AFTER_LOAD, ((TestDataIndexer) indexer).getIndexed());
+        }
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void updatingWhileLoadingTest() throws Exception {
+        try {
+            indexer.load(true, -1);
+            indexer.update(new Indexable(ADD_DATA, kbId));
+        } finally {
+            indexer.await();
+            Assert.assertEquals(EXP_AFTER_LOAD, ((TestDataIndexer) indexer).getIndexed());
+        }
     }
 
     @Test
     public void resetLoadingTest() throws Exception {
         indexer.load();
-        indexer.awaitLoader();
+        indexer.await();
         indexer.load(true, -1);
-        indexer.awaitLoader();
-        Assert.assertEquals(expected, ((TestDataIndexer) indexer).getIndexed());
+        indexer.await();
+        Assert.assertEquals(EXP_AFTER_LOAD, ((TestDataIndexer) indexer).getIndexed());
     }
 
     @Test
     public void limitLoadingTest() throws Exception {
         indexer.load(true, 3); //first two entries will fail for sure.
-        indexer.awaitLoader();
+        indexer.await();
         Assert.assertEquals(((TestDataIndexer) indexer).getIndexed(),
                 Collections.singletonList(new TestData(false, false, "first")));
     }

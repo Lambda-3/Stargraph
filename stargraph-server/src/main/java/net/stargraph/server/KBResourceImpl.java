@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,7 +83,7 @@ final class KBResourceImpl implements KBResource {
     @Override
     public Response loadAll(String id, String resetKey) {
         KBCore core = stargraph.getKBCore(id);
-        core.getLoader().loadAll(resetKey);
+        core.getLoader().safeLoadAll(resetKey);
         return ResourceUtils.createAckResponse(true);
     }
 
@@ -112,8 +111,7 @@ final class KBResourceImpl implements KBResource {
             if (type.equals("documents")) {
                 String docId = fileName; //TODO get from other source?
                 String docTitle = FilenameUtils.removeExtension(fileName); //TODO get from other source?
-                indexer.index(new Indexable(new Document(docId, docTitle, null, content), kbId));
-                indexer.flush();
+                indexer.update(new Indexable(new Document(docId, docTitle, null, content), kbId));
             } else {
                 logger.error(marker, "Type not supported yet: " + type);
                 return Response.status(Response.Status.NOT_IMPLEMENTED).build();

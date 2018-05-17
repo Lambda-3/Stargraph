@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.impl.hdt;
 
 /*-
  * ==========================License-Start=============================
@@ -27,41 +27,43 @@ package net.stargraph.core;
  */
 
 import net.stargraph.StarGraphException;
-import org.apache.jena.rdf.model.Model;
+import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.DefaultModelFileLoader;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.rdfhdt.hdt.hdt.HDT;
+import org.rdfhdt.hdt.hdt.HDTManager;
+import org.rdfhdt.hdtjena.HDTGraph;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-public final class NTriplesModelFactory extends GraphModelFactory {
+public final class HDTModelFileLoader extends DefaultModelFileLoader {
+    private final boolean useIndex;
 
-    public NTriplesModelFactory(Stargraph core) {
-        super(core);
+
+    public HDTModelFileLoader(String dbid, File file, boolean useIndex) {
+        super(dbid, file, null);
+        this.useIndex = useIndex;
     }
 
     @Override
-    protected Model createModel(String dbId) {
-        File ntriplesFile = getNTriplesPath(dbId).toFile();
-        if (!ntriplesFile.exists()) {
-            logger.warn(marker, "Can't find NT file {}", ntriplesFile);
-        } else {
+    public JModel loadModel() {
+        logger.info(marker, "Loading '{}', useIndex={}", file.getAbsolutePath(), useIndex);
 
-            try (InputStream is = new FileInputStream(ntriplesFile)) {
-                Model model = ModelFactory.createDefaultModel();
-                model.read(is, null, "N-TRIPLES");
-                return model;
-            } catch (Exception e) {
-                throw new StarGraphException(e);
+        JModel model = null;
+
+        try {
+            String hdtFilePathStr = file.getAbsolutePath();
+            HDT hdt = useIndex ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
+            HDTGraph graph = new HDTGraph(hdt);
+            model = new JModel(ModelFactory.createModelForGraph(graph));
+        } catch (Exception e) {
+            throw new StarGraphException(e);
+        } finally {
+            if (model == null) {
+                logger.error(marker, "No Graph Model instantiated for {}", dbId);
             }
         }
 
-        return null;
-    }
-
-    private Path getNTriplesPath(String dbId) {
-        return Paths.get(stargraph.getDataRootDir(), dbId, "facts", "triples.nt");
+        return model;
     }
 }

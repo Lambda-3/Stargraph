@@ -26,41 +26,67 @@ package net.stargraph.data;
  * ==========================License-End===============================
  */
 
-import net.stargraph.data.processor.Holder;
+import jersey.repackaged.com.google.common.collect.Iterators;
+import net.stargraph.StarGraphException;
+import net.stargraph.model.GraphModel;
 
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.*;
 
 /**
- * Primary data consumer interface.
+ * Primary data generating interface.
  */
-public class DataProvider<T extends Holder> implements Iterable<T> {
+public class DataProvider<T> {
+    private List<DataSource<T>> dataSources;
+    private DataGenerator<? extends GraphModel, T> graphModelUpdater; // optional, can be null
 
-    private Iterator<T> dataIt;
+    public DataProvider(DataSource<T> dataSource) {
+        this(Arrays.asList(dataSource));
+    }
 
-    public DataProvider(Iterator<T> data) {
-        if (data == null) {
-            throw new IllegalArgumentException("Data can't be null.");
+    public DataProvider(DataSource<T> dataSource, DataGenerator<? extends GraphModel, T> graphModelUpdater) {
+        this(Arrays.asList(dataSource), graphModelUpdater);
+    }
+
+    public DataProvider(List<DataSource<T>> dataSources) {
+        this(dataSources, null);
+    }
+
+    public DataProvider(List<DataSource<T>> dataSources, DataGenerator<? extends GraphModel, T> graphModelUpdater) {
+        this.dataSources = Objects.requireNonNull(dataSources);
+        this.graphModelUpdater = graphModelUpdater;
+    }
+
+
+
+    public List<DataSource<T>> getDataSources() {
+        return dataSources;
+    }
+
+    public DataSource<T> getMergedDataSource() {
+        return new DataSource<T>() {
+            @Override
+            public Iterator<T> createIterator() {
+
+                // create iterators
+                List<Iterator<T>> iterators = new ArrayList<>();
+                dataSources.forEach(d -> iterators.add(d.createIterator()));
+                Iterator<T> mergedIt = Iterators.concat(iterators.iterator());
+
+                return mergedIt;
+            }
+        };
+    }
+
+    public boolean hasGraphModelUpdater() {
+        return graphModelUpdater != null;
+    }
+
+    public DataGenerator<? extends GraphModel, T> getGraphModelUpdater() {
+        if (graphModelUpdater != null) {
+            return graphModelUpdater;
+        } else {
+            throw new StarGraphException("No graph model updater exists.");
         }
-
-        this.dataIt = data;
-    }
-
-    public Stream<T> getStream() {
-        return StreamSupport.stream(this.spliterator(), false);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return dataIt;
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return Spliterators.spliteratorUnknownSize(dataIt, Spliterator.NONNULL);
     }
 
 }

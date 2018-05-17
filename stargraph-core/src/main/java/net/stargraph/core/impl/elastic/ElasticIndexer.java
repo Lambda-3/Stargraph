@@ -79,26 +79,27 @@ public final class ElasticIndexer extends BaseIndexer {
         }
     }
 
+    private void afterOperation() {
+        if (bulkProcessor != null) {
+            doFlush();
+        }
+
+        // Closing the bulkProcessor here was causing flush() to fail
+
+        if (!indexRequests.isEmpty()) {
+            logger.error(marker, "Still pending {} index requests!?", indexRequests.size()); // should not happen
+            indexRequests.clear();
+        }
+    }
+
     @Override
     protected void afterLoad() throws InterruptedException {
-        if (bulkProcessor != null) {
-            logger.info(marker, "Waiting for transport to serialize all remaining documents.");
+        afterOperation();
+    }
 
-            if (!bulkProcessor.awaitClose(120, TimeUnit.MINUTES)) {
-                logger.warn(marker, "Closing time expired BEFORE sending all documents!");
-            }
-
-            logger.info(marker, "Optimizing index for reading..");
-            ForceMergeResponse res = esClient.prepareForceMerge().get();
-            if (res.getFailedShards() != 0) {
-                logger.warn(marker, "An error was detected during optimization. Check logs.");
-            }
-
-            if (!indexRequests.isEmpty()) {
-                logger.error(marker, "Still pending {} index requests!?", indexRequests.size()); // should not happen
-                indexRequests.clear();
-            }
-        }
+    @Override
+    protected void afterUpdate() {
+        afterOperation();
     }
 
     @Override
@@ -116,6 +117,7 @@ public final class ElasticIndexer extends BaseIndexer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+        logger.info(marker, "Optimizing index for reading..");
         ForceMergeResponse res = esClient.prepareForceMerge().get();
         if (res.getFailedShards() > 0) {
             logger.warn("Flush request failure detected on {}", kbId);

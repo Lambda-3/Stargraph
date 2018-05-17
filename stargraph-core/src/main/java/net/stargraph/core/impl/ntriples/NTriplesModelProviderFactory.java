@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.impl.ntriples;
 
 /*-
  * ==========================License-Start=============================
@@ -26,32 +26,41 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
-import org.apache.jena.rdf.model.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import com.typesafe.config.Config;
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.data.FileDataSource;
+import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultModelFileLoader;
+import net.stargraph.core.graph.GraphModelProvider;
+import net.stargraph.model.KBId;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.File;
+import java.util.Iterator;
 
-public abstract class GraphModelFactory {
-    private Map<String, Model> models;
+public final class NTriplesModelProviderFactory extends BaseGraphModelProviderFactory {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
-    protected Stargraph stargraph;
-
-    public GraphModelFactory(Stargraph stargraph) {
-        this.stargraph = Objects.requireNonNull(stargraph);
-        this.models = new ConcurrentHashMap<>();
+    public NTriplesModelProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
-    Model getModel(String dbId) {
-        return models.computeIfAbsent(dbId, (id) -> createModel(dbId));
+    @Override
+    public GraphModelProvider create(String dbId) {
+        final KBId kbId = KBId.of(dbId, "facts");
+        Config config = stargraph.getKBCore(dbId).getConfig();
+
+        final String cfgFilePath = "graphmodel.ntriples.file";
+        String resourcePath = "triples.nt";
+        if (config.hasPath(cfgFilePath)) {
+            resourcePath = config.getString(cfgFilePath);
+        }
+
+        return new GraphModelProvider(
+                new FileDataSource(stargraph, kbId, resourcePath) {
+                    @Override
+                    protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                        return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                    }
+                }
+        );
     }
-
-    protected abstract Model createModel(String dbId);
-
 }

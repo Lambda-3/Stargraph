@@ -1,4 +1,4 @@
-package net.stargraph.test;
+package net.stargraph.core.impl.turtle;
 
 /*-
  * ==========================License-Start=============================
@@ -27,41 +27,40 @@ package net.stargraph.test;
  */
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.index.Indexer;
-import net.stargraph.core.search.Searcher;
+import net.stargraph.core.data.FileDataSource;
+import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultModelFileLoader;
+import net.stargraph.core.graph.GraphModelProvider;
 import net.stargraph.model.KBId;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.Iterator;
 
-public final class LuceneIndexerTest {
+public final class TurtleModelProviderFactory extends BaseGraphModelProviderFactory {
 
-    private KBId kbId = KBId.of("obama", "entities"); // Entities uses Lucene. See reference.conf.
-    private Stargraph stargraph;
-
-
-    @BeforeClass
-    public void beforeClass() {
-        ConfigFactory.invalidateCaches();
-        Config config = ConfigFactory.load().getConfig("stargraph");
-        File dataRootDir = TestUtils.prepareObamaTestEnv().toFile();
-        this.stargraph = new Stargraph(config, false);
-        stargraph.setKBInitSet(kbId.getId());
-        stargraph.setDataRootDir(dataRootDir);
-        this.stargraph.initialize();
+    public TurtleModelProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
+    @Override
+    public GraphModelProvider create(String dbId) {
+        final KBId kbId = KBId.of(dbId, "facts");
+        Config config = stargraph.getKBCore(dbId).getConfig();
 
-    @Test
-    public void bulkLoadTest() throws Exception {
-        Indexer indexer = stargraph.getIndexer(kbId);
-        indexer.load(true, -1);
-        indexer.await();
-        Searcher searcher = stargraph.getSearcher(kbId);
-        Assert.assertEquals(searcher.countDocuments(), 756);
+        final String cfgFilePath = "graphmodel.turtle.file";
+        String resourcePath = "triples.ttl";
+        if (config.hasPath(cfgFilePath)) {
+            resourcePath = config.getString(cfgFilePath);
+        }
+
+        return new GraphModelProvider(
+                new FileDataSource(stargraph, kbId, resourcePath) {
+                    @Override
+                    protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
+                        return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
+                    }
+                }
+        );
     }
 }

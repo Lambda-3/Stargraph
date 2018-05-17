@@ -1,4 +1,4 @@
-package net.stargraph.core;
+package net.stargraph.core.data;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,37 @@ package net.stargraph.core;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.Stargraph;
+import net.stargraph.core.graph.JModel;
+import net.stargraph.data.DataGenerator;
+import net.stargraph.data.DataProvider;
+import net.stargraph.data.DataSource;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
-import net.stargraph.model.PropertyEntity;
-import org.apache.jena.rdf.model.Statement;
 
-import static net.stargraph.ModelUtils.createProperty;
+import java.util.Iterator;
 
-final class PropertyIterator extends TripleIterator<Indexable> {
+public final class EntityProviderFactory extends BaseDataProviderFactory {
 
-    PropertyIterator(Stargraph core, KBId kbId) {
-        super(core, kbId);
+    public EntityProviderFactory(Stargraph stargraph) {
+        super(stargraph);
     }
 
     @Override
-    protected Indexable buildNext(Statement statement) {
-        PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
-        return new Indexable(propertyEntity, kbId);
+    public DataProvider<Indexable> create(KBId kbId) {
+        return new DataProvider<>(
+                new DataSource<Indexable>() {
+                    @Override
+                    public Iterator<Indexable> createIterator() {
+                        return new EntityGraphIterator(stargraph, kbId);
+                    }
+                },
+                new DataGenerator<JModel, Indexable>() {
+                    @Override
+                    public Iterator<Indexable> getIterator(JModel data) {
+                        return new EntityGraphIterator(stargraph, kbId, data);
+                    }
+                }
+        );
     }
 }

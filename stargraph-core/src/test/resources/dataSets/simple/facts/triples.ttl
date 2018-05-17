@@ -1,0 +1,19 @@
+@prefix ns0: <http://dbpedia.org/property/> .
+@prefix ns1: <http://dbpedia.org/datatype/> .
+
+<http://dbpedia.org/resource/President_of_the_United_States> ns0:incumbent <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Armed_Forces> ns0:commanderInChief <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Barack_Obama> ns0:name "Barack Obama"@en .
+<http://dbpedia.org/resource/Sergio>
+  ns0:name "Sergio"@en ;
+  ns0:lastname "Malandro"@en ;
+  ns0:job "Funny Man"@en ;
+  ns0:age 60 ;
+  ns0:homepage <http://example.com/>, <http://example.com> ;
+  ns0:ageInSeconds "1892160000"^^ns1:seconds ;
+  ns0:_ "No Scoring"@en .
+
+<http://dbpedia.org/resource/%22Sergio%22> ns0:any "Whatever"@en .
+<http://dbpedia.org/example/File:Sergio.jpg> ns0:name "Sergio.jpg"@en .
+<http://dbpedia.org/example/File:Sergio.png> ns0:thumbnail "Sergio.png"@en .
+<http://dbpedia.org/resource/1939_Stanley_Cup_Finals> ns0:1_3__ "Bobby Bauer, 2 – 16:31"@en .

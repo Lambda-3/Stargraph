@@ -1,0 +1,964 @@
+@prefix ns0: <http://dbpedia.org/property/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ns1: <http://dbpedia.org/property/jr/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+
+<http://dbpedia.org/resource/SomeEntity> ns0:someProperty <http://dbpedia.org/resource/AnotherEntity> .
+<http://dbpedia.org/resource/Mount_Wellington,_BC/Canada> ns0:testing <http://dbpedia.org/resource/Canada> .
+<http://dbpedia.org/resource/First_Lady_of_the_United_States> ns0:incumbent <http://dbpedia.org/resource/Michelle_Obama> .
+<http://dbpedia.org/resource/John_Lynch_(New_Hampshire)> ns0:caption "Lynch campaigning for Barack Obama"@en .
+<http://dbpedia.org/resource/James_L._Jones> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Laura_Bush>
+  ns0:successor <http://dbpedia.org/resource/Michelle_Obama> ;
+  ns0:after <http://dbpedia.org/resource/Michelle_Obama> .
+
+<http://dbpedia.org/resource/Nobel_Prize>
+  ns0:footer "Left: Barack Obama after receiving the Nobel Peace Prize in Oslo City Hall from the hands of Norwegian Nobel Committee Chairman Thorbjorn Jagland; Right: Giovanni Jona-Lasinio presenting Yoichiro Nambu's Nobel Lecture at Aula Magna, Stockholm in 2008"@en ;
+  ns0:image "Horbjorn Jagland presents President Barack Obama with the Nobel Prize medal and diploma.jpg"@en .
+
+<http://dbpedia.org/resource/Puerto_Rico> ns0:leaderName <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Pope_John_Paul_II> ns0:bishop "Ildefonso Obama Obono"@en .
+<http://dbpedia.org/resource/President_of_the_United_States> ns0:incumbent <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Texas> ns0:candidate <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Libertarian_Party_(United_States)> ns0:candidate "Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_Armed_Forces> ns0:commanderInChief <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/White_House> ns0:currentTenants "Barack Obama, President of the United States and the First Family"@en .
+<http://dbpedia.org/resource/United_States_National_Security_Council> ns0:chief1Name <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Joan_Baez> ns0:description "Joan Baez performs \"We Shall Overcome\" at the White House in front of president Barack Obama, at a celebration of music from the civil rights era ."@en .
+<http://dbpedia.org/resource/Bruce_Springsteen> ns0:header "Springsteen at a rally for the presidential candidate Barack Obama"@en .
+<http://dbpedia.org/resource/Roe_v._Wade> ns0:image "AntiObamaBiden.jpg"@en .
+<http://dbpedia.org/resource/Denton_County,_Texas> ns0:candidate <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Tom_Vilsack> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Calumet_Park,_Illinois>
+  ns0:imageSkyline "Obama Drive.jpg"@en ;
+  ns0:imageCaption "Obama Drive street sign"@en .
+
+<http://dbpedia.org/resource/Centralia,_Washington> ns0:candidate <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Joe_Biden> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Uniformed_services_of_the_United_States> ns0:commanderInChief <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Nancy_Pelosi> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Martti_Ahtisaari> ns0:after <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Orrin_Hatch> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Presidency_of_George_W._Bush> ns0:successor <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Bob_Graham> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ryan_Crocker> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Gary_Hart> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ray_Mabus> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Justices_of_the_Supreme_Court_of_the_United_States> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jackson_State_University> ns0:nota "CIO at Environmental Protection Agency during  President Barack Obama administration. He is a Presidential Appointment."@en .
+<http://dbpedia.org/resource/Debra_Winger> ns0:caption "Debra Winger at the inauguration of President Obama"@en .
+<http://dbpedia.org/resource/Janet_Napolitano> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Teodoro_Obiang_Nguema_Mbasogo> ns0:primeminister <http://dbpedia.org/resource/Ricardo_Mangue_Obama_Nfubea> .
+<http://dbpedia.org/resource/Russ_Feingold> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Eric_Shinseki> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jonathan_Pollard> ns0:source "Former US Attorney General Michael Mukasey in a letter sent to President Barack Obama"@en .
+<http://dbpedia.org/resource/James_Franklin_Jeffrey> ns0:president <http://dbpedia.org/resource/Barack_Obama>, "Barack Obama"@en .
+<http://dbpedia.org/resource/Elizabeth_Warren> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Max_Baucus> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Richard_Holbrooke> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/We_Shall_Overcome> ns0:description "Joan Baez performs \"We Shall Overcome\" at the White House in front of U.S. President Barack Obama, at a celebration of music from the civil rights era ."@en .
+<http://dbpedia.org/resource/Gary_Johnson> ns0:candidate "Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_United_Nations> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Ninth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Obama,_Fukui>
+  ns0:name "Obama"@en ;
+  ns0:settlementType <http://dbpedia.org/resource/Cities_of_Japan> ;
+  ns0:mapimage "Obama in Fukui prefecture Ja.svg"@en ;
+  ns0:region "Chūbu"@en ;
+  ns0:prefecture <http://dbpedia.org/resource/Fukui_Prefecture> ;
+  ns0:areaKm 2.328500e+2 ;
+  ns0:popdate 2005 ;
+  ns0:population 32185 ;
+  ns0:densityKm 1.382200e+2 ;
+  ns0:latitudedegrees 35 ;
+  ns0:latitudeminutes 30 ;
+  ns0:longtitudedegrees 135 ;
+  ns0:longtitudeminutes 45 ;
+  ns0:symbolimage "Flag of Obama, Fukui.svgborder"@en ;
+  ns0:symboldescription "Flag"@en ;
+  ns0:mayor "Toshio Murakami"@en ;
+  ns0:cityhallpostalcode 917 ;
+  ns0:cityhalladdress 6 ;
+  ns0:cityhallphone 770 ;
+  ns0:cityhalllink <http://www1.city.obama.fukui.jp> ;
+  a <http://dbpedia.org/class/yago/AdministrativeDistrict108491826>, <http://dbpedia.org/class/yago/CitiesInFukuiPrefecture>, <http://dbpedia.org/class/yago/City108524735>, <http://dbpedia.org/class/yago/District108552138>, <http://dbpedia.org/class/yago/GeographicalArea108574314>, <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Municipality108626283>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Region108630985>, <http://dbpedia.org/class/yago/UrbanArea108675967>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+
+<http://dbpedia.org/resource/Peter_Fitzgerald_(politician)>
+  ns0:succeeded <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:after <http://dbpedia.org/resource/Barack_Obama> .
+
+<http://dbpedia.org/resource/Dick_Durbin> ns0:alongside <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Caroline_Kennedy> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Illinois_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/John_Podesta> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Betty_Boothroyd> ns0:caption "Lady Boothroyd  sits between George Osborne and Douglas Alexander to watch President Obama give a speech in Westminster Hall, May 2011"@en .
+<http://dbpedia.org/resource/Chuck_Hagel> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Spelman_College> ns0:nota "Judge, United States District Court appointed by Barack Obama"@en .
+<http://dbpedia.org/resource/Patrick_Leahy> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Penn_Masala> ns0:caption "Penn Masala with US President Obama, 2009."@en .
+<http://dbpedia.org/resource/Laura_Linney> ns0:caption "Linney, a presenter at the Obama Inaugural Celebration at the Lincoln Memorial, January 2009"@en .
+<http://dbpedia.org/resource/Paul_Volcker> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Eighth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_presidential_election,_2008>
+  ns0:nominee "Barack Obama"@en ;
+  ns0:mapCaption "Presidential election results map. Blue denotes states/districts won by Obama/Biden, and Red denotes those won by McCain/Palin. Numbers indicate electoral votes allotted to the winner of each state. Obama won one electoral vote  of Nebraska's five."@en ;
+  ns0:afterElection <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:name <http://dbpedia.org/resource/Barack_Obama> .
+
+<http://dbpedia.org/resource/Ellen_Tauscher> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Hilda_Solis> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Rahm_Emanuel> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ray_LaHood> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Larry_Echo_Hawk> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Fourth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Seventh_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Fifth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_First_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Third_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Second_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Eleventh_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Tenth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Sixth_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Kathleen_Sebelius> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Punahou_School>
+  ns0:image "Official_portrait_of_Barack_Obama.jpg"@en ;
+  ns0:caption "Barack Obama , Harvard Law Review editor, U Chicago lecturer on Constitutional Law, Nobel, Grammy and Emmy winner, author, state basketball champion, US Senator, 44th US President"@en .
+
+<http://dbpedia.org/resource/Robert_Mueller> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ron_Kirk> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Charles_Bolden> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Shepard_Fairey> ns0:works <http://dbpedia.org/resource/Barack_Obama_%22Hope%22_poster> .
+<http://dbpedia.org/resource/Jack_Ryan_(politician)> ns0:opponent <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Barack_Obama>
+  ns0:name "Barack Obama"@en, "Obama, Barack"@en ;
+  ns0:office 44 ;
+  ns0:vicepresident <http://dbpedia.org/resource/Joe_Biden> ;
+  ns0:termStart "2009-01-20"^^xsd:date, "2005-01-03"^^xsd:date, "1997-01-08"^^xsd:date ;
+  ns0:predecessor <http://dbpedia.org/resource/George_W._Bush>, <http://dbpedia.org/resource/Peter_Fitzgerald_(politician)>, <http://dbpedia.org/resource/Alice_Palmer_(politician)> ;
+  ns1:sr "United States Senator"@en ;
+  ns0:state <http://dbpedia.org/resource/Illinois> ;
+  ns0:termEnd "2008-11-16"^^xsd:date, "2004-11-04"^^xsd:date ;
+  ns0:successor <http://dbpedia.org/resource/Roland_Burris>, <http://dbpedia.org/resource/Kwame_Raoul> ;
+  ns0:stateSenate "Illinois"@en ;
+  ns0:district 13 ;
+  ns0:birthName "Barack Hussein Obama II"@en ;
+  ns0:birthDate "1961-08-04"^^xsd:date ;
+  ns0:birthPlace <http://dbpedia.org/resource/Honolulu>, <http://dbpedia.org/resource/Hawaii>, <http://dbpedia.org/resource/United_States> ;
+  ns0:party <http://dbpedia.org/resource/Democratic_Party_(United_States)> ;
+  ns0:spouse <http://dbpedia.org/resource/Michelle_Obama> ;
+  ns0:children "Malia"@en, "Sasha"@en ;
+  ns0:residence <http://dbpedia.org/resource/White_House> ;
+  ns0:education <http://dbpedia.org/resource/Punahou_School> ;
+  ns0:almaMater <http://dbpedia.org/resource/Occidental_College>, <http://dbpedia.org/resource/Columbia_University>, <http://dbpedia.org/resource/Harvard_Law_School> ;
+  ns0:religion <http://dbpedia.org/resource/Christianity> ;
+  ns0:signature "Barack Obama signature.svg"@en ;
+  ns0:website <https://www.barackobama.com> ;
+  ns0:filename "President Obama on Death of Osama bin Laden.ogv"@en, 50111 ;
+  ns0:title "President Obama on Osama bin Laden's Death"@en, "Offices and distinctions"@en ;
+  ns0:description "President Obama's address"@en, "audio only version"@en ;
+  ns0:by "yes"@en ;
+  ns0:onlinebooks "yes"@en ;
+  ns0:viaf 52010985 ;
+  ns0:congbio "o000167"@en ;
+  ns0:votesmart 9490 ;
+  ns0:washpo "gJQAugUh6W"@en ;
+  ns0:govtrack 400629 ;
+  ns0:cSpan "barackobama"@en ;
+  ns0:ontheissues "Barack_Obama.htm"@en ;
+  ns0:legistorm 76 ;
+  ns0:fec "S4IL00180"@en ;
+  ns0:opensecrets "N00009638"@en ;
+  ns0:followthemoney 17677 ;
+  ns0:rose 233 ;
+  ns0:imdb 1682433 ;
+  ns0:nyt "o/barack_obama"@en ;
+  ns0:wsj "person/O/barack-obama/4328"@en ;
+  ns0:guardian "world/barack-obama"@en ;
+  ns0:worldcat "lccn-n94-112934"@en ;
+  ns0:nndb 208 ;
+  ns0:id "Obama,+Barack"@en ;
+  ns0:book "Barack Obama"@en ;
+  ns0:portal "Barack Obama"@en, "Government of the United States"@en ;
+  ns0:commons "y"@en ;
+  ns0:n "y"@en ;
+  ns0:q "y"@en ;
+  ns0:s "y"@en ;
+  ns0:sSearch "Author:Barack Obama"@en ;
+  ns0:gnd 132522136 ;
+  ns0:lccn "n/94/112934"@en ;
+  ns0:selibr 314463 ;
+  ns0:bnf 15591663 ;
+  ns0:shortDescription "American politician, 44th President of the United States"@en ;
+  ns0:dateOfBirth "1961-08-04"^^xsd:date ;
+  ns0:placeOfBirth "Honolulu, Hawaii, United States"@en ;
+  a owl:Thing, <http://dbpedia.org/ontology/Person>, <http://www.wikidata.org/entity/Q5>, foaf:Person, schema:Person, <http://www.wikidata.org/entity/Q215627>, <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#NaturalPerson>, <http://dbpedia.org/ontology/Agent>, <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent>, <http://dbpedia.org/class/yago/Academician109759069>, <http://dbpedia.org/class/yago/Acquirer109764201>, <http://dbpedia.org/class/yago/Adult109605289>, <http://dbpedia.org/class/yago/AfricanAmericanAcademics>, <http://dbpedia.org/class/yago/AfricanAmericanLawyers>, <http://dbpedia.org/class/yago/AfricanAmericanUnitedStatesSenators>, <http://dbpedia.org/class/yago/Alumnus109786338>, <http://dbpedia.org/class/yago/AmericanCivilRightsLawyers>, <http://dbpedia.org/class/yago/AmericanLegalScholars>, <http://dbpedia.org/class/yago/AmericanNobelLaureates>, <http://dbpedia.org/class/yago/AmericanPoliticalWriters>, <http://dbpedia.org/class/yago/Articulator109811712>, <http://dbpedia.org/class/yago/AudioBookNarrators>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/ColumbiaUniversityAlumni>, <http://dbpedia.org/class/yago/Communicator109610660>, <http://dbpedia.org/class/yago/CommunityOrganizers>, <http://dbpedia.org/class/yago/CurrentNationalLeaders>, <http://dbpedia.org/class/yago/DemocraticPartyPresidentsOfTheUnitedStates>, <http://dbpedia.org/class/yago/DemocraticPartyUnitedStatesSenators>, <http://dbpedia.org/class/yago/Educator110045713>, <http://dbpedia.org/class/yago/HarvardLawSchoolAlumni>, <http://dbpedia.org/class/yago/HeadOfState110164747>, <http://dbpedia.org/class/yago/Holder110180178>, <http://dbpedia.org/class/yago/Honoree110183757>, <http://dbpedia.org/class/yago/IllinoisLawyers>, <http://dbpedia.org/class/yago/IllinoisStateSenators>, <http://dbpedia.org/class/yago/Intellectual109621545>, <http://dbpedia.org/class/yago/Laureate110249011>, <http://dbpedia.org/class/yago/Lawgiver110249270>, <http://dbpedia.org/class/yago/Lawyer110249950>, <http://dbpedia.org/class/yago/Leader109623038>, <http://dbpedia.org/class/yago/Legislator110253995>, <http://dbpedia.org/class/yago/LivingPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Narrator110345804>, <http://dbpedia.org/class/yago/Negotiator110351874>, <http://dbpedia.org/class/yago/NobelPeacePrizeLaureates>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/OccidentalCollegeAlumni>, <http://dbpedia.org/class/yago/Officeholder110371450>, <http://dbpedia.org/class/yago/Official110372373>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Organizer110383237>, <http://dbpedia.org/class/yago/Owner110389398>, <http://dbpedia.org/class/yago/PeopleFromHonolulu,Hawaii>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Politician110450303>, <http://dbpedia.org/class/yago/Politician110451263>, <http://dbpedia.org/class/yago/PoliticiansFromChicago,Illinois>, <http://dbpedia.org/class/yago/President110467179>, <http://dbpedia.org/class/yago/PresidentsOfTheUnitedNationsSecurityCouncil>, <http://dbpedia.org/class/yago/Professional110480253>, <http://dbpedia.org/class/yago/PunahouSchoolAlumni>, <http://dbpedia.org/class/yago/Recipient109627906>, <http://dbpedia.org/class/yago/Representative110522035>, <http://dbpedia.org/class/yago/Scholar110557854>, <http://dbpedia.org/class/yago/Senator110578471>, <http://dbpedia.org/class/yago/SkilledWorker110605985>, <http://dbpedia.org/class/yago/Speaker110630188>, <http://dbpedia.org/class/yago/StateSenator110650076>, <http://dbpedia.org/class/yago/Statesman110650162>, <http://dbpedia.org/class/yago/Thinker110708454>, <http://dbpedia.org/class/yago/UnitedStatesSenatorsFromIllinois>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Worker109632518>, <http://dbpedia.org/class/yago/Writer110794014>, <http://dbpedia.org/class/yago/WritersFromChicago,Illinois>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> ;
+  dc:subject <http://dbpedia.org/resource/Category:Punahou_School_alumni>, <http://dbpedia.org/resource/Category:United_States_presidential_candidates,_2012>, <http://dbpedia.org/resource/Category:20th-century_American_writers>, <http://dbpedia.org/resource/Category:American_male_writers>, <http://dbpedia.org/resource/Category:Writers_from_Chicago,_Illinois>, <http://dbpedia.org/resource/Category:American_legal_scholars>, <http://dbpedia.org/resource/Category:African-American_Christians>, <http://dbpedia.org/resource/Category:American_people_of_Irish_descent>, <http://dbpedia.org/resource/Category:American_memoirists>, <http://dbpedia.org/resource/Category:Harvard_Law_School_alumni>, <http://dbpedia.org/resource/Category:Living_people>, <http://dbpedia.org/resource/Category:American_Nobel_laureates>, <http://dbpedia.org/resource/Category:American_people_of_English_descent>, <http://dbpedia.org/resource/Category:International_opponents_of_apartheid_in_South_Africa>, <http://dbpedia.org/resource/Category:American_political_writers>, <http://dbpedia.org/resource/Category:Columbia_University_alumni>, <http://dbpedia.org/resource/Category:Democratic_Party_United_States_Senators>, <http://dbpedia.org/resource/Category:Barack_Obama>, <http://dbpedia.org/resource/Category:United_States_presidential_candidates,_2008>, <http://dbpedia.org/resource/Category:American_Protestants>, <http://dbpedia.org/resource/Category:American_civil_rights_lawyers>, <http://dbpedia.org/resource/Category:20th-century_scholars>, <http://dbpedia.org/resource/Category:21st-century_scholars>, <http://dbpedia.org/resource/Category:Obama_family>, <http://dbpedia.org/resource/Category:Progressivism_in_the_United_States>, <http://dbpedia.org/resource/Category:Recipients_of_the_Presidential_Medal_of_Distinction_of_Israel>, <http://dbpedia.org/resource/Category:University_of_Chicago_Law_School_faculty>, <http://dbpedia.org/resource/Category:United_Church_of_Christ_members>, <http://dbpedia.org/resource/Category:Irish_diaspora_politicians>, <http://dbpedia.org/resource/Category:Occidental_College_alumni>, <http://dbpedia.org/resource/Category:Politicians_from_Chicago,_Illinois>, <http://dbpedia.org/resource/Category:Presidents_of_the_United_States>, <http://dbpedia.org/resource/Category:Democratic_Party_(United_States)_presidential_nominees>, <http://dbpedia.org/resource/Category:Democratic_Party_Presidents_of_the_United_States>, <http://dbpedia.org/resource/Category:Illinois_Democrats>, <http://dbpedia.org/resource/Category:Illinois_lawyers>, <http://dbpedia.org/resource/Category:African-American_lawyers>, <http://dbpedia.org/resource/Category:African-American_non-fiction_writers>, <http://dbpedia.org/resource/Category:African-American_politicians>, <http://dbpedia.org/resource/Category:American_gun_control_advocates>, <http://dbpedia.org/resource/Category:American_people_of_Luo_descent>, <http://dbpedia.org/resource/Category:African-American_United_States_presidential_candidates>, <http://dbpedia.org/resource/Category:21st-century_American_politicians>, <http://dbpedia.org/resource/Category:African-American_academics>, <http://dbpedia.org/resource/Category:Illinois_State_Senators>, <http://dbpedia.org/resource/Category:United_States_Senators_from_Illinois>, <http://dbpedia.org/resource/Category:African-American_United_States_Senators>, <http://dbpedia.org/resource/Category:American_people_of_Kenyan_descent>, <http://dbpedia.org/resource/Category:Nobel_Peace_Prize_laureates>, <http://dbpedia.org/resource/Category:Grammy_Award_winners>, <http://dbpedia.org/resource/Category:1961_births>, <http://dbpedia.org/resource/Category:Articles_containing_video_clips>, <http://dbpedia.org/resource/Category:21st-century_American_writers>, <http://dbpedia.org/resource/Category:Politicians_from_Honolulu,_Hawaii> .
+
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_District_of_Columbia_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/James_H._Billington> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Gordon_R._England> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Harvard_University_people>
+  ns0:name <http://dbpedia.org/resource/Barack_Obama>, "Barack Hussein Obama, Sr."@en ;
+  ns0:nota "lawyer, Assistant to President Barack Obama; Chief of staff to First Lady Michelle Obama; and Executive Director of the White House Council on Women and Girls."@en, "Adviser to Obama Campaign, Department of Energy Official"@en, "Kenyan economist, father of U.S. President Barack Obama"@en .
+
+<http://dbpedia.org/resource/Janet_Yellen> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/William_M._Daley> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/William_H._Webster> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Antonio_Rodr%C3%ADguez_Balinas> ns0:video "You can see a  of President Barack Obama awarding the Congressional Gold Medal to the Borinqueneers"@en .
+<http://dbpedia.org/resource/Oath_of_office_of_the_President_of_the_United_States>
+  ns0:filename "Barack Obama Oath of Office.ogg"@en, "President Obama Re-Takes Oath.ogg"@en ;
+  ns0:title "\"Barack Obama taking the Oath of Office\""@en, "\"President Obama Re-Takes Oath\""@en .
+
+<http://dbpedia.org/resource/Brad_Carson> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Carlos_C%C3%A9sar> ns0:caption "Carlos César  meets with U.S. President Barack Obama in November 2010"@en .
+<http://dbpedia.org/resource/2004_Democratic_National_Convention> ns0:keynoteSpeaker "Barack Obama of Illinois"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Canada> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Carol_Browner> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Miguel_Abia_Biteo_Boric%C3%B3> ns0:after <http://dbpedia.org/resource/Ricardo_Mangue_Obama_Nfubea> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_New_York> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Marc_Grossman> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Virginia> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Armed_Forces> ns0:appointer "Obama"@en .
+<http://dbpedia.org/resource/Leon_Panetta> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Laurence_Tribe> ns0:notableStudents "President Barack Obama"@en .
+<http://dbpedia.org/resource/John_Boehner> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ron_Sims> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Carlos_Betances_Ram%C3%ADrez> ns0:video "You can see a video of President Barack Obama"@en .
+<http://dbpedia.org/resource/Robert_Gates> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Timothy_J._Roemer> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Cass_Sunstein> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_United_Kingdom> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Central_District_of_California> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Pennsylvania> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_New_York> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Jeffrey_R._Immelt> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Kal_Penn> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_New_York> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_New_York> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Alabama> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_California> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_Florida> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Oklahoma> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_California> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Mich%C3%A8le_Flournoy> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ken_Salazar> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Washington> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Tennessee> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Illinois> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Alaska> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Colorado> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Arizona> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Connecticut> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Delaware> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Kansas> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Minnesota> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_New_Jersey> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Nebraska> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Maryland> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Massachusetts> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_New_Hampshire> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Oregon> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Utah> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Rhode_Island> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Wyoming> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_South_Carolina> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Vermont> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Nevada> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_South_Dakota> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Montana> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_Bahamas> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Texas_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/John_M._McHugh> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Alabama_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Alabama_State_University> ns0:nota "First black police chief of Montgomery, Alabama. Appointed by President Obama in 2010 and currently serves as the U.S. Marshal for the Middle District of Alabama."@en .
+<http://dbpedia.org/resource/Inez_Tenenbaum> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Rand_Beers> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ricardo_Arjona> ns0:quote """Although many believe is a treshed topic, it isn't for a Cuban, be it on the island or Florida. The status of this dispute hasn't changed since 1959 and I've never seen something as disgusting as a rivality between people created by politics. Chávez can fight with Uribe, Fidel with Obama, but does this have to do with two third-generation cousins that inherit an enmity from a politic matter[?].
+:—Ricardo Arjona in a discussion about the political theme of "Puente"."""@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_Illinois> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Virginia> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Middle_District_of_North_Carolina> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_California> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Middle_District_of_Georgia> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Georgia> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Central_District_of_Illinois> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Florida> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Louis_Caldera> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jimmie_Johnson> ns0:caption "Johnson  with his wife Chandra and President Barack Obama in 2011"@en .
+<http://dbpedia.org/resource/James_A._Wynn,_Jr.> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_North_Carolina> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Stanley_Fischer> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Dan_Rooney> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Court_of_Appeals_for_the_Federal_Circuit> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Daniel_Benjamin> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Madagascar_national_football_team> ns0:name "Obama Rajaozara"@en .
+<http://dbpedia.org/resource/2008_Democratic_National_Convention>
+  ns0:caption "Obama and Biden"@en ;
+  ns0:speakers <http://dbpedia.org/resource/Michelle_Obama> ;
+  ns0:presidentialNominee "Barack Obama of Illinois"@en ;
+  ns0:presidenttotals "Obama : 3,188.5"@en .
+
+<http://dbpedia.org/resource/United_States_Court_of_International_Trade> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Ashton_Carter> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Gene_Sperling> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Harold_Hongju_Koh> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador-at-Large_for_War_Crimes_Issues> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jon_Huntsman,_Jr.> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Michael_Chertoff> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Susan_Richard_Nelson>
+  ns0:appointer <http://dbpedia.org/resource/Barack_Obama> ;
+  a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Michigan> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Jerry_Abramson> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Don_Beyer> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Herb_Klein_(politician)> ns0:caption "Herb Klein and U.S. President Barack Obama"@en .
+<http://dbpedia.org/resource/John_E._Potter> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Anne_W._Patterson> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Middle_District_of_Florida> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Peter_Allgeier> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Kenneth_Chenault> ns0:caption "Chenault and his wife at Barack Obama's second state dinner"@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Texas> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Military_history_of_Puerto_Rico> ns0:video "You can see a video of President Barack Obama awarding the Congressional Gold Medal to the Borinqueneers HERE"@en .
+<http://dbpedia.org/resource/Director_of_the_Central_Intelligence_Agency> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Christopher_R._Hill> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Columbia> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Wisconsin> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Ben_Bernanke> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Stephen_Kappes> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/John_Roberts>
+  ns0:filename "Barack Obama Oath of Office.ogg"@en, "President Obama Re-Takes Oath.ogg"@en ;
+  ns0:title "\"Barack Obama taking the Oath of Office\""@en, "\"President Obama Re-Takes Oath\""@en .
+
+<http://dbpedia.org/resource/Antigua> ns0:highestMount "Mount Obama / Boggy Peak"@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Hawaii> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Soulcalibur_III> ns0:programmer "Tadashi Obama"@en .
+<http://dbpedia.org/resource/David_Axelrod> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Elena_Kagan>
+  ns0:nominator <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:president <http://dbpedia.org/resource/Barack_Obama> ;
+  a <http://dbpedia.org/class/yago/UnitedStatesFederalJudgesAppointedByBarackObama> .
+
+<http://dbpedia.org/resource/Sonia_Sotomayor>
+  ns0:nominator <http://dbpedia.org/resource/Barack_Obama> ;
+  a <http://dbpedia.org/class/yago/UnitedStatesFederalJudgesAppointedByBarackObama> .
+
+<http://dbpedia.org/resource/Ron_Klain> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Louisiana> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/James_Comey> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Pete_Geren> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Dorothy_Howell_Rodham>
+  ns0:title "President Barack Obama after a ceremony in the White House on the life of Dorothy Rodham"@en ;
+  ns0:filename "President Obama on the life of Dorothy Howell Rodham.ogv"@en, "President Obama on the life of Dorothy Howell Rodham.ogg"@en .
+
+<http://dbpedia.org/resource/Michelle_Obama>
+  ns0:name "Michelle Obama"@en, "Obama, Michelle"@en ;
+  ns0:imageName "Michelle Obama 2013 official portrait.jpg"@en ;
+  ns0:caption 2013, "The Obamas fist bump upon his winning the Democratic nomination."@en, "--08-23"^^xsd:gMonthDay, "--12-10"^^xsd:gMonthDay, "Obama speaks at the 2008 Democratic convention"@en, "--04-01"^^xsd:gMonthDay, "Michelle Obama and Carla Bruni"@en, "Michelle Obama wore Isabel Toledo clothes made of St. Gallen Embroidery to the 2009 presidential inauguration."@en, "The Obamas dance at a presidential inaugural ball."@en ;
+  ns0:alt "Michelle Obama facing forward, smiling, clad in black dress and single strand pearl necklace resting bare right forearm and both hands on a brocaded sofa armrest."@en, "The Obamas face each other and bump fists on stage. She wears a purple dress and he wears a dark suit. Several signs read \"CHANGE WE CAN BELIEVE IN\" and several photographers take photos."@en, "Barack and Michelle Obama and a woman and a man on an outdoor stage. The first three smile and wave. The men wear suit pants, white shirts with the sleeves rolled up, and ties. Michelle is in a colorful print dress and the other woman is in a creme business suit."@en, "Michelle Obama, Oprah Winfrey and Barack Obama on stage at a campaign rally."@en, "Michelle Obama speaks at a convention; her image and name are projected on a huge screen behind her. The large audience waves vertical blue signs."@en, "Michelle Obama and Elizabeth II shake hands and smile at each other as Barack enters the room in the background."@en, "Michelle Obama and Carla Bruni share a laugh while seated on adjacent couches."@en, "Barack and Michelle Obama hold hands and smile while walking; she waves to a crowd. She wears a gold embroidered dress and coat; he wears a black overcoat and burgundy scarf. A serious man in a dark suit watches nearby."@en, "Barack and Michelle Obama dance arm-in-arm and smile. She wears a white dress, large ring, long earrings and a bracelet. He wears a black tuxedo."@en ;
+  ns0:imageSize 225 ;
+  ns0:office <http://dbpedia.org/resource/First_Lady_of_the_United_States> ;
+  ns0:termStart "2009-01-20"^^xsd:date ;
+  ns0:predecessor <http://dbpedia.org/resource/Laura_Bush> ;
+  ns0:birthDate "1964-01-17"^^xsd:date ;
+  ns0:birthPlace "Chicago, Illinois, U.S."@en ;
+  ns0:birthName "Michelle LaVaughn Robinson"@en ;
+  ns0:nationality "American"@en ;
+  ns0:party <http://dbpedia.org/resource/Democratic_Party_(United_States)> ;
+  ns0:relations <http://dbpedia.org/resource/Craig_Robinson_(basketball)> ;
+  ns0:children "Malia Ann Obama"@en, "Natasha Obama"@en ;
+  ns0:residence <http://dbpedia.org/resource/Hyde_Park,_Chicago>, <http://dbpedia.org/resource/White_House> ;
+  ns0:almaMater "Princeton University"@en, "Harvard Law School"@en ;
+  ns0:profession "Lawyer"@en ;
+  ns0:religion <http://dbpedia.org/resource/Protestantism> ;
+  ns0:signature "Michelle Obama signature.svg"@en ;
+  ns0:align "right"@en, "left"@en ;
+  ns0:direction "horizontal"@en, "vertical"@en ;
+  ns0:headerAlign "left/right/center"@en ;
+  ns0:footerAlign "left/right/center"@en ;
+  ns0:image "Michelle Obama and Barack Obama enjoy a victory fist pound upon winning the Democratic Nomination.jpg"@en, "Obamas and Bidens.jpg"@en, "Michelle,_Oprah_Winfrey_and_Barack_Obama.jpg"@en, "Michelle Obama DNC 2008.jpg"@en, "Barack Obama Michelle Obama Queen Elizabeth II Buckingham Palace London.jpg"@en, "Michelle obama and carla bruni sarkozy.jpg"@en, "Obamas walk down PA Ave. 1-20-09 hires 090120-N-0696M-546a.jpg"@en, "Barack and Michelle Obama at the Home States Ball.jpg"@en ;
+  ns0:width 180, 189, 187, 225 ;
+  ns0:rows 2 ;
+  ns0:before <http://dbpedia.org/resource/Laura_Bush> ;
+  ns0:title <http://dbpedia.org/resource/First_Lady_of_the_United_States>, <http://dbpedia.org/resource/President's_Committee_on_the_Arts_and_Humanities>, "(Serving with Chairwoman Rachel Goslins)"@en ;
+  ns0:years 2009 ;
+  ns0:alternativeNames "Obama, Michelle LaVaughn Robinson; Robinson, Michelle"@en ;
+  ns0:shortDescription "Wife of the 44th President of the United States"@en ;
+  ns0:dateOfBirth "1964-01-17"^^xsd:date ;
+  ns0:placeOfBirth "Chicago, Illinois, United States"@en ;
+  a owl:Thing, <http://dbpedia.org/ontology/Person>, <http://www.wikidata.org/entity/Q5>, foaf:Person, schema:Person, <http://www.wikidata.org/entity/Q215627>, <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#NaturalPerson>, <http://dbpedia.org/ontology/Agent>, <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Agent>, <http://dbpedia.org/class/yago/Achiever109762821>, <http://dbpedia.org/class/yago/Adult109605289>, <http://dbpedia.org/class/yago/AfricanAmericanFemaleLawyers>, <http://dbpedia.org/class/yago/Alumnus109786338>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Female109619168>, <http://dbpedia.org/class/yago/FirstLadiesOfTheUnitedStates>, <http://dbpedia.org/class/yago/FirstLady110092880>, <http://dbpedia.org/class/yago/HarvardLawSchoolAlumni>, <http://dbpedia.org/class/yago/IllinoisLawyers>, <http://dbpedia.org/class/yago/Intellectual109621545>, <http://dbpedia.org/class/yago/Lawyer110249950>, <http://dbpedia.org/class/yago/LivingPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/PeopleFromChicago,Illinois>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/PrincetonUniversityAlumni>, <http://dbpedia.org/class/yago/Professional110480253>, <http://dbpedia.org/class/yago/Scholar110557854>, <http://dbpedia.org/class/yago/WhitneyM.YoungMagnetHighSchoolAlumni>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Woman110787470>, <http://dbpedia.org/class/yago/WomenInIllinoisPolitics>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+
+<http://dbpedia.org/resource/David_Plouffe> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Arne_Duncan> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Illinois_Route_3> ns0:road "Barack Obama Avenue – East St. Louis Business District"@en .
+<http://dbpedia.org/resource/John_F._Tefft> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Japan> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Afghanistan> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Iraq> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Kuwait> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_European_Union> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Adolfo_Carri%C3%B3n,_Jr.> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Susan_Rice> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Heather_M._Hodges> ns0:president "Barack Obama"@en .
+<http://dbpedia.org/resource/Keith_B._Alexander> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Robin_Thicke> ns0:quote "\"There's so many meanings behind that title. Number one, it reflects what we're going through as a nation here in America. I just felt, with Barack Obama and the new energy he's bringing, that it is time for some fresh hope and new attitudes. Then, in terms of me as an artist, because I'd been singing all these songs about self-reflection – like '2 The Sky' and 'Angels' – I just thought it was time for me to start singing about something ELSE! Also, I felt that – with my music being a little different from everything else you can get out there – the music IN ITSELF is also something different and something else!\""@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Middle_District_of_Pennsylvania> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Cristeta_Comerford> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Eduardo_Aguirre> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_France> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Donald_C._Winter> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Street_art>
+  ns0:image "Shepard Fairey Obama Poster in Denver Colorado.jpg"@en ;
+  ns0:caption "Shepard Fairey, Obama poster; Denver, Colorado."@en .
+
+<http://dbpedia.org/resource/Samantha_Power> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Joint_session_of_the_United_States_Congress> ns0:sessionRoom "Obama Health Care Speech to Joint Session of Congress.jpg"@en .
+<http://dbpedia.org/resource/Barney_(dog)> ns0:after "Barack Obama's"@en .
+<http://dbpedia.org/resource/Howard_Koh> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/William_Brownfield> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Puerto_Rico> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Indiana> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_Indiana> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Oregon_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Wisconsin> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Colorado_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_Organization_of_American_States> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Christopher_Dell> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_the_Holy_See> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jim_Wilkinson_(former_U.S._government_employee)>
+  ns0:text "Jim Wilkinson, a longtime Republican operative, served as Paulson’s chief of staff during the crisis, and his impression of the candidates could hardly have been clearer. “I’m a pro-life, pro-gun, Texas Republican,” said Wilkinson. “I worked all eight years for Bush. I helped sell the Iraq War. I was in the Florida recount. And I wrote a letter to John McCain asking for my five-hundred-dollar contribution back, when he pulled that stunt and came back to D.C. Because it just wasn’t what a serious person does.” To his amazement, Wilkinson determined that he would be voting for Obama."@en ;
+  ns0:source "Game Change: Obama and the Clintons, McCain and Palin, and the Race of a Lifetime"@en .
+
+<http://dbpedia.org/resource/Cruz_Reynoso> ns0:committees <http://dbpedia.org/resource/Presidential_transition_of_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_Texas> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/David_Petraeus> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/John_Bryson> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Democratic_Party_presidential_candidates,_2008>
+  ns0:nominee <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:mapCaption "Democratic Primary Results. Blue denote Obama win."@en ;
+  ns0:afterElection <http://dbpedia.org/resource/Barack_Obama> .
+
+<http://dbpedia.org/resource/Dennis_C._Blair> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Texas> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_Maine> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Brookings_Institution_scholars> ns0:nota "United States Ambassador to the United Nations under Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Algeria> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Lebanon> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Morocco> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Irish-American_Heritage_Month> ns0:caption "President Barack Obama with Taoiseach Enda Kenny wearing shamrock in the Oval Office in March 2012."@en .
+<http://dbpedia.org/resource/George_W._Bush> ns0:successor <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Pennsylvania> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_presidential_inauguration>
+  ns0:filename "Barack Obama inauguration speech 2009.ogg"@en ;
+  ns0:title "Inaugural address of Barack Obama"@en .
+
+<http://dbpedia.org/resource/William_Kennard> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/L._Paige_Marvel> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Michael_B._Thornton> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Julian_Castro> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/List_of_University_of_Notre_Dame_alumni> ns0:nota "Washington Examiner columnist and best-selling author of The Case Against Barack Obama"@en .
+<http://dbpedia.org/resource/Roland_Burris>
+  ns0:preceded <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:before <http://dbpedia.org/resource/Barack_Obama> .
+
+<http://dbpedia.org/resource/Martin_Luther_King,_Jr._Memorial> ns0:video """MLK Memorial Dedication, Washington DC , C&#8209;SPAN
+President Obama's remarks begin at time 2:50"""@en .
+<http://dbpedia.org/resource/Tammy_Duckworth> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/William_K._Reilly> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Major_non-NATO_ally> ns0:leaderName <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/John_M._Gerrard>
+  ns0:appointer <http://dbpedia.org/resource/Barack_Obama> ;
+  a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+
+<http://dbpedia.org/resource/United_States_Ambassador_to_Mexico> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Te%C3%B3filo_Marxuach> ns0:video "You can see a video of President Barack Obama awarding the Congressional Gold Medal to the Borinqueneers HERE"@en .
+<http://dbpedia.org/resource/List_of_Sarah_Lawrence_College_people> ns0:caption "Rahm Emanuel -  Former White House Chief of Staff under President Barack Obama; former member of the United States House of Representatives and chairman of the Democratic Caucus. He was the fourth-ranking Democrat in the House, behind Speaker Nancy Pelosi, Leader Steny Hoyer and Whip Jim Clyburn."@en .
+<http://dbpedia.org/resource/David_E._Sanger> ns0:notableWorks "Confront and Conceal: Obama's Secret Wars"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Italy> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/William_Joseph_Burns> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Mortimer_L._Downey> ns0:boards "team leader for Transportation, Obama Transition Team"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Germany> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Under_Secretary_of_State_for_Economic_Growth,_Energy,_and_the_Environment> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Nebraska_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Craig_Roberts_Stapleton> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Lisa_P._Jackson> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_New_Zealand> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Scouts> ns0:name <http://dbpedia.org/resource/Barack_Obama>, <http://dbpedia.org/resource/Michelle_Obama> .
+<http://dbpedia.org/resource/Marco_Lopez> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Arkansas> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Austan_Goolsbee> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Democratic_Party_presidential_primaries,_2008>
+  ns0:nominee "Barack Obama"@en ;
+  ns0:mapCaption "Democratic Primary Results . Purple denotes an Obama win and gold a Clinton win."@en ;
+  ns0:afterElection <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:header "Barack Obama on the night he clinched the Democratic nomination."@en .
+
+<http://dbpedia.org/resource/Peter_R._Orszag> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Regina_Benjamin> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Georgia_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Richard_Cordray> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Missouri_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/West_Virginia_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Sylvia_Mathews_Burwell> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Interests_Section_in_Havana> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/George_A._Krol> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Arturo_Valenzuela> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Neal_Katyal> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Ronnie_L._White> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Marcie_Berman_Ries> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Aretha_Franklin_discography> ns0:caption "Franklin performing at President Barack Obama's inauguration in 2009"@en .
+<http://dbpedia.org/resource/Rock_(rapper)> ns0:alias "Rock, Big Rock, Tha Rockness Monstah, Bummee Jab, Alvin Katraz, Dutch, Tha Flipsta, BigRock Obama, Monstaman Rocko"@en .
+<http://dbpedia.org/resource/Victoria_Nuland> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Denny_Chin> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jonathan_Adelstein> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Cameron_Kerry> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jamaluddin_Jarjis> ns0:caption "Jamaluddin with US president Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Southern_District_of_Mississippi> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Real_Time_with_Bill_Maher_episodes_(2007)> ns0:shortsummary "Funding of Iraq War, Clinton vs. Obama, privatization of government, still more on U.S. attorney firings, death of Pat Tillman"@en .
+<http://dbpedia.org/resource/Donald_Laverdure> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Hillary_Rodham_Clinton> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Iraq_War> ns0:commander "Barack Obama"@en .
+<http://dbpedia.org/resource/Democratic_Party_(United_States)> ns0:leader1Name "Barack Obama"@en .
+<http://dbpedia.org/resource/Michigan_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Michael_Hayden_(general)> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Thomas_J._Perrelli> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Denise_Bauer> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/John_Kerry> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Jack_Lew> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Nancy-Ann_DeParle> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Kentucky_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Prevention_(magazine)> ns0:imageCaption "Michelle Obama on the cover of the November 2009 issue of Prevention"@en .
+<http://dbpedia.org/resource/Pennsylvania_Army_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Dreams_from_My_Father>
+  ns0:author <http://dbpedia.org/resource/Barack_Obama> ;
+  a <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/BooksByBarackObama> .
+
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Eastern_District_of_Missouri> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Chicago_bid_for_the_2016_Summer_Olympics>
+  ns0:footer "President of the United States Barack Obama, Mayor of Chicago Richard M. Daley, Olympians Michael Jordan and Michael Phelps and celebrity Oprah Winfrey."@en ;
+  ns0:image "President Barack Obama, 2012 portrait crop.jpg"@en .
+
+<http://dbpedia.org/resource/California_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Gary_Gensler> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Carlos_R._Moreno> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Director_of_the_Defense_Intelligence_Agency> ns0:appointer <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Middle_District_of_Tennessee> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Dan_Tangherlini> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Mad_TV_(season_12)> ns0:shortsummary "After The Montel Williams Show, the host  suddenly starts rapping while walking to his dressing room; unaired openings of Law & Order features awkward discoveries of dead bodies and Kate Walsh trying to have a treasure hunt; the LAPD is now selling pinatas shaped like minority suspects; Barack Obama  overshadows a speech by Hillary Clinton ; a couple  gets splattered with bird droppings during a wedding proposal; the Blind Kung-Fu Master  is sent to space to stop an alien princess  from dominating the universe; Bobby Lee asks Arden Myrin to help him pick up girls at a bar; Celebrity Pets focuses on Dick Cheney's disturbed dog; Wendy Walker  fails to make a Valentine's Day-themed dish on Three Minute Meals."@en, "The new season of Survivor has Christians, Jews, Muslims, and Scientologists pitted against each other; a parody of Scrubs mocks the show's wild shifts between wacky farce and sappy medical drama; in a commercial for a new period-control pill, a husband  wants to make love to his wife  more often; Larry King reviews House; Tito Ortiz appears in a commercial promoting a new deodorant with Bobby Lee and Jordan Peele; a Hillary Clinton supporter  and a Barack Obama supporter  have a point-counterpoint arg; Tank  faces competition from Carl Edwards while trying to pick up girls; video footage of Britney Spears  and Kevin Federline  at their divorce settlement meeting; VH1 Best Mom Ever features celebrities looking back on how their mothers treated them."@en .
+<http://dbpedia.org/resource/BMPR1A> ns0:vauthors "Ishidou Y, Kitajima I, Obama H, Maruyama I, Murata F, Imamura T, Yamada N, ten Dijke P, Miyazono K, Sakou T"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Ireland> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Robert_B._Murrett> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Saudi_Arabia> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Kwame_Raoul> ns0:predecessor <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/New_Jersey_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Matthew_Bryza> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/List_of_Squidbillies_episodes> ns0:shortsummary "Dan Halen tells everyone in Dougal County that Obama is putting fluoride and other mind-bending drugs in the water supply to sterilize the town."@en .
+<http://dbpedia.org/resource/Ohio_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/United_States_Ambassador_to_Honduras> ns0:nominator <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Mad_TV_(season_13)> ns0:shortsummary "Music video parody of Rihanna's \"Umbrella\" has Hillary Clinton  madly in love with Barack Obama ; new feature player Dan Oster reads a snippet of a romance novel he wrote himself; another installment of Johnny Sanchez and Bobby Lee's Rice And Beans: The Heartland Tour; Bon Qui Qui  annoys her customers at King Burger."@en .
+<http://dbpedia.org/resource/Tom_Strickland> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Thomas_A._Shannon,_Jr.> ns0:president <http://dbpedia.org/resource/Barack_Obama>, "Barack Obama"@en .
+<http://dbpedia.org/resource/David_Hale_(diplomat)>
+  ns0:president <http://dbpedia.org/resource/Barack_Obama> ;
+  ns0:title <http://dbpedia.org/resource/Presidency_of_Barack_Obama> .
+
+<http://dbpedia.org/resource/Jane_Lubchenco> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_District_of_New_Mexico> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Northern_District_of_Mississippi> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/John_C._Inglis> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Bud_Billiken_Parade_and_Picnic> ns0:caption "Barack Obama float for 2004 U.S. Senate race at the 2004 parade."@en .
+<http://dbpedia.org/resource/United_States_District_Court_for_the_Western_District_of_Missouri> ns0:appointer <http://dbpedia.org/resource/List_of_federal_judges_appointed_by_Barack_Obama> .
+<http://dbpedia.org/resource/Ricardo_Mangue_Obama_Nfubea>
+  ns0:name "Ricardo Mangue Obama Nfubea"@en, "Mangue Obama Nfubea, Ricardo"@en ;
+  ns0:order <http://dbpedia.org/resource/List_of_heads_of_government_of_Equatorial_Guinea> ;
+  ns0:president <http://dbpedia.org/resource/Teodoro_Obiang_Nguema_Mbasogo> ;
+  ns0:termStart "2006-08-14"^^xsd:date ;
+  ns0:termEnd "2008-07-08"^^xsd:date ;
+  ns0:predecessor <http://dbpedia.org/resource/Miguel_Abia_Biteo_Boric%C3%B3> ;
+  ns0:successor <http://dbpedia.org/resource/Ignacio_Milam_Tang> ;
+  ns0:birthDate 1961 ;
+  ns0:party <http://dbpedia.org/resource/Democratic_Party_of_Equatorial_Guinea> ;
+  ns0:title <http://dbpedia.org/resource/List_of_heads_of_government_of_Equatorial_Guinea> ;
+  ns0:before <http://dbpedia.org/resource/Miguel_Abia_Biteo_Boric%C3%B3> ;
+  ns0:after <http://dbpedia.org/resource/Ignacio_Milam_Tang> ;
+  ns0:years 2006 ;
+  ns0:shortDescription "Equatoguinean politician"@en ;
+  ns0:dateOfBirth 1961 ;
+  a <http://dbpedia.org/ontology/Person>, <http://dbpedia.org/class/yago/Administrator109770949>, <http://dbpedia.org/class/yago/Adult109605289>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/EquatoguineanLawyers>, <http://dbpedia.org/class/yago/Executive110069645>, <http://dbpedia.org/class/yago/GovernmentMinistersOfEquatorialGuinea>, <http://dbpedia.org/class/yago/Head110162991>, <http://dbpedia.org/class/yago/Lawyer110249950>, <http://dbpedia.org/class/yago/Leader109623038>, <http://dbpedia.org/class/yago/LivingPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Minister110320863>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Professional110480253>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+
+<http://dbpedia.org/resource/Harry_M._Wyatt_III> ns0:title "(Under Presidents George W. Bush and Barack Obama)"@en .
+<http://dbpedia.org/resource/West_Virginia_Air_National_Guard> ns0:commander "President Barack Obama"@en .
+<http://dbpedia.org/resource/Christopher_Scolese> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Alan_Krueger> ns0:president <http://dbpedia.org/resource/Barack_Obama> .
+<http://dbpedia.org/resource/Federal_Funding_Accountability_and_Transparency_Act_of_2006> ns0:introducedby "Tom Coburn, Barack Obama, Tom Carper, and John McCain"@en .
+<http://dbpedia.org/resource/Barack_Obama__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_presidential_primary_campaign,_2008> a owl:Thing .
+<http://dbpedia.org/resource/Obama_Line> a <http://dbpedia.org/ontology/RailwayLine>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Line103671272>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Road104096066>, <http://dbpedia.org/class/yago/Way104564698>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Mount_Obama> a <http://dbpedia.org/ontology/Mountain>, <http://dbpedia.org/class/yago/GeologicalFormation109287968>, <http://dbpedia.org/class/yago/Mountain109359803>, <http://dbpedia.org/class/yago/NaturalElevation109366317>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/List_of_Barack_Obama_presidential_campaign_endorsements,_2008> a owl:Thing .
+<http://dbpedia.org/resource/Barack_Obama,_Sr.> a <http://dbpedia.org/ontology/Person>, <http://dbpedia.org/class/yago/AlumniOfMasenoSchool>, <http://dbpedia.org/class/yago/Alumnus109786338>, <http://dbpedia.org/class/yago/Atheist109820044>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Disbeliever110015897>, <http://dbpedia.org/class/yago/Economist110043643>, <http://dbpedia.org/class/yago/HarvardUniversityAlumni>, <http://dbpedia.org/class/yago/Intellectual109621545>, <http://dbpedia.org/class/yago/KenyanAtheists>, <http://dbpedia.org/class/yago/KenyanEconomists>, <http://dbpedia.org/class/yago/KenyanLuoPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/NonreligiousPerson109625789>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/PeopleFromRachuonyoDistrict>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Scholar110557854>, <http://dbpedia.org/class/yago/Scientist110560637>, <http://dbpedia.org/class/yago/SocialScientist110619642>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Barack_Obama,_Sr.__1> a <http://dbpedia.org/ontology/PersonFunction> .
+<http://dbpedia.org/resource/Early_life_and_career_of_Barack_Obama> a <http://dbpedia.org/ontology/Person> .
+<http://dbpedia.org/resource/Illinois_Senate_career_of_Barack_Obama> a <http://dbpedia.org/ontology/OfficeHolder>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Holder110180178>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Officeholder110371450>, <http://dbpedia.org/class/yago/Official110372373>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Owner110389398>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/SkilledWorker110605985>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Worker109632518>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Illinois_Senate_career_of_Barack_Obama__1> a <http://dbpedia.org/ontology/TimePeriod> .
+<http://dbpedia.org/resource/United_States_Senate_career_of_Barack_Obama> a <http://dbpedia.org/ontology/Senator>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/FundamentalQuantity113575869>, <http://dbpedia.org/class/yago/Measure100033615>, <http://dbpedia.org/class/yago/Tenure115291498>, <http://dbpedia.org/class/yago/TenuresInPoliticalOfficeByIndividual>, <http://dbpedia.org/class/yago/Term115224486>, <http://dbpedia.org/class/yago/TimePeriod115113229> .
+<http://dbpedia.org/resource/Barack_Obama_presidential_campaign,_2008> a owl:Thing .
+<http://dbpedia.org/resource/Public_image_of_Barack_Obama> a owl:Thing .
+<http://dbpedia.org/resource/The_Obama_Nation> a <http://dbpedia.org/ontology/Book>, <http://dbpedia.org/class/yago/2008Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/BooksCriticalOfModernLiberalismInTheUnitedStates>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/The_Case_Against_Barack_Obama> a <http://dbpedia.org/ontology/Book>, <http://dbpedia.org/class/yago/2008Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/BooksCriticalOfModernLiberalismInTheUnitedStates>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/Presidential_transition_of_Barack_Obama> a owl:Thing, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Group100031264>, <http://dbpedia.org/class/yago/Organization108008335>, <http://dbpedia.org/class/yago/SocialGroup107950920>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama> a <http://dbpedia.org/ontology/OfficeHolder>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Holder110180178>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Officeholder110371450>, <http://dbpedia.org/class/yago/Official110372373>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Owner110389398>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/SkilledWorker110605985>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Worker109632518>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__1> a <http://dbpedia.org/ontology/TimePeriod> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__5> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__6> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__7> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__8> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__9> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__10> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__11> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__12> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__13> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Presidency_of_Barack_Obama__14> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Obama_Day> a owl:Thing, <http://dbpedia.org/ontology/Holiday>, <http://www.wikidata.org/entity/Q1445650>, <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#TimeInterval>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Activity100407535>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/FundamentalQuantity113575869>, <http://dbpedia.org/class/yago/Leisure115137676>, <http://dbpedia.org/class/yago/Look100877127>, <http://dbpedia.org/class/yago/Measure100033615>, <http://dbpedia.org/class/yago/NovemberObservances>, <http://dbpedia.org/class/yago/Observation100879759>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Sensing100876874>, <http://dbpedia.org/class/yago/SensoryActivity100876737>, <http://dbpedia.org/class/yago/TimeOff115118453>, <http://dbpedia.org/class/yago/TimePeriod115113229>, <http://dbpedia.org/class/yago/Vacation115137890>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_citizenship_conspiracy_theories> a owl:Thing, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/ConspiracyTheories>, <http://dbpedia.org/class/yago/Explanation105793000>, <http://dbpedia.org/class/yago/HigherCognitiveProcess105770664>, <http://dbpedia.org/class/yago/Process105701363>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Theory105989479>, <http://dbpedia.org/class/yago/Thinking105770926> .
+<http://dbpedia.org/resource/Barack_Obama_citizenship_conspiracy_theories__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_citizenship_conspiracy_theories__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama> a owl:Thing .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__5> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__6> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__7> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__8> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__9> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__10> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__11> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__12> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__13> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__14> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__15> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__16> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__17> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__18> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__19> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_inauguration_of_Barack_Obama__20> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama:_Der_schwarze_Kennedy> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/The_Speech:_Race_and_Barack_Obama's_%22A_More_Perfect_Union%22> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Foreign_policy_of_the_Barack_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009> a owl:Thing .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__5> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__6> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__7> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__8> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__9> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__10> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_speech_to_joint_session_of_Congress,_February_2009__11> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency> a owl:Thing .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__5> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__6> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__7> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__8> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__9> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__10> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__11> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__12> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__13> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__14> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__15> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__16> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__17> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__18> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__19> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__20> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__21> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__22> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__23> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__24> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__25> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__26> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__27> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__28> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__29> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__30> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__31> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__32> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/First_100_days_of_Barack_Obama's_presidency__33> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)> a owl:Thing .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__5> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__6> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__7> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__8> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__9> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__10> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2009)__11> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Confirmations_of_Barack_Obama's_Cabinet> a owl:Thing .
+<http://dbpedia.org/resource/I_Got_a_Crush..._on_Obama> a <http://dbpedia.org/ontology/Song>, <http://dbpedia.org/class/yago/2007Songs>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Acculturation105984936>, <http://dbpedia.org/class/yago/AuditoryCommunication107109019>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/Communication100033020>, <http://dbpedia.org/class/yago/Content105809192>, <http://dbpedia.org/class/yago/InternetMemes>, <http://dbpedia.org/class/yago/Meme105985126>, <http://dbpedia.org/class/yago/Music107020895>, <http://dbpedia.org/class/yago/MusicalComposition107037465>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Song107048000>, <http://dbpedia.org/class/yago/Video106277803>, <http://dbpedia.org/class/yago/ViralVideos>, <http://dbpedia.org/class/yago/VisualCommunication106873252>, <http://dbpedia.org/class/yago/YouTubeVideos> .
+<http://dbpedia.org/resource/Obama:_From_Promise_to_Power> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Barack_Obama_Academy> a <http://dbpedia.org/ontology/School>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/EducationalInstitution108276342>, <http://dbpedia.org/class/yago/Group100031264>, <http://dbpedia.org/class/yago/Institution108053576>, <http://dbpedia.org/class/yago/Organization108008335>, <http://dbpedia.org/class/yago/PublicMiddleSchoolsInCalifornia>, <http://dbpedia.org/class/yago/School108276720>, <http://dbpedia.org/class/yago/SchoolsInAlamedaCounty,California>, <http://dbpedia.org/class/yago/SecondarySchool108284481>, <http://dbpedia.org/class/yago/SocialGroup107950920>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/List_of_presidential_trips_made_by_Barack_Obama> a owl:Thing .
+<http://dbpedia.org/resource/By_the_People:_The_Election_of_Barack_Obama> a <http://dbpedia.org/ontology/Film> .
+<http://dbpedia.org/resource/East_Asian_foreign_policy_of_the_Barack_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/South_Asian_foreign_policy_of_the_Barack_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/European_foreign_policy_of_the_Barack_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/Middle_Eastern_foreign_policy_of_the_Barack_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/Health_care_reforms_proposed_during_the_Obama_administration> a owl:Thing .
+<http://dbpedia.org/resource/Economic_policy_of_Barack_Obama> a owl:Thing, <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Point108620061>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidentialCandidates,2008>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidents>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesSenators>, <http://dbpedia.org/class/yago/Position108621598>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_Academy_of_International_Studies_6-12> a <http://dbpedia.org/ontology/School> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2010)> a owl:Thing .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2010)__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2010)__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2010)__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Barack_Obama_religion_conspiracy_theories> a owl:Thing, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/ConspiracyTheories>, <http://dbpedia.org/class/yago/Explanation105793000>, <http://dbpedia.org/class/yago/HigherCognitiveProcess105770664>, <http://dbpedia.org/class/yago/Process105701363>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Theory105989479>, <http://dbpedia.org/class/yago/Thinking105770926> .
+<http://dbpedia.org/resource/Barack_Obama_presidential_campaign,_2012> a owl:Thing .
+<http://dbpedia.org/resource/Obama_Zombies> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/The_Bridge:_The_Life_and_Rise_of_Barack_Obama> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Fernando_Obama> a <http://dbpedia.org/ontology/SoccerPlayer>, <http://dbpedia.org/class/yago/AssociationFootballDefenders>, <http://dbpedia.org/class/yago/Athlete109820263>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Citizen109923673>, <http://dbpedia.org/class/yago/Contestant109613191>, <http://dbpedia.org/class/yago/Defender109614684>, <http://dbpedia.org/class/yago/EquatoguineanExpatriateFootballers>, <http://dbpedia.org/class/yago/EquatoguineanFootballers>, <http://dbpedia.org/class/yago/ExpatriateFootballersInSpain>, <http://dbpedia.org/class/yago/FootballPlayer110101634>, <http://dbpedia.org/class/yago/LivingPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/National109625401>, <http://dbpedia.org/class/yago/NaturalizedCitizensOfEquatorialGuinea>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/PeopleFromMurcia>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Player110439851>, <http://dbpedia.org/class/yago/Preserver110466918>, <http://dbpedia.org/class/yago/SpanishFootballers>, <http://dbpedia.org/class/yago/SpanishPeopleOfEquatoguineanDescent>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Fernando_Obama__1> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__2> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__3> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__4> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__5> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__6> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__7> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__8> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__9> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__10> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__11> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Fernando_Obama__12> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Welcome_to_Obamaland> a <http://dbpedia.org/ontology/Book>, <http://dbpedia.org/class/yago/2009Books>, <http://dbpedia.org/class/yago/AmericanNon-fictionBooks>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/Obama_Anak_Menteng> a <http://dbpedia.org/ontology/Film>, <http://dbpedia.org/class/yago/2010Films>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/FilmsDirectedByJohnDeRantau>, <http://dbpedia.org/class/yago/Indonesian-languageFilms>, <http://dbpedia.org/class/yago/IndonesianFilms>, <http://dbpedia.org/class/yago/Movie106613686>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Show106619065>, <http://dbpedia.org/class/yago/SocialEvent107288639>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/The_Obama_Deception:_The_Mask_Comes_Off> a <http://dbpedia.org/ontology/Film> .
+<http://dbpedia.org/resource/Obama's_Wars> a <http://dbpedia.org/ontology/Book>, <http://dbpedia.org/class/yago/2010Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/IraqWarBooks>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/Phas_Gaye_Re_Obama> a <http://dbpedia.org/ontology/Film>, <http://dbpedia.org/class/yago/2010Films>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Hindi-languageFilms>, <http://dbpedia.org/class/yago/IndianComedyFilms>, <http://dbpedia.org/class/yago/IndianFilms>, <http://dbpedia.org/class/yago/Movie106613686>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Show106619065>, <http://dbpedia.org/class/yago/SocialEvent107288639>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2011)> a owl:Thing .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2011)__1> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2011)__2> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2011)__3> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/Timeline_of_the_presidency_of_Barack_Obama_(2011)__4> a <http://dbpedia.org/ontology/Sound> .
+<http://dbpedia.org/resource/The_Obama_Story> a <http://dbpedia.org/ontology/Book>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/President_Obama_on_Death_of_Osama_bin_Laden_(SPOOF)> a <http://dbpedia.org/ontology/Single>, <http://dbpedia.org/class/yago/2011Works>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/EndProduct103287178>, <http://dbpedia.org/class/yago/Instrumentality103575240>, <http://dbpedia.org/class/yago/Medium106254669>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Oeuvre103841417>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Whole100003553> .
+<http://dbpedia.org/resource/The_Promise:_President_Obama,_Year_One> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Barack_Obama_Male_Leadership_Academy> a <http://dbpedia.org/ontology/School>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Boys'SchoolsInTheUnitedStates>, <http://dbpedia.org/class/yago/EducationalInstitution108276342>, <http://dbpedia.org/class/yago/Group100031264>, <http://dbpedia.org/class/yago/HighSchoolsInDallas,Texas>, <http://dbpedia.org/class/yago/Institution108053576>, <http://dbpedia.org/class/yago/Organization108008335>, <http://dbpedia.org/class/yago/School108276720>, <http://dbpedia.org/class/yago/SecondarySchool108284481>, <http://dbpedia.org/class/yago/SeniorHighSchool108409617>, <http://dbpedia.org/class/yago/SocialGroup107950920>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Florent_Obama> a <http://dbpedia.org/ontology/SoccerPlayer>, <http://dbpedia.org/class/yago/Athlete109820263>, <http://dbpedia.org/class/yago/CameroonianFootballers>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Contestant109613191>, <http://dbpedia.org/class/yago/ExpatriateFootballersInThailand>, <http://dbpedia.org/class/yago/FootballPlayer110101634>, <http://dbpedia.org/class/yago/LivingPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Player110439851>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Florent_Obama__2> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Florent_Obama__3> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Florent_Obama__4> a <http://dbpedia.org/ontology/CareerStation> .
+<http://dbpedia.org/resource/Kill_or_Capture:_The_War_on_Terror_and_the_Soul_of_the_Obama_Presidency> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/2016:_Obama's_America> a <http://dbpedia.org/ontology/Film> .
+<http://dbpedia.org/resource/Obama's_Last_Stand> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Obama_Wins!> a <http://dbpedia.org/ontology/TelevisionEpisode> .
+<http://dbpedia.org/resource/Second_inauguration_of_Barack_Obama> a owl:Thing .
+<http://dbpedia.org/resource/Speeches_of_Barack_Obama> a owl:Thing .
+<http://dbpedia.org/resource/Barack_Obama_vs_Mitt_Romney> a <http://dbpedia.org/ontology/Single> .
+<http://dbpedia.org/resource/The_Oath:_The_Obama_White_House_and_the_Supreme_Court> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Barack_Obama_Green_Charter_High_School> a <http://dbpedia.org/ontology/School> .
+<http://dbpedia.org/resource/Art_for_Obama> a <http://dbpedia.org/ontology/Book> .
+<http://dbpedia.org/resource/Barack_Obama_Presidential_Library_and_Museum> a <http://dbpedia.org/ontology/Organisation> .
+<http://dbpedia.org/resource/Obama_(genus)> a <http://dbpedia.org/ontology/Animal> .
+<http://dbpedia.org/resource/Welcome_Obama> a <http://dbpedia.org/ontology/Film> .
+<http://dbpedia.org/resource/ATF_gunwalking_scandal> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/A_More_Perfect_Union_(speech)> a <http://dbpedia.org/class/yago/SpeechesByBarackObama> .
+<http://dbpedia.org/resource/A_New_Beginning> a <http://dbpedia.org/class/yago/SpeechesByBarackObama> .
+<http://dbpedia.org/resource/Abdul_Kallon> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Air_Force_One_photo_op_incident> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Alison_J._Nathan> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Amy_Berman_Jackson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Amy_Totenberg> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Andrew_L._Carter,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Anthony_J._Battaglia> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Arenda_L._Wright_Allen> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Audrey_G._Fleissig> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Azizabad_airstrike> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Barack_Obama_%22Hope%22_poster> a <http://dbpedia.org/class/yago/2008Works>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/EndProduct103287178>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Oeuvre103841417>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Whole100003553> .
+<http://dbpedia.org/resource/Barack_Obama_%22Joker%22_poster> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Acculturation105984936>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/Content105809192>, <http://dbpedia.org/class/yago/Image105928118>, <http://dbpedia.org/class/yago/ImagesOfBarackObama>, <http://dbpedia.org/class/yago/InternetMemes>, <http://dbpedia.org/class/yago/Meme105985126>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Representation105926676> .
+<http://dbpedia.org/resource/Barack_Obama_Tucson_memorial_speech> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Address107238694>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/SpeechAct107160883>, <http://dbpedia.org/class/yago/SpeechesByBarackObama>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_assassination_scare_in_Denver> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Activity100407535>, <http://dbpedia.org/class/yago/AssassinationAttempts>, <http://dbpedia.org/class/yago/Attempt100786195>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_assassination_scare_in_Tennessee> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Activity100407535>, <http://dbpedia.org/class/yago/AssassinationAttempts>, <http://dbpedia.org/class/yago/Attempt100786195>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_assassination_threats> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Activity100407535>, <http://dbpedia.org/class/yago/AssassinationAttempts>, <http://dbpedia.org/class/yago/Attempt100786195>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_foreign_policy> a <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Point108620061>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidentialCandidates,2008>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidents>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesSenators>, <http://dbpedia.org/class/yago/Position108621598>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_in_comics> a <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/Communicator109610660>, <http://dbpedia.org/class/yago/FictionalPresidentsOfTheUnitedStates>, <http://dbpedia.org/class/yago/HeadOfState110164747>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Negotiator110351874>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/President110467179>, <http://dbpedia.org/class/yago/Representative110522035>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Barack_Obama_judicial_appointment_controversies> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Controversy107183151>, <http://dbpedia.org/class/yago/Disagreement107180787>, <http://dbpedia.org/class/yago/Dispute107181935>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/FederalJudicialAppointmentControversiesInTheUnitedStates>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/SpeechAct107160883>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_presidential_eligibility_litigation> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/ConspiracyTheories>, <http://dbpedia.org/class/yago/Explanation105793000>, <http://dbpedia.org/class/yago/HigherCognitiveProcess105770664>, <http://dbpedia.org/class/yago/Process105701363>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Theory105989479>, <http://dbpedia.org/class/yago/Thinking105770926> .
+<http://dbpedia.org/resource/Barack_Obama_social_policy> a <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Point108620061>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidentialCandidates,2008>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidents>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesSenators>, <http://dbpedia.org/class/yago/Position108621598>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Barack_Obama_%E2%80%93_Der_schwarze_Kennedy> a <http://dbpedia.org/class/yago/2007Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/GermanBooks>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/Benita_Y._Pearson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Beryl_A._Howell> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Brian_Anthony_Jackson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Brian_C._Wimes> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Buffett_Rule> a <http://dbpedia.org/class/yago/WorksByBarackObama> .
+<http://dbpedia.org/resource/Cable_TV_Wakasa_Obama> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/CableTelevisionCompanies>, <http://dbpedia.org/class/yago/CompaniesBasedInFukuiPrefecture>, <http://dbpedia.org/class/yago/Company108058098>, <http://dbpedia.org/class/yago/Group100031264>, <http://dbpedia.org/class/yago/Institution108053576>, <http://dbpedia.org/class/yago/MediaCompaniesOfJapan>, <http://dbpedia.org/class/yago/Organization108008335>, <http://dbpedia.org/class/yago/SocialGroup107950920>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Carlton_W._Reeves> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Catastrophe_(book)> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/Catherine_Eagles> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Cathy_Ann_Bencivengo> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Cathy_Bissoon> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Charlene_Honeywell> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Charles_Freeman_appointment_controversy> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Christina_Reiss> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Citizen's_Briefing_Book> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/Claire_C._Cecchi> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Code_name_Geronimo_controversy> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Culture_of_Corruption> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/D._Price_Marshall_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Dana_L._Christensen> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/David_Campos_Guaderrama> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/David_Nuffer> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Deadheads_for_Obama> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Concert106892775>, <http://dbpedia.org/class/yago/Concerts>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Performance106891493>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Show106619065>, <http://dbpedia.org/class/yago/SocialEvent107288639>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Death_of_Osama_bin_Laden> a <http://dbpedia.org/class/yago/ObamaAdministrationInitiatives> .
+<http://dbpedia.org/resource/Denise_Jefferson_Casper> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Diana_Salda%C3%B1a> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Dolly_M._Gee> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Drone_attacks_in_Pakistan> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Edgardo_Ramos> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Edmond_E._Chang> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Edward_J._Davila> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Edward_M._Chen> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Elizabeth_Erny_Foote> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Ellen_Lipton_Hollander> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Esther_Salas> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Family_of_Barack_Obama> a <http://dbpedia.org/class/yago/AmericanPeopleOfAsianDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfDutchDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfEnglishDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfFrenchDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfGermanDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfIndonesianDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfIrishDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfKenyanDescent>, <http://dbpedia.org/class/yago/AmericanPeopleOfScottishDescent>, <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/KenyanLuoPeople>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/PeopleOfKenyanDescent>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Game_Change> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/Gary_Feinerman> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/George_Obama> a <http://dbpedia.org/class/yago/CausalAgent100007347>, <http://dbpedia.org/class/yago/LivingThing100004258>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Organism100004475>, <http://dbpedia.org/class/yago/Person100007846>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Relative110235549>, <http://dbpedia.org/class/yago/Sibling110595164>, <http://dbpedia.org/class/yago/SiblingsOfPresidentsOfTheUnitedStates>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoLegalActor>, <http://dbpedia.org/class/yago/YagoLegalActorGeo> .
+<http://dbpedia.org/resource/Gina_Marie_Groh> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Gloria_Navarro> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Granai_airstrike> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Gregg_Costa> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Guantanamo_Bay_detention_camp> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Henry_Louis_Gates_arrest_controversy> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Higashi-Obama_Station> a <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Facility103315023>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/RailwayStation104049098>, <http://dbpedia.org/class/yago/RailwayStationsInFukuiPrefecture>, <http://dbpedia.org/class/yago/Station104306080>, <http://dbpedia.org/class/yago/StationsOfWestJapanRailwayCompany>, <http://dbpedia.org/class/yago/Terminal104412901>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Hope!_%E2%80%93_Das_Obama_Musical> a <http://dbpedia.org/class/yago/2010Musicals>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Movie106613686>, <http://dbpedia.org/class/yago/Musical107019172>, <http://dbpedia.org/class/yago/MusicalsInspiredByReal-lifeEvents>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Play107018931>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Show106619065>, <http://dbpedia.org/class/yago/SocialEvent107288639>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/In_the_President's_Secret_Service> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/Inauguration_of_Barack_Obama> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Action100037396>, <http://dbpedia.org/class/yago/Beginning100235435>, <http://dbpedia.org/class/yago/Change100191142>, <http://dbpedia.org/class/yago/ChangeOfState100199130>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Inauguration100239910>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/UnitedStatesPresidentialInaugurations>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Invitations_to_the_inauguration_of_Barack_Obama> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Action100037396>, <http://dbpedia.org/class/yago/Beginning100235435>, <http://dbpedia.org/class/yago/Change100191142>, <http://dbpedia.org/class/yago/ChangeOfState100199130>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Inauguration100239910>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/UnitedStatesPresidentialInaugurations>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Irene_C._Berger> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/J._Michelle_Childs> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/J._Paul_Oetken> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jacqueline_Nguyen> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/James_E._Boasberg> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/James_E._Shadid> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/James_K._Bredar> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/James_Rodney_Gilstrap> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jane_Magnus-Stinson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jane_Margaret_Triche-Milazzo> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jeffrey_L._Viken> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jennifer_Guerin_Zipps> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jesse_M._Furman> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/John_A._Gibney,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/John_A._Kronstadt> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/John_Andrew_Ross> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama>, <http://dbpedia.org/class/yago/UnitedStatesFederalJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/John_J._McConnell,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Jon_DeGuilio> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Josephine_S._Tucker> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Kandahar_massacre> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Katherine_B._Forrest> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Kathleen_M._Williams> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Kevin_H._Sharp> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Kimberly_J._Mueller> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Leonard_P._Stark> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Leslie_E._Kobayashi> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Lucy_H._Koh> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Mae_D'Agostino> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Malik_Abongo_Obama> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Action100037396>, <http://dbpedia.org/class/yago/Choice100161243>, <http://dbpedia.org/class/yago/Decision100162632>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Move100165942>, <http://dbpedia.org/class/yago/PossibleCut-and-pasteMoves>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Marc_Thomas_Treadwell> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Marco_A._Hernandez> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Margo_Kitsy_Brodie> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Marina_Marmolejo> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Mark_A._Goldsmith> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Mark_R._Hornak> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Mary_Elizabeth_Phillips> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Max_O._Cogburn,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Maywand_District_murders> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Memogate_(Pakistan)> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Michael_F._Urbanski> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Michael_H._Simon> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Michael_W._Fitzgerald> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Miranda_Du> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Nancy_D._Freudenthal> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Nancy_Torresen> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Nannette_Jolivette_Brown> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/National_Defense_Resources_Preparedness_executive_order> a <http://dbpedia.org/class/yago/ExecutiveOrdersOfBarackObama> .
+<http://dbpedia.org/resource/Nelva_Gonzales_Ramos> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/New_Black_Panther_Party_voter_intimidation_case> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Obama,_Nagasaki> a <http://dbpedia.org/class/yago/AdministrativeDistrict108491826>, <http://dbpedia.org/class/yago/DissolvedMunicipalitiesOfNagasakiPrefecture>, <http://dbpedia.org/class/yago/District108552138>, <http://dbpedia.org/class/yago/GeographicalArea108574314>, <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Municipality108626283>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Region108630985>, <http://dbpedia.org/class/yago/UrbanArea108675967>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_Castle_(Fukui)> a <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Building102913152>, <http://dbpedia.org/class/yago/CastlesInFukuiPrefecture>, <http://dbpedia.org/class/yago/Dwelling103259505>, <http://dbpedia.org/class/yago/FormerCastles>, <http://dbpedia.org/class/yago/House103544360>, <http://dbpedia.org/class/yago/Housing103546340>, <http://dbpedia.org/class/yago/Mansion103719053>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Palace103878066>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Structure104341686>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_Castle_(Mutsu)> a <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Building102913152>, <http://dbpedia.org/class/yago/CastlesInFukushimaPrefecture>, <http://dbpedia.org/class/yago/Dwelling103259505>, <http://dbpedia.org/class/yago/FormerCastles>, <http://dbpedia.org/class/yago/House103544360>, <http://dbpedia.org/class/yago/Housing103546340>, <http://dbpedia.org/class/yago/Mansion103719053>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/Palace103878066>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Structure104341686>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_Doctrine> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Belief105941423>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/Content105809192>, <http://dbpedia.org/class/yago/Doctrine105943300>, <http://dbpedia.org/class/yago/ForeignPolicyDoctrinesOfTheUnitedStates>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100> .
+<http://dbpedia.org/resource/Obama_Domain> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Attribute100024264>, <http://dbpedia.org/class/yago/DomainsOfJapan>, <http://dbpedia.org/class/yago/Environment113934596>, <http://dbpedia.org/class/yago/Situation113927383>, <http://dbpedia.org/class/yago/Sphere114514039>, <http://dbpedia.org/class/yago/State100024720> .
+<http://dbpedia.org/resource/Obama_Nishi_Interchange> a <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Road104096066>, <http://dbpedia.org/class/yago/RoadsInJapan>, <http://dbpedia.org/class/yago/Way104564698>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_On_My_Mind> a <http://dbpedia.org/class/yago/2009Plays>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/BritishPlays>, <http://dbpedia.org/class/yago/Communication100033020>, <http://dbpedia.org/class/yago/DramaticComposition107007684>, <http://dbpedia.org/class/yago/Play107007945>, <http://dbpedia.org/class/yago/PlaysBasedOnActualEvents>, <http://dbpedia.org/class/yago/Writing106362953>, <http://dbpedia.org/class/yago/WrittenCommunication106349220> .
+<http://dbpedia.org/resource/Obama_Onsen> a <http://dbpedia.org/class/yago/GeologicalFormation109287968>, <http://dbpedia.org/class/yago/HotSpring109305898>, <http://dbpedia.org/class/yago/HotSpringsOfJapan>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Spring109443453>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_Station> a <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Facility103315023>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/RailwayStation104049098>, <http://dbpedia.org/class/yago/RailwayStationsInFukuiPrefecture>, <http://dbpedia.org/class/yago/Station104306080>, <http://dbpedia.org/class/yago/StationsOfWestJapanRailwayCompany>, <http://dbpedia.org/class/yago/Terminal104412901>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Obama_logo> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Communication100033020>, <http://dbpedia.org/class/yago/Description106724763>, <http://dbpedia.org/class/yago/Logo107272084>, <http://dbpedia.org/class/yago/LogoDescriptions>, <http://dbpedia.org/class/yago/Logos>, <http://dbpedia.org/class/yago/Marker107270179>, <http://dbpedia.org/class/yago/Message106598915>, <http://dbpedia.org/class/yago/PoliticalLogos>, <http://dbpedia.org/class/yago/Signal106791372>, <http://dbpedia.org/class/yago/Statement106722453>, <http://dbpedia.org/class/yago/Symbol106806469>, <http://dbpedia.org/class/yago/Trademark106851742> .
+<http://dbpedia.org/resource/Of_Thee_I_Sing_(book)> a <http://dbpedia.org/class/yago/BooksByBarackObama> .
+<http://dbpedia.org/resource/Open_Government_Initiative> a <http://dbpedia.org/class/yago/ObamaAdministrationInitiatives> .
+<http://dbpedia.org/resource/Paul_A._Engelmayer> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Paul_K._Holmes_III> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Political_positions_of_Barack_Obama> a <http://dbpedia.org/class/yago/Location100027167>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Point108620061>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidentialCandidates,2008>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidentialCandidates,2012>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesPresidents>, <http://dbpedia.org/class/yago/PoliticalPositionsOfUnitedStatesSenators>, <http://dbpedia.org/class/yago/Position108621598>, <http://dbpedia.org/class/yago/YagoGeoEntity>, <http://dbpedia.org/class/yago/YagoLegalActorGeo>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Political_scandals_during_the_Obama_administration> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Controversy107183151>, <http://dbpedia.org/class/yago/Disagreement107180787>, <http://dbpedia.org/class/yago/Dispute107181935>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/Gossip107223170>, <http://dbpedia.org/class/yago/Informing107212190>, <http://dbpedia.org/class/yago/ObamaAdministrationControversies>, <http://dbpedia.org/class/yago/PoliticalScandalsInTheUnitedStatesByPresidentialAdministration>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Report107217924>, <http://dbpedia.org/class/yago/Scandal107223811>, <http://dbpedia.org/class/yago/SpeechAct107160883>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/President's_Management_Advisory_Board> a <http://dbpedia.org/class/yago/ExecutiveOrdersOfBarackObama> .
+<http://dbpedia.org/resource/President's_Management_Council> a <http://dbpedia.org/class/yago/ExecutiveOrdersOfBarackObama> .
+<http://dbpedia.org/resource/R._Brooke_Jackson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Rashad_Hussain's_comments_on_Sami_Al-Arian> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Redemption_Song_(Obama_book)> a <http://dbpedia.org/class/yago/2008Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/Resignation_of_Shirley_Sherrod> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Richard_G._Andrews> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Richard_G._Seeborg> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Richard_Mark_Gergel> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Robert_D._Mariani> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Robert_L._Wilkins> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Robert_N._Scola,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Roberto_Lange> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Ronnie_Abrams> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Rosanna_M._Peterson> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Roy_B._Dalton,_Jr.> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Rudolph_Contreras> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Sara_Lynn_Darrow> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Scott_W._Skavdahl> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Sharon_J._Coleman> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Sharon_L._Gleason> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Solyndra_loan_controversy> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Space_policy_of_the_Barack_Obama_administration> a <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Address107238694>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/SpeechAct107160883>, <http://dbpedia.org/class/yago/SpeechesByBarackObama>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Steve_C._Jones> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Sue_E._Myerscough> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Super_Obama_World> a <http://dbpedia.org/class/yago/2008VideoGames>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Act100030358>, <http://dbpedia.org/class/yago/Activity100407535>, <http://dbpedia.org/class/yago/ComputerGame100458890>, <http://dbpedia.org/class/yago/Contest107456188>, <http://dbpedia.org/class/yago/Diversion100426928>, <http://dbpedia.org/class/yago/Event100029378>, <http://dbpedia.org/class/yago/FreeOnlineGames>, <http://dbpedia.org/class/yago/Game100430606>, <http://dbpedia.org/class/yago/Game100456199>, <http://dbpedia.org/class/yago/PlatformGames>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/SocialEvent107288639>, <http://dbpedia.org/class/yago/YagoPermanentlyLocatedEntity> .
+<http://dbpedia.org/resource/Susan_Owens_Hickey> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Susie_Morgan> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Tanya_Walton_Pratt> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/The_Audacity_of_Hope> a <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/BooksByBarackObama> .
+<http://dbpedia.org/resource/The_Audacity_of_Hope_(speech)> a <http://dbpedia.org/class/yago/SpeechesByBarackObama> .
+<http://dbpedia.org/resource/The_Obama_Diaries> a <http://dbpedia.org/class/yago/2010Books>, <http://dbpedia.org/class/yago/Artifact100021939>, <http://dbpedia.org/class/yago/Book106410904>, <http://dbpedia.org/class/yago/BooksAboutBarackObama>, <http://dbpedia.org/class/yago/Creation103129123>, <http://dbpedia.org/class/yago/Object100002684>, <http://dbpedia.org/class/yago/PhysicalEntity100001930>, <http://dbpedia.org/class/yago/Product104007894>, <http://dbpedia.org/class/yago/Publication106589574>, <http://dbpedia.org/class/yago/Whole100003553>, <http://dbpedia.org/class/yago/Work104599396> .
+<http://dbpedia.org/resource/The_Obama_Identity> a <http://dbpedia.org/class/yago/2010Novels>, <http://dbpedia.org/class/yago/Abstraction100002137>, <http://dbpedia.org/class/yago/Cognition100023271>, <http://dbpedia.org/class/yago/Communication100033020>, <http://dbpedia.org/class/yago/ConspiracyTheories>, <http://dbpedia.org/class/yago/Explanation105793000>, <http://dbpedia.org/class/yago/Fiction106367107>, <http://dbpedia.org/class/yago/HigherCognitiveProcess105770664>, <http://dbpedia.org/class/yago/LiteraryComposition106364329>, <http://dbpedia.org/class/yago/Novel106367879>, <http://dbpedia.org/class/yago/PoliticalNovels>, <http://dbpedia.org/class/yago/Process105701363>, <http://dbpedia.org/class/yago/PsychologicalFeature100023100>, <http://dbpedia.org/class/yago/Theory105989479>, <http://dbpedia.org/class/yago/Thinking105770926>, <http://dbpedia.org/class/yago/Writing106362953>, <http://dbpedia.org/class/yago/WrittenCommunication106349220> .
+<http://dbpedia.org/resource/The_Situation_Room_(photograph)> a <http://dbpedia.org/class/yago/ImagesOfBarackObama> .
+<http://dbpedia.org/resource/Thomas_O._Rice> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Timothy_Black> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Timothy_M._Cain> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Video_of_US_troops_urinating_on_Taliban_fighters> a <http://dbpedia.org/class/yago/ObamaAdministrationControversies> .
+<http://dbpedia.org/resource/Vincent_L._Briccetti> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/We_Can't_Wait> a <http://dbpedia.org/class/yago/ExecutiveOrdersOfBarackObama> .
+<http://dbpedia.org/resource/Where's_the_Birth_Certificate%3F> a <http://dbpedia.org/class/yago/BooksAboutBarackObama> .
+<http://dbpedia.org/resource/William_Francis_Kuntz> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/William_J._Mart%C3%ADnez> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/William_M._Conley> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .
+<http://dbpedia.org/resource/Yvonne_Gonzalez_Rogers> a <http://dbpedia.org/class/yago/UnitedStatesDistrictCourtJudgesAppointedByBarackObama> .

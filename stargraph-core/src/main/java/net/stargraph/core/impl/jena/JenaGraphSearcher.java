@@ -27,10 +27,10 @@ package net.stargraph.core.impl.jena;
  */
 
 import net.stargraph.ModelUtils;
-import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
+import net.stargraph.core.graph.JModel;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.ValueEntity;
@@ -38,7 +38,6 @@ import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
     private Marker marker = MarkerFactory.getMarker("jena");
     private Namespace ns;
     private EntitySearcher entitySearcher;
-    private Model graphModel;
+    private JModel graphModel;
     private String dbId;
 
     public JenaGraphSearcher(String dbId, Stargraph stargraph) {
@@ -80,7 +79,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
 
         Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, graphModel)) {
+        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, graphModel.getModel())) {
             ResultSet results = qexec.execSelect();
 
             while (results.hasNext()) {
