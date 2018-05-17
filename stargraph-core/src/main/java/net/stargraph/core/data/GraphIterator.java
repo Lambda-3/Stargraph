@@ -67,7 +67,7 @@ abstract class GraphIterator<T> implements Iterator<T> {
         }
 
         while (innerIt.hasNext()) {
-            currentStmt = innerIt.next();
+            currentStmt = innerIt.nextStatement();
             //skipping blank nodes.
             if ((!currentStmt.getSubject().isAnon() && !currentStmt.getObject().isAnon())) {
                 return true;
