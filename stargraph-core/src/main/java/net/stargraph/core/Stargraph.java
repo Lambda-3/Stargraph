@@ -33,8 +33,8 @@ import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.data.BaseDataProviderFactory;
 import net.stargraph.core.graph.BaseGraphModelProviderFactory;
+import net.stargraph.core.graph.DefaultGraphModelProviderFactory;
 import net.stargraph.core.graph.GraphModelProviderFactory;
-import net.stargraph.core.impl.hdt.HDTModelProviderFactory;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.search.EntitySearcher;
@@ -98,7 +98,7 @@ public final class Stargraph {
         // Configurable defaults
         setDataRootDir(mainConfig.getString("data.root-dir")); // absolute path is expected
         setDefaultIndicesFactory(createDefaultIndicesFactory());
-        setDefaultGraphModelProviderFactory(new HDTModelProviderFactory(this));
+        setDefaultGraphModelProviderFactory(new DefaultGraphModelProviderFactory(this));
 
         if (initKBs) {
             initialize();
@@ -327,15 +327,15 @@ public final class Stargraph {
         return mainConfig.getConfig(String.format("kb.%s.model.%s", kbId.getId(), kbId.getModel()));
     }
 
-    private Config getGraphModelProviderCfg(String dbid) {
+    public Config getGraphModelProviderCfg(String dbid) {
         return getGraphModelConfig(dbid).getConfig("provider");
     }
 
-    private Config getDataProviderCfg(KBId kbId) {
+    public Config getDataProviderCfg(KBId kbId) {
         return getModelConfig(kbId).getConfig("provider");
     }
 
-    private List<? extends Config> getProcessorsCfg(KBId kbId) {
+    public List<? extends Config> getProcessorsCfg(KBId kbId) {
         if (getModelConfig(kbId).hasPath("processors")) {
             return getModelConfig(kbId).getConfigList("processors");
         }

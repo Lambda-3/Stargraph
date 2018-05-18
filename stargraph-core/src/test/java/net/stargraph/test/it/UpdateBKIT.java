@@ -31,13 +31,8 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.KBCore;
 import net.stargraph.core.KBLoader;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.graph.MGraphModel;
-import net.stargraph.core.impl.hdt.HDTModelProviderFactory;
-import net.stargraph.core.impl.ntriples.NTriplesModelProviderFactory;
-import net.stargraph.core.impl.turtle.TurtleModelProviderFactory;
-import net.stargraph.model.KBId;
 import org.apache.jena.rdf.model.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -96,23 +91,6 @@ public final class UpdateBKIT {
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
-
-        GraphModelProviderFactory factory;
-        switch (type) {
-            case "hdt":
-                factory = new HDTModelProviderFactory(stargraph);
-                break;
-            case "nt":
-                factory = new NTriplesModelProviderFactory(stargraph);
-                break;
-            case "ttl":
-                factory = new TurtleModelProviderFactory(stargraph);
-                break;
-            default:
-                throw new AssertionError("Unknown type");
-        }
-        stargraph.setDefaultGraphModelProviderFactory(factory);
-
         stargraph.initialize();
         core = stargraph.getKBCore("simple");
         loader = core.getLoader();
