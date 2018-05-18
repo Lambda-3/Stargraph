@@ -27,15 +27,15 @@ package net.stargraph.core.data;
  */
 
 import com.google.common.collect.Iterators;
-import net.stargraph.core.KBCore;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.KBId;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,16 +52,14 @@ public final class EntityGraphIterator implements Iterator<Indexable> {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Marker marker = MarkerFactory.getMarker("core");
     private KBId kbId;
-    private KBCore core;
     private Namespace namespace;
-    private Iterator<Node> iterator;
+    private Iterator<Node> innerIt;
     private Node currentNode;
 
-    public EntityGraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
+    public EntityGraphIterator(Stargraph stargraph, KBId kbId, BaseGraphModel model) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.core = stargraph.getKBCore(kbId.getId());
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
-        this.iterator = createIterator(model);
+        createIterator(model);
     }
 
     public EntityGraphIterator(Stargraph stargraph, KBId kbId) {
@@ -75,8 +73,8 @@ public final class EntityGraphIterator implements Iterator<Indexable> {
             return true;
         }
 
-        while (iterator.hasNext()) {
-            currentNode = iterator.next();
+        while (innerIt.hasNext()) {
+            currentNode = innerIt.next();
             //skipping literals and blank nodes.
             if ((!currentNode.isBlank() && !currentNode.isLiteral())) {
                  if (namespace.isFromMainNS(currentNode.getURI())) {
@@ -111,12 +109,17 @@ public final class EntityGraphIterator implements Iterator<Indexable> {
         return uri;
     }
 
-    private Iterator<Node> createIterator(JModel model) {
-        Graph g = model.getModel().getGraph();
-        ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
-        ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);
-        exIt = g.find(null, null, Node.ANY);
-        ExtendedIterator<Node> objIt = exIt.mapWith(Triple::getObject);
-        return Iterators.concat(subjIt, objIt);
+    private void createIterator(BaseGraphModel graphModel) {
+        graphModel.doRead(new BaseGraphModel.ReadTransaction() {
+            @Override
+            public void readTransaction(Model model) {
+                Graph g = model.getGraph();
+                ExtendedIterator<Triple> exIt = g.find(Node.ANY, null, null);
+                ExtendedIterator<Node> subjIt = exIt.mapWith(Triple::getSubject);
+                exIt = g.find(null, null, Node.ANY);
+                ExtendedIterator<Node> objIt = exIt.mapWith(Triple::getObject);
+                innerIt = Iterators.concat(subjIt, objIt);
+            }
+        });
     }
 }

@@ -27,32 +27,43 @@ package net.stargraph.core.graph;
  */
 
 import net.stargraph.StarGraphException;
-import net.stargraph.data.DataSource;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Primary graph model generating interface.
+ */
 public class GraphModelProvider {
-    private List<DataSource<JModel>> dataSources;
+    private List<GraphSource<BaseGraphModel>> graphSources;
 
-    public GraphModelProvider(DataSource<JModel> dataSource) {
-        this(Arrays.asList(dataSource));
+    public GraphModelProvider(GraphSource<BaseGraphModel> graphSource) {
+        this(Arrays.asList(graphSource));
     }
 
-    public GraphModelProvider(List<DataSource<JModel>> dataSources) {
-        this.dataSources = Objects.requireNonNull(dataSources);
+    public GraphModelProvider(List<GraphSource<BaseGraphModel>> graphSources) {
+        this.graphSources = Objects.requireNonNull(graphSources);
     }
 
-    public JModel getGraphModel() {
-        // Attention: when a large HDT file is added to a model (even if it is an empty default model), it takes forever.
-        // If a single HDT file is the only data source, one may consider directly returning the HDT model, but then extending the model (model.add()) does not work.
+    public BaseGraphModel createGraphModel(boolean inMemory, boolean reset) {
+        BaseGraphModel graphModel;
+        if (inMemory) {
+            graphModel = new MGraphModel();
+        } else {
+            graphModel = new SGraphModel();
 
+            if (!reset) {
+                // TODO implement
+                throw new UnsupportedOperationException("Not implemented yet.");
+            }
+        }
+
+        // Extend graph model
         try {
-            JModel mergedModel =  new JModel();
-            dataSources.forEach(s -> s.createIterator().forEachRemaining(m -> mergedModel.add(m)));
+            graphSources.forEach(s -> s.extend(graphModel));
 
-            return mergedModel;
+            return graphModel;
         } catch (Exception e) {
             throw new StarGraphException(e);
         }

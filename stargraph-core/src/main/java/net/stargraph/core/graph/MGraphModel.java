@@ -1,4 +1,4 @@
-package net.stargraph.core.impl.turtle;
+package net.stargraph.core.graph;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.impl.turtle;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,30 +26,37 @@ package net.stargraph.core.impl.turtle;
  * ==========================License-End===============================
  */
 
-import com.typesafe.config.Config;
-import net.stargraph.core.Stargraph;
-import net.stargraph.core.graph.BaseGraphModelProviderFactory;
-import net.stargraph.core.graph.DefaultFileGraphSource;
-import net.stargraph.core.graph.GraphModelProvider;
+import net.stargraph.StarGraphException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
-public final class TurtleModelProviderFactory extends BaseGraphModelProviderFactory {
+import java.io.IOException;
 
-    public TurtleModelProviderFactory(Stargraph stargraph) {
-        super(stargraph);
+/**
+ * A model held in memory.
+ */
+public class MGraphModel extends BaseGraphModel {
+    private Model model;
+
+    public MGraphModel() {
+        this.model = ModelFactory.createDefaultModel();
+    }
+
+    public MGraphModel(Model model) {
+        this.model = model;
     }
 
     @Override
-    public GraphModelProvider create(String dbId) {
-        Config config = stargraph.getKBCore(dbId).getConfig();
+    public void doRead(ReadTransaction readTransaction) {
+        readTransaction.readTransaction(model);
+    }
 
-        final String cfgFilePath = "graphmodel.turtle.file";
-        String resourcePath = "triples.ttl";
-        if (config.hasPath(cfgFilePath)) {
-            resourcePath = config.getString(cfgFilePath);
+    @Override
+    public void doWrite(WriteTransaction writeTransaction) {
+        try {
+            writeTransaction.writeTransaction(model);
+        } catch (IOException e) {
+            throw new StarGraphException(e);
         }
-
-        return new GraphModelProvider(
-                new DefaultFileGraphSource(stargraph, dbId, resourcePath, null, true)
-        );
     }
 }

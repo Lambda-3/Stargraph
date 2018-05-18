@@ -30,7 +30,7 @@ import net.stargraph.ModelUtils;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphSearcher;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.ValueEntity;
@@ -38,6 +38,7 @@ import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
     private Marker marker = MarkerFactory.getMarker("jena");
     private Namespace ns;
     private EntitySearcher entitySearcher;
-    private JModel graphModel;
+    private BaseGraphModel graphModel;
     private String dbId;
 
     public JenaGraphSearcher(String dbId, Stargraph stargraph) {
@@ -79,29 +80,34 @@ public final class JenaGraphSearcher implements GraphSearcher {
 
         Map<String, List<LabeledEntity>> result = new LinkedHashMap<>();
 
-        try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, graphModel.getModel())) {
-            ResultSet results = qexec.execSelect();
+        graphModel.doRead(new BaseGraphModel.ReadTransaction() {
+            @Override
+            public void readTransaction(Model model) {
+                try (QueryExecution qexec = QueryExecutionFactory.create(sparqlQuery, model)) {
+                    ResultSet results = qexec.execSelect();
 
-            while (results.hasNext()) {
-                Binding jBinding = results.nextBinding();
-                Iterator<Var> vars = jBinding.vars();
-                while (vars.hasNext()) {
-                    Var jVar = vars.next();
+                    while (results.hasNext()) {
+                        Binding jBinding = results.nextBinding();
+                        Iterator<Var> vars = jBinding.vars();
+                        while (vars.hasNext()) {
+                            Var jVar = vars.next();
 
-                    if (!jBinding.get(jVar).isLiteral()) {
-                        String id = jBinding.get(jVar).getURI();
-                        List<LabeledEntity> entities = result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>());
-                        LabeledEntity labeledEntity = ns.isFromMainNS(id) ? entitySearcher.getEntity(dbId, id) : ModelUtils.createInstance(id);
-                        entities.add(labeledEntity);
-                    } else {
-                        LiteralLabel lit = jBinding.get(jVar).getLiteral();
-                        ValueEntity valueEntity = new ValueEntity(lit.getLexicalForm(), lit.getDatatype().getURI(), lit.language());
-                        result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>()).add(valueEntity);
+                            if (!jBinding.get(jVar).isLiteral()) {
+                                String id = jBinding.get(jVar).getURI();
+                                List<LabeledEntity> entities = result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>());
+                                LabeledEntity labeledEntity = ns.isFromMainNS(id) ? entitySearcher.getEntity(dbId, id) : ModelUtils.createInstance(id);
+                                entities.add(labeledEntity);
+                            } else {
+                                LiteralLabel lit = jBinding.get(jVar).getLiteral();
+                                ValueEntity valueEntity = new ValueEntity(lit.getLexicalForm(), lit.getDatatype().getURI(), lit.language());
+                                result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>()).add(valueEntity);
+                            }
+                        }
                     }
                 }
             }
+        });
 
-        }
         long millis = System.currentTimeMillis() - startTime;
 
         if (!result.isEmpty()) {

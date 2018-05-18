@@ -28,8 +28,9 @@ package net.stargraph.core.data;
 
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.model.KBId;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
@@ -50,10 +51,10 @@ abstract class GraphIterator<T> implements Iterator<T> {
     private Statement currentStmt;
     private Namespace namespace;
 
-    GraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
+    GraphIterator(Stargraph stargraph, KBId kbId, BaseGraphModel model) {
         this.namespace = stargraph.getKBCore(kbId.getId()).getNamespace();
         this.kbId = Objects.requireNonNull(kbId);
-        this.innerIt = Objects.requireNonNull(model).getModel().listStatements();
+        createIterator(model);
     }
 
     GraphIterator(Stargraph stargraph, KBId kbId) {
@@ -62,6 +63,9 @@ abstract class GraphIterator<T> implements Iterator<T> {
 
     @Override
     public final boolean hasNext() {
+        if (innerIt == null) {
+            return false;
+        }
         if (currentStmt != null) {
             return true;
         }
@@ -100,5 +104,14 @@ abstract class GraphIterator<T> implements Iterator<T> {
             return namespace.shrinkURI(uri);
         }
         return uri;
+    }
+
+    private void createIterator(BaseGraphModel graphModel) {
+        graphModel.doRead(new BaseGraphModel.ReadTransaction() {
+            @Override
+            public void readTransaction(Model model) {
+                innerIt = model.listStatements();
+            }
+        });
     }
 }

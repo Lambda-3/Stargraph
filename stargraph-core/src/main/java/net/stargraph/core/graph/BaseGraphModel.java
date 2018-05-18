@@ -1,4 +1,4 @@
-package net.stargraph.core.impl.hdt;
+package net.stargraph.core.graph;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.impl.hdt;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,44 +26,54 @@ package net.stargraph.core.impl.hdt;
  * ==========================License-End===============================
  */
 
-import net.stargraph.StarGraphException;
-import net.stargraph.core.graph.JModel;
-import net.stargraph.core.graph.DefaultModelFileLoader;
+import net.stargraph.model.GraphModel;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.rdfhdt.hdt.hdt.HDT;
-import org.rdfhdt.hdt.hdt.HDTManager;
-import org.rdfhdt.hdtjena.HDTGraph;
+import org.apache.jena.shared.AddDeniedException;
 
-import java.io.File;
+import java.io.IOException;
 
-public final class HDTModelFileLoader extends DefaultModelFileLoader {
-    private final boolean useIndex;
-
-
-    public HDTModelFileLoader(String dbid, File file, boolean useIndex) {
-        super(dbid, file, null);
-        this.useIndex = useIndex;
+/**
+ * A wrapper for Jena's graph model
+ */
+public abstract class BaseGraphModel implements GraphModel {
+    public interface ReadTransaction {
+        void readTransaction(Model model);
     }
 
-    @Override
-    public JModel loadModel() {
-        logger.info(marker, "Loading '{}', useIndex={}", file.getAbsolutePath(), useIndex);
+    public interface WriteTransaction {
+        boolean writeTransaction(Model model) throws IOException;
+    }
 
-        JModel model = null;
+    public void add(BaseGraphModel other) {
+        doWrite(new WriteTransaction() {
+            @Override
+            public boolean writeTransaction(Model thisModel) {
+                other.doRead(new ReadTransaction() {
+                    @Override
+                    public void readTransaction(Model otherModel) {
+                        thisModel.add(otherModel);
+                    }
+                });
 
-        try {
-            String hdtFilePathStr = file.getAbsolutePath();
-            HDT hdt = useIndex ? HDTManager.mapIndexedHDT(hdtFilePathStr, null) : HDTManager.loadHDT(hdtFilePathStr, null);
-            HDTGraph graph = new HDTGraph(hdt);
-            model = new JModel(ModelFactory.createModelForGraph(graph));
-        } catch (Exception e) {
-            throw new StarGraphException(e);
-        } finally {
-            if (model == null) {
-                logger.error(marker, "No Graph Model instantiated for {}", dbId);
+                return true;
             }
-        }
-
-        return model;
+        });
     }
+
+    public long getSize() {
+        final long[] size = {0};
+
+        doRead(new ReadTransaction() {
+            @Override
+            public void readTransaction(Model model) {
+                size[0] = model.size();
+            }
+        });
+
+        return size[0];
+    }
+
+    public abstract void doRead(ReadTransaction readTransaction);
+    public abstract void doWrite(WriteTransaction writeTransaction);
 }

@@ -29,72 +29,48 @@ package net.stargraph.test;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.data.FileDataSource;
 import net.stargraph.core.graph.*;
-import net.stargraph.core.impl.hdt.HDTModelFileLoader;
-import net.stargraph.data.DataSource;
+import net.stargraph.core.impl.hdt.HDTFileGraphSource;
 import net.stargraph.model.KBId;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import static net.stargraph.test.TestUtils.createPath;
 
 public final class GraphModelProviderFactoryTest {
-    private class DataSourceGenerator {
+
+    private class GraphSourceGenerator {
         private Stargraph stargraph;
-        private KBId kbId;
+        private String dbId;
 
-        public DataSourceGenerator(Stargraph stargraph, KBId kbId) {
+        public GraphSourceGenerator(Stargraph stargraph, String dbId) {
             this.stargraph = stargraph;
-            this.kbId = kbId;
+            this.dbId = dbId;
         }
 
-        public DataSource getHDTDataSource() {
-            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath()) {
-                @Override
-                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                    return new HDTModelFileLoader(kbId.getId(), file, false).loadModelAsIterator();
-                }
-            };
+        public GraphSource getHDTDataSource() {
+            return new HDTFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath(), null, true, false);
         }
 
-        public DataSource getNTDataSource() {
-            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.nt").getPath()) {
-                @Override
-                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
-                }
-            };
+        public GraphSource getNTDataSource() {
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.nt").getPath(), null, true);
         }
 
-        public DataSource getTurtleDataSource() {
-            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.ttl").getPath()) {
-                @Override
-                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
-                }
-            };
+        public GraphSource getTurtleDataSource() {
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.ttl").getPath(), null, true);
         }
 
-        public DataSource getNewDataSource() {
-            return new FileDataSource(stargraph, kbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath()) {
-                @Override
-                protected Iterator createIterator(Stargraph stargraph, KBId kbId, File file) {
-                    return new DefaultModelFileLoader(kbId.getId(), file).loadModelAsIterator();
-                }
-            };
+        public GraphSource getNewDataSource() {
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath(), null, true);
         }
     }
 
     private interface FactoryGenerator {
-        GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId);
+        GraphModelProviderFactory generate(Stargraph stargraph, String dbId);
     }
 
 
@@ -109,11 +85,11 @@ public final class GraphModelProviderFactoryTest {
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
-        stargraph.setDefaultGraphModelProviderFactory(factoryGenerator.generate(stargraph, kbId));
+        stargraph.setDefaultGraphModelProviderFactory(factoryGenerator.generate(stargraph, kbId.getId()));
         stargraph.initialize();
 
-        JModel model = stargraph.getKBCore(kbId.getId()).getGraphModel();
-        Assert.assertTrue(model.size() > 2000);
+        BaseGraphModel model = stargraph.getKBCore(kbId.getId()).getGraphModel();
+        Assert.assertTrue(model.getSize() > 2000);
     }
 
     @Test
@@ -121,8 +97,8 @@ public final class GraphModelProviderFactoryTest {
 
         loadJointGraphModelTest(new FactoryGenerator() {
             @Override
-            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
-                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+            public GraphModelProviderFactory generate(Stargraph stargraph, String dbId) {
+                GraphSourceGenerator generator = new GraphSourceGenerator(stargraph, dbId);
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {
@@ -141,8 +117,8 @@ public final class GraphModelProviderFactoryTest {
 
         loadJointGraphModelTest(new FactoryGenerator() {
             @Override
-            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
-                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+            public GraphModelProviderFactory generate(Stargraph stargraph, String dbId) {
+                GraphSourceGenerator generator = new GraphSourceGenerator(stargraph, dbId);
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {
@@ -161,8 +137,8 @@ public final class GraphModelProviderFactoryTest {
 
         loadJointGraphModelTest(new FactoryGenerator() {
             @Override
-            public GraphModelProviderFactory generate(Stargraph stargraph, KBId kbId) {
-                DataSourceGenerator generator = new DataSourceGenerator(stargraph, kbId);
+            public GraphModelProviderFactory generate(Stargraph stargraph, String dbId) {
+                GraphSourceGenerator generator = new GraphSourceGenerator(stargraph, dbId);
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {

@@ -1,4 +1,4 @@
-package net.stargraph.core.data;
+package net.stargraph.core.impl.hdt;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package net.stargraph.core.data;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,37 +26,42 @@ package net.stargraph.core.data;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.BaseGraphModel;
-import net.stargraph.data.DataGenerator;
-import net.stargraph.data.DataProvider;
-import net.stargraph.data.DataSource;
-import net.stargraph.data.Indexable;
-import net.stargraph.model.KBId;
+import net.stargraph.core.graph.FileGraphSource;
+import net.stargraph.core.graph.MGraphModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.rdfhdt.hdt.hdt.HDT;
+import org.rdfhdt.hdt.hdt.HDTManager;
+import org.rdfhdt.hdtjena.HDTGraph;
 
-import java.util.Iterator;
+import java.io.File;
 
-public final class PropertyProviderFactory extends BaseDataProviderFactory {
+public class HDTFileGraphSource extends FileGraphSource {
+    private boolean useIndex;
 
-    public PropertyProviderFactory(Stargraph stargraph) {
-        super(stargraph);
+    public HDTFileGraphSource(Stargraph stargraph, String dbId, String resource, String storeFilename, boolean required, boolean useIndex) {
+        super(stargraph, dbId, resource, storeFilename, required);
+        this.useIndex = useIndex;
     }
 
     @Override
-    public DataProvider<Indexable> create(KBId kbId) {
-        return new DataProvider<>(
-                new DataSource<Indexable>() {
-                    @Override
-                    public Iterator<Indexable> createIterator() {
-                        return new PropertyGraphIterator(stargraph, kbId);
-                    }
-                },
-                new DataGenerator<BaseGraphModel, Indexable>() {
-                    @Override
-                    public Iterator<Indexable> getIterator(BaseGraphModel data) {
-                        return new PropertyGraphIterator(stargraph, kbId, data);
-                    }
-                }
-        );
+    protected void extend(BaseGraphModel graphModel, File file) {
+        logger.info(marker, "Extending graph model with file '{}'", file.getAbsolutePath());
+
+        try {
+            HDT hdt = useIndex ? HDTManager.mapIndexedHDT(file.getAbsolutePath(), null) : HDTManager.loadHDT(file.getAbsolutePath(), null);
+            HDTGraph graph = new HDTGraph(hdt);
+            Model other = ModelFactory.createModelForGraph(graph);
+
+            // Attention: The HDT file is fully loaded into memory
+            MGraphModel otherModel = new MGraphModel(other);
+            graphModel.add(otherModel);
+        } catch (Exception e) {
+            logger.error(marker, "Failed to extend graph model for {}", dbId);
+            throw new StarGraphException(e);
+        }
     }
 }

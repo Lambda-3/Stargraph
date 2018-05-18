@@ -32,7 +32,8 @@ import net.stargraph.core.KBCore;
 import net.stargraph.core.KBLoader;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.GraphModelProviderFactory;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
+import net.stargraph.core.graph.MGraphModel;
 import net.stargraph.core.impl.hdt.HDTModelProviderFactory;
 import net.stargraph.core.impl.ntriples.NTriplesModelProviderFactory;
 import net.stargraph.core.impl.turtle.TurtleModelProviderFactory;
@@ -46,7 +47,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import static net.stargraph.test.TestUtils.copyResource;
 import static net.stargraph.test.TestUtils.createPath;
@@ -55,14 +55,14 @@ import static net.stargraph.test.TestUtils.createPath;
  * Aims to test the incremental features.
  */
 public final class UpdateBKIT {
-    private static final JModel ADDED_MODEL;
+    private static final BaseGraphModel ADDED_MODEL;
     static {
         Model m = ModelFactory.createDefaultModel();
         Resource instance1 = m.createResource("http://dbpedia.org/resource/Barack_Obama");
         Resource instance2 = m.createResource("http://dbpedia.org/resource/Michelle_Obama");
         Property property = ResourceFactory.createProperty("http://dbpedia.org/property/commanderInChief");
         instance1.addProperty(property, instance2);
-        ADDED_MODEL = new JModel(m);
+        ADDED_MODEL = new MGraphModel(m);
     }
 
 
@@ -124,14 +124,14 @@ public final class UpdateBKIT {
         loader.loadAll();
         loader.await();
 
-        long graphSizeBefore = core.getGraphModel().size();
+        long graphSizeBefore = core.getGraphModel().getSize();
         long factsSizeBefore = core.getSearcher("facts").countDocuments();
         long entitiesSizeBefore = core.getSearcher("entities").countDocuments();
 
         loader.updateKB(ADDED_MODEL);
         loader.await();
 
-        long graphSizeAfter = core.getGraphModel().size();
+        long graphSizeAfter = core.getGraphModel().getSize();
         long factsSizeAfter = core.getSearcher("facts").countDocuments();
         long entitiesSizeAfter = core.getSearcher("entities").countDocuments();
 

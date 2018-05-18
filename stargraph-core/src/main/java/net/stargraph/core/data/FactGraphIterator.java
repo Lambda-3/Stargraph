@@ -27,7 +27,7 @@ package net.stargraph.core.data;
  */
 
 import net.stargraph.core.Stargraph;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.data.Indexable;
 import net.stargraph.model.*;
 import org.apache.jena.rdf.model.Literal;
@@ -38,7 +38,7 @@ import static net.stargraph.ModelUtils.createProperty;
 
 final class FactGraphIterator extends GraphIterator<Indexable> {
 
-    public FactGraphIterator(Stargraph stargraph, KBId kbId, JModel model) {
+    public FactGraphIterator(Stargraph stargraph, KBId kbId, BaseGraphModel model) {
         super(stargraph, kbId, model);
     }
 

@@ -27,7 +27,7 @@ package net.stargraph.core;
  */
 
 import net.stargraph.StarGraphException;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.index.Indexer;
 import net.stargraph.core.search.Searcher;
 import net.stargraph.data.DataProvider;
@@ -190,7 +190,7 @@ public final class KBLoader {
         }
     }
 
-    public synchronized void updateKB(JModel addedModel) {
+    public synchronized void updateKB(BaseGraphModel addedModel) {
         if (loaderScheduled) {
             throw new IllegalStateException("Loader is still scheduled.");
         }
@@ -206,7 +206,7 @@ public final class KBLoader {
         );
     }
 
-    private synchronized void doUpdateKB(String dbId, JModel addedModel) {
+    private synchronized void doUpdateKB(String dbId, BaseGraphModel addedModel) {
         this.updating = true;
 
         logger.warn(marker, "##### Update graph model of '{}'. This can take some time ;) #####", dbId);
@@ -221,14 +221,14 @@ public final class KBLoader {
         }
     }
 
-    private void doExtendGraphModel(String dbId, JModel addedModel) {
+    private void doExtendGraphModel(String dbId, BaseGraphModel addedModel) {
         logger.info(marker, "Extending graph model of '{}'..", dbId);
 
-        JModel graphModel = core.getGraphModel();
+        BaseGraphModel graphModel = core.getGraphModel();
         graphModel.add(addedModel);
     }
 
-    private void doUpdateIndex(String dbId, JModel addedModel) {
+    private void doUpdateIndex(String dbId, BaseGraphModel addedModel) {
         logger.info(marker, "Update index of '{}'..", dbId);
 
         core.getKBIds().forEach(kbId -> { // why not parallel?

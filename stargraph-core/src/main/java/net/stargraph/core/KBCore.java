@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.GraphSearcher;
-import net.stargraph.core.graph.JModel;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
@@ -41,7 +41,7 @@ public final class KBCore {
     private Config kbConfig;
     private Language language;
     private String nerKbName;
-    private JModel graphModel;
+    private BaseGraphModel graphModel;
     private KBLoader kbLoader;
     private Namespace namespace;
     private Stargraph stargraph;
@@ -159,12 +159,12 @@ public final class KBCore {
         return typeObj.keySet().stream().map(modelName -> KBId.of(kbName, modelName)).collect(Collectors.toList());
     }
 
-    public JModel getGraphModel() {
+    public BaseGraphModel getGraphModel() {
         checkRunning();
         if (graphModel == null) {
             GraphModelProviderFactory factory = stargraph.getGraphModelProviderFactory(kbName);
             logger.info(marker, "Create graph model for '{}' using '{}'", kbName, factory.getClass().getSimpleName());
-            graphModel = factory.create(kbName).getGraphModel();
+            graphModel = factory.create(kbName).createGraphModel(true, true);
             if (graphModel == null) {
                 throw new StarGraphException("Could not create graph model for: " + kbName);
             }
