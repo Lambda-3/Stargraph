@@ -27,45 +27,75 @@ package net.stargraph.core.graph;
  */
 
 import net.stargraph.StarGraphException;
+import net.stargraph.core.Stargraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Primary graph model generating interface.
  */
 public class GraphModelProvider {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Marker marker = MarkerFactory.getMarker("core");
+
+    private Stargraph stargraph;
+    private String dbId;
+    private boolean inMemory;
+    private boolean reset;
     private List<GraphSource<BaseGraphModel>> graphSources;
 
-    public GraphModelProvider(GraphSource<BaseGraphModel> graphSource) {
-        this(Arrays.asList(graphSource));
+    public GraphModelProvider(Stargraph stargraph, String dbId, boolean inMemory, boolean reset, GraphSource<BaseGraphModel> graphSource) {
+        this(stargraph, dbId, inMemory, reset, Arrays.asList(graphSource));
     }
 
-    public GraphModelProvider(List<GraphSource<BaseGraphModel>> graphSources) {
+    public GraphModelProvider(Stargraph stargraph, String dbId, boolean inMemory, boolean reset, List<GraphSource<BaseGraphModel>> graphSources) {
+        this.stargraph = stargraph;
+        this.dbId = dbId;
+        this.inMemory = inMemory;
+        this.reset = reset;
         this.graphSources = Objects.requireNonNull(graphSources);
     }
 
-    public BaseGraphModel createGraphModel(boolean inMemory, boolean reset) {
+    public BaseGraphModel createGraphModel() {
         BaseGraphModel graphModel;
+
+        long startTime = System.nanoTime() / 1000_000;
         if (inMemory) {
+            logger.info(marker, "Create an in-memory graph model..");
             graphModel = new MGraphModel();
         } else {
-            graphModel = new SGraphModel();
-
-            if (!reset) {
-                // TODO implement
-                throw new UnsupportedOperationException("Not implemented yet.");
-            }
+            logger.info(marker, "Create a stored graph model..");
+            Path storePath = getGraphModelStoreDir(stargraph, dbId);
+            graphModel = new SGraphModel(storePath.toString(), reset);
         }
 
         // Extend graph model
         try {
             graphSources.forEach(s -> s.extend(graphModel));
+            long elapsedTime = (System.nanoTime() / 1000_000) - startTime;
 
+            logger.info(marker, "Graph model created in {} min, {} sec.",
+                    TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
+                    TimeUnit.MILLISECONDS.toSeconds(elapsedTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime))
+                    );
             return graphModel;
         } catch (Exception e) {
             throw new StarGraphException(e);
         }
+    }
+
+    private Path getGraphModelStoreDir(Stargraph stargraph, String dbId) {
+        String rootPath = stargraph.getDataRootDir();
+        return Paths.get(rootPath, dbId, "facts", "graph");
     }
 }

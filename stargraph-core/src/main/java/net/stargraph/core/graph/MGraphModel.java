@@ -59,4 +59,18 @@ public class MGraphModel extends BaseGraphModel {
             throw new StarGraphException(e);
         }
     }
+
+    @Override
+    public void reset() {
+        close();
+        this.model = ModelFactory.createDefaultModel();
+    }
+
+    @Override
+    public void close() {
+        if (model != null) {
+            model.close();
+            model = null;
+        }
+    }
 }

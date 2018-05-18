@@ -3,9 +3,9 @@ package net.stargraph.core;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
+import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.graph.GraphModelProviderFactory;
 import net.stargraph.core.graph.GraphSearcher;
-import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.impl.corenlp.NERSearcher;
 import net.stargraph.core.impl.jena.JenaGraphSearcher;
 import net.stargraph.core.index.Indexer;
@@ -130,6 +130,10 @@ public final class KBCore {
 
         indexers.values().forEach(Indexer::stop);
         searchers.values().forEach(Searcher::stop);
+        BaseGraphModel m = getGraphModel();
+        if (m != null) {
+            m.close();
+        }
 
         this.running = false;
     }
@@ -164,7 +168,7 @@ public final class KBCore {
         if (graphModel == null) {
             GraphModelProviderFactory factory = stargraph.getGraphModelProviderFactory(kbName);
             logger.info(marker, "Create graph model for '{}' using '{}'", kbName, factory.getClass().getSimpleName());
-            graphModel = factory.create(kbName).createGraphModel(true, true);
+            graphModel = factory.create(kbName).createGraphModel();
             if (graphModel == null) {
                 throw new StarGraphException("Could not create graph model for: " + kbName);
             }

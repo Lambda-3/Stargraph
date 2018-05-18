@@ -76,4 +76,6 @@ public abstract class BaseGraphModel implements GraphModel {
 
     public abstract void doRead(ReadTransaction readTransaction);
     public abstract void doWrite(WriteTransaction writeTransaction);
+    public abstract void reset();
+    public abstract void close();
 }

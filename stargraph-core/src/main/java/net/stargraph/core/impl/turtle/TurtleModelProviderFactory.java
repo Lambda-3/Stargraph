@@ -48,8 +48,14 @@ public final class TurtleModelProviderFactory extends BaseGraphModelProviderFact
             resourcePath = config.getString(cfgFilePath);
         }
 
+        final String cfgInMemoryPath = "graphmodel.turtle.in-memory";
+        boolean inMemory = config.hasPath(cfgInMemoryPath)? config.getBoolean(cfgInMemoryPath) : true;
+
+        final String cfgResetPath = "graphmodel.turtle.reset";
+        boolean reset = config.hasPath(cfgResetPath) && config.getBoolean(cfgResetPath);
+
         return new GraphModelProvider(
-                new DefaultFileGraphSource(stargraph, dbId, resourcePath, null, true)
+                stargraph, dbId, inMemory, reset, new DefaultFileGraphSource(stargraph, dbId, resourcePath, null, true)
         );
     }
 }

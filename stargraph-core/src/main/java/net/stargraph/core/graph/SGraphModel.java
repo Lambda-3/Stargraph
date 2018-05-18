@@ -26,18 +26,92 @@ package net.stargraph.core.graph;
  * ==========================License-End===============================
  */
 
+import net.stargraph.StarGraphException;
+import org.apache.commons.io.FileUtils;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
+import org.apache.jena.tdb.TDBFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
 /**
  * A model stored in the file system.
  */
 public class SGraphModel extends BaseGraphModel {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Marker marker = MarkerFactory.getMarker("core");
+
+    private final File directory;
+    private Dataset dataset;
+
+    public SGraphModel(String directory, boolean reset) {
+        this.directory = new File(Objects.requireNonNull(directory));
+        if (!this.directory.exists()) {
+            this.directory.mkdirs();
+        }
+
+        if (reset) {
+            reset();
+        }
+
+        this.dataset = TDBFactory.createDataset(directory);
+    }
 
     @Override
     public void doRead(ReadTransaction readTransaction) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        dataset.begin(ReadWrite.READ) ;
+        try {
+            readTransaction.readTransaction(dataset.getDefaultModel());
+        } catch (Exception e) {
+            throw new StarGraphException(e);
+        } finally {
+            dataset.end() ;
+        }
     }
 
     @Override
     public void doWrite(WriteTransaction writeTransaction) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        dataset.begin(ReadWrite.WRITE) ;
+        try {
+            if (writeTransaction.writeTransaction(dataset.getDefaultModel())) {
+                dataset.commit();
+            } else {
+                dataset.abort();
+            }
+        } catch (Exception e) {
+            throw new StarGraphException(e);
+        } finally {
+            dataset.end() ;
+        }
+    }
+
+    @Override
+    public void reset() {
+        try {
+            if (directory.exists()) {
+                FileUtils.deleteDirectory(directory.getAbsoluteFile());
+            }
+            directory.mkdirs();
+        } catch (IOException e) {
+            logger.error(marker, "Failed to reset graph model");
+            throw new StarGraphException(e);
+        } finally {
+            close();
+        }
+
+        this.dataset = TDBFactory.createDataset(directory.getAbsolutePath());
+    }
+
+    public void close() {
+        if (dataset != null) {
+            dataset.close();
+            dataset = null;
+        }
     }
 }

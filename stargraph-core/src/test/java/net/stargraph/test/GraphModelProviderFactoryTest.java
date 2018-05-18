@@ -102,7 +102,7 @@ public final class GraphModelProviderFactoryTest {
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {
-                        return new GraphModelProvider(Arrays.asList(
+                        return new GraphModelProvider(stargraph, dbId, true, true, Arrays.asList(
                                 generator.getHDTDataSource(),
                                 generator.getNewDataSource()
                         ));
@@ -122,7 +122,7 @@ public final class GraphModelProviderFactoryTest {
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {
-                        return new GraphModelProvider(Arrays.asList(
+                        return new GraphModelProvider(stargraph, dbId, true, true, Arrays.asList(
                                 generator.getNewDataSource(),
                                 generator.getHDTDataSource()
                                 ));
@@ -142,7 +142,7 @@ public final class GraphModelProviderFactoryTest {
                 return new BaseGraphModelProviderFactory(stargraph) {
                     @Override
                     public GraphModelProvider create(String dbId) {
-                        return new GraphModelProvider(Arrays.asList(
+                        return new GraphModelProvider(stargraph, dbId, true, true, Arrays.asList(
                                 generator.getNTDataSource(),
                                 generator.getHDTDataSource(),
                                 generator.getTurtleDataSource(),

@@ -21,10 +21,17 @@ public class HDTModelProviderFactory extends BaseGraphModelProviderFactory {
             resourcePath = config.getString(cfgFilePath);
         }
 
-        boolean useIndex = config.hasPath("graphmodel.hdt.use-index") && config.getBoolean("graphmodel.hdt.use-index");
+        final String cfgUseIndexPath = "graphmodel.hdt.use-index";
+        boolean useIndex = config.hasPath(cfgUseIndexPath) && config.getBoolean(cfgUseIndexPath);
+
+        final String cfgInMemoryPath = "graphmodel.hdt.in-memory";
+        boolean inMemory = config.hasPath(cfgInMemoryPath)? config.getBoolean(cfgInMemoryPath) : true;
+
+        final String cfgResetPath = "graphmodel.hdt.reset";
+        boolean reset = config.hasPath(cfgResetPath) && config.getBoolean(cfgResetPath);
 
         return new GraphModelProvider(
-                new HDTFileGraphSource(stargraph, dbId, resourcePath, null, true, useIndex)
+                stargraph, dbId, inMemory, reset, new HDTFileGraphSource(stargraph, dbId, resourcePath, null, true, useIndex)
         );
     }
 }
