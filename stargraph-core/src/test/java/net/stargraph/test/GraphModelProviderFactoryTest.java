@@ -31,7 +31,6 @@ import com.typesafe.config.ConfigFactory;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.graph.*;
 import net.stargraph.core.impl.hdt.HDTFileGraphSource;
-import net.stargraph.model.KBId;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -39,7 +38,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static net.stargraph.test.TestUtils.createPath;
+import static net.stargraph.test.TestUtils.createGraphModelPath;
+
 
 public final class GraphModelProviderFactoryTest {
 
@@ -53,19 +53,19 @@ public final class GraphModelProviderFactoryTest {
         }
 
         public GraphSource getHDTDataSource() {
-            return new HDTFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.hdt").getPath(), null, true, false);
+            return new HDTFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/graph/triples.hdt").getPath(), null, true, false);
         }
 
         public GraphSource getNTDataSource() {
-            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.nt").getPath(), null, true);
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/graph/triples.nt").getPath(), null, true);
         }
 
         public GraphSource getTurtleDataSource() {
-            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/triples.ttl").getPath(), null, true);
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/graph/triples.ttl").getPath(), null, true);
         }
 
         public GraphSource getNewDataSource() {
-            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/facts/Michelle_Obama.nt").getPath(), null, true);
+            return new DefaultFileGraphSource(stargraph, dbId, ClassLoader.getSystemResource("dataSets/obama/graph/Michelle_Obama.nt").getPath(), null, true);
         }
     }
 
@@ -74,21 +74,21 @@ public final class GraphModelProviderFactoryTest {
     }
 
 
-    private KBId kbId = KBId.of("mytest", "facts");
+    private String dbId = "mytest";
     private Stargraph stargraph;
 
     private void loadJointGraphModelTest(FactoryGenerator factoryGenerator) throws IOException {
         Path root = java.nio.file.Files.createTempFile("stargraph-", "-dataDir");
-        createPath(root, kbId);
+        createGraphModelPath(root, dbId);
 
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
         stargraph.setDataRootDir(root.toFile());
-        stargraph.setDefaultGraphModelProviderFactory(factoryGenerator.generate(stargraph, kbId.getId()));
+        stargraph.setDefaultGraphModelProviderFactory(factoryGenerator.generate(stargraph, dbId));
         stargraph.initialize();
 
-        BaseGraphModel model = stargraph.getKBCore(kbId.getId()).getGraphModel();
+        BaseGraphModel model = stargraph.getKBCore(dbId).getGraphModel();
         Assert.assertTrue(model.getSize() > 2000);
     }
 

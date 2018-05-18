@@ -65,8 +65,7 @@ public final class LuceneFactory implements IndicesFactory {
         return luceneDirs.computeIfAbsent(kbId,
                 (id) -> {
                     try {
-                        String rootPath = stargraph.getDataRootDir();
-                        Path idxPath = Paths.get(rootPath, id.getId(), id.getModel(), "idx");
+                        Path idxPath = Paths.get(stargraph.getModelDataDir(kbId), "lucene-store");
                         return new MMapDirectory(idxPath);
                     } catch (IOException e) {
                         throw new StarGraphException(e);

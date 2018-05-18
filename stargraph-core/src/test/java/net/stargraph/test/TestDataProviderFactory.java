@@ -28,6 +28,7 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import net.stargraph.core.Stargraph;
 import net.stargraph.data.DataProvider;
 import net.stargraph.data.DataProviderFactory;
 import net.stargraph.data.DataSource;
@@ -46,7 +47,7 @@ public final class TestDataProviderFactory implements DataProviderFactory {
 
     @Override
     public DataProvider<? extends Holder> create(KBId kbId) {
-        String cfgPath = String.format("%s.provider.args.data", kbId.getModelPath());
+        String cfgPath = String.format("kb.%s.model.%s.provider.args.data", kbId.getId(), kbId.getModel());
         List<? extends Config> configList = config.getConfigList(cfgPath);
         List<TestData> testData = configList.stream()
                 .map(cfg -> new TestData(cfg.getBoolean("failOnIndexer"), cfg.getBoolean("failOnProvider"), cfg.getString("text")))

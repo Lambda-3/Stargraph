@@ -43,7 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static net.stargraph.test.TestUtils.copyResource;
-import static net.stargraph.test.TestUtils.createPath;
+import static net.stargraph.test.TestUtils.createGraphModelPath;
 
 /**
  *
@@ -52,6 +52,7 @@ public final class IndexerIT {
 
     private KBCore core;
     private EntitySearcher entitySearcher;
+    private String dbId = "obama";
     private KBId factsId = KBId.of("obama", "facts");
     private KBId propsId = KBId.of("obama", "relations");
     private KBId entitiesId = KBId.of("obama", "entities");
@@ -59,8 +60,8 @@ public final class IndexerIT {
     @BeforeClass
     public void before() throws Exception {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
-        Path hdtPath = createPath(root, factsId).resolve("triples.hdt");
-        copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
+        Path hdtPath = createGraphModelPath(root, dbId).resolve("triples.hdt");
+        copyResource("dataSets/obama/graph/triples.hdt", hdtPath);
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         Stargraph stargraph = new Stargraph(config, false);

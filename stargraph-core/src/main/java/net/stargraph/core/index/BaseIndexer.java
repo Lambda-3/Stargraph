@@ -299,7 +299,7 @@ public abstract class BaseIndexer implements Indexer {
         logger.info(marker, "### Started {} task for {}, [reset={}, limit={}] ###", label, kbId, reset, limit);
 
         boolean logStats = stargraph.getMainConfig().getBoolean("progress-watcher.log-stats");
-        ProgressWatcher progressWatcher = new ProgressWatcher(kbId, stargraph.getDataRootDir(), logStats);
+        ProgressWatcher progressWatcher = new ProgressWatcher(kbId, stargraph.getModelDataDir(kbId), logStats);
 
         try {
             progressWatcher.start(true);

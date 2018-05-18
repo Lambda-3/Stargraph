@@ -55,12 +55,12 @@ public final class ProgressWatcher {
     private ScheduledExecutorService executor;
     private KBId kbId;
     private boolean logStats;
-    private String dataRootDir;
+    private String storeDir;
 
 
-    public ProgressWatcher(KBId kbId, String dataRootDir, boolean logStats) {
+    public ProgressWatcher(KBId kbId, String storeDir, boolean logStats) {
         this.kbId = Objects.requireNonNull(kbId);
-        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+        this.storeDir = Objects.requireNonNull(storeDir);
         this.logStats = logStats;
     }
 
@@ -132,7 +132,7 @@ public final class ProgressWatcher {
 
     private void logStats() {
         if (logStats) {
-            File csvFile = Paths.get(dataRootDir, kbId.getId(), String.format("indexing-time-%s.csv", kbId.getModel())).toFile();
+            File csvFile = Paths.get(storeDir, String.format("indexing-time-%s.csv", kbId.getModel())).toFile();
             logger.info(marker, "Logging stats to {}", csvFile);
 
             boolean exists = csvFile.exists();

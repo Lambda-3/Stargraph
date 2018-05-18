@@ -1,7 +1,6 @@
 package net.stargraph.core;
 
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigObject;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.graph.GraphModelProviderFactory;
@@ -37,7 +36,6 @@ public final class KBCore {
     private Marker marker;
 
     private String kbName;
-    private Config mainConfig;
     private Config kbConfig;
     private Language language;
     private String nerKbName;
@@ -54,8 +52,7 @@ public final class KBCore {
     public KBCore(String kbName, Stargraph stargraph, boolean start) {
         this.kbName = Objects.requireNonNull(kbName);
         this.stargraph = Objects.requireNonNull(stargraph);
-        this.mainConfig = stargraph.getMainConfig();
-        this.kbConfig = mainConfig.getConfig(String.format("kb.%s", kbName));
+        this.kbConfig = stargraph.getKBConfig(kbName);
         this.marker = MarkerFactory.getMarker(kbName);
         this.indexers = new ConcurrentHashMap<>();
         this.searchers = new ConcurrentHashMap<>();
@@ -159,8 +156,7 @@ public final class KBCore {
     }
 
     public List<KBId> getKBIds() {
-        ConfigObject typeObj = this.mainConfig.getObject(String.format("kb.%s.model", kbName));
-        return typeObj.keySet().stream().map(modelName -> KBId.of(kbName, modelName)).collect(Collectors.toList());
+        return stargraph.getKBIds(kbName);
     }
 
     public BaseGraphModel getGraphModel() {

@@ -37,7 +37,12 @@ import java.nio.file.StandardCopyOption;
 
 public final class TestUtils {
 
-    public static Path createPath(Path root, KBId kbId) throws IOException {
+    public static Path createGraphModelPath(Path root, String dbId) throws IOException {
+        Files.delete(root);
+        return Files.createDirectories(root.resolve(dbId).resolve("graph"));
+    }
+
+    public static Path createModelPath(Path root, KBId kbId) throws IOException {
         Files.delete(root);
         return Files.createDirectories(root.resolve(kbId.getId()).resolve(kbId.getModel()));
     }
@@ -59,11 +64,11 @@ public final class TestUtils {
         Path root;
         try {
             root = Files.createTempFile("stargraph-", "-dataDir");
-            Path factsPath = createPath(root, KBId.of("obama", "facts"));
+            Path factsPath = createGraphModelPath(root, "obama");
             Path hdtPath = factsPath.resolve("triples.hdt");
             Path ntFilePath = factsPath.resolve("triples.nt");
-            copyResource("dataSets/obama/facts/triples.hdt", hdtPath);
-            copyResource("dataSets/obama/facts/triples.nt", ntFilePath);
+            copyResource("dataSets/obama/graph/triples.hdt", hdtPath);
+            copyResource("dataSets/obama/graph/triples.nt", ntFilePath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

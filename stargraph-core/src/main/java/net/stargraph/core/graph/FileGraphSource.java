@@ -62,7 +62,7 @@ public abstract class FileGraphSource implements GraphSource<BaseGraphModel> {
     @Override
     public void extend(BaseGraphModel graphModel) {
         try {
-            File file = DataUtils.getData(stargraph, resource, KBId.of(dbId, "facts"), storeFilename).toFile();
+            File file = DataUtils.getData(resource, stargraph.getGraphModelDataDir(dbId), storeFilename).toFile();
             if (!file.exists()) {
                 if (required) {
                     throw new FileNotFoundException("File not found: '" + file + "'");

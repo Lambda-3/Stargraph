@@ -28,6 +28,7 @@ package net.stargraph.core;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigObject;
 import net.stargraph.ModelUtils;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.data.BaseDataProviderFactory;
@@ -50,8 +51,10 @@ import org.slf4j.MarkerFactory;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The Stargraph database core implementation.
@@ -109,32 +112,12 @@ public final class Stargraph {
         throw new StarGraphException("KB not found: '" + dbId + "'");
     }
 
-    public String getGraphModelPath(String dbid) {
-        return String.format("kb.%s.graphmodel", dbid);
-    }
-
-    public Config getMainConfig() {
-        return mainConfig;
-    }
-
-    public Config getModelConfig(KBId kbId) {
-        return mainConfig.getConfig(kbId.getModelPath());
-    }
-
-    public Config getGraphModelConfig(String dbid) {
-        return mainConfig.getConfig(getGraphModelPath(dbid));
-    }
-
     public Collection<KBCore> getKBs() {
         return kbCoreMap.values();
     }
 
     public boolean hasKB(String kbName) {
         return getKBs().stream().anyMatch(core -> core.getKBName().equals(kbName));
-    }
-
-    public String getDataRootDir() {
-        return dataRootDir;
     }
 
     public Indexer getIndexer(KBId kbId) {
@@ -147,14 +130,6 @@ public final class Stargraph {
 
     public void setKBInitSet(String ... kbIds) {
         this.kbInitSet.addAll(Arrays.asList(kbIds));
-    }
-
-    public void setDataRootDir(String dataRootDir) {
-        this.dataRootDir = Objects.requireNonNull(dataRootDir);
-    }
-
-    public void setDataRootDir(File dataRootDir) {
-        this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
     }
 
     public void setDefaultIndicesFactory(IndicesFactory indicesFactory) {
@@ -273,9 +248,8 @@ public final class Stargraph {
         return indicesFactory;
     }
 
-    private boolean isEnabled(String kbName) {
-        Config kbConfig = mainConfig.getConfig(String.format("kb.%s", kbName));
-        return kbConfig.getBoolean("enabled");
+    private boolean isEnabled(String dbId) {
+        return getKBConfig(dbId).getBoolean("enabled");
     }
 
     private void initializeKBs() {
@@ -311,24 +285,6 @@ public final class Stargraph {
         }
     }
 
-    private List<? extends Config> getProcessorsCfg(KBId kbId) {
-        String path = String.format("%s.processors", kbId.getModelPath());
-        if (mainConfig.hasPath(path)) {
-            return mainConfig.getConfigList(path);
-        }
-        return null;
-    }
-
-    private Config getGraphModelProviderCfg(String dbid) {
-        String path = String.format("%s.provider", getGraphModelPath(dbid));
-        return mainConfig.getConfig(path);
-    }
-
-    private Config getDataProviderCfg(KBId kbId) {
-        String path = String.format("%s.provider", kbId.getModelPath());
-        return mainConfig.getConfig(path);
-    }
-
     private IndicesFactory createDefaultIndicesFactory() {
         return getIndicesFactory(null);
     }
@@ -345,5 +301,70 @@ public final class Stargraph {
 
     public EntitySearcher getEntitySearcher() {
         return entitySearcher;
+    }
+
+
+    public List<KBId> getKBIds(String dbId) {
+        ConfigObject typeObj = getKBConfig(dbId).getObject("model");
+        return typeObj.keySet().stream().map(modelName -> KBId.of(dbId, modelName)).collect(Collectors.toList());
+    }
+
+    // Configuration-Objects
+
+    public Config getMainConfig() {
+        return mainConfig;
+    }
+
+    public Config getKBConfig(String dbId) {
+        return mainConfig.getConfig(String.format("kb.%s", dbId));
+    }
+
+    public Config getGraphModelConfig(String dbid) {
+        return mainConfig.getConfig(String.format("kb.%s.graphmodel", dbid));
+    }
+
+    public Config getModelConfig(KBId kbId) {
+        return mainConfig.getConfig(String.format("kb.%s.model.%s", kbId.getId(), kbId.getModel()));
+    }
+
+    private Config getGraphModelProviderCfg(String dbid) {
+        return getGraphModelConfig(dbid).getConfig("provider");
+    }
+
+    private Config getDataProviderCfg(KBId kbId) {
+        return getModelConfig(kbId).getConfig("provider");
+    }
+
+    private List<? extends Config> getProcessorsCfg(KBId kbId) {
+        if (getModelConfig(kbId).hasPath("processors")) {
+            return getModelConfig(kbId).getConfigList("processors");
+        }
+        return null;
+    }
+
+    // Directories
+
+    public void setDataRootDir(String dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir);
+    }
+
+    public void setDataRootDir(File dataRootDir) {
+        this.dataRootDir = Objects.requireNonNull(dataRootDir.getAbsolutePath());
+    }
+
+    public String getDataRootDir() {
+        return dataRootDir;
+    }
+
+    public String getKBDataDir(String dbId) {
+        return Paths.get(getDataRootDir(), dbId).toString();
+    }
+
+    public String getGraphModelDataDir(String dbId) {
+        return Paths.get(getDataRootDir(), dbId, "graph").toString();
+    }
+
+    public String getModelDataDir(KBId kbId) {
+        return Paths.get(getDataRootDir(), kbId.getId(), kbId.getModel()).toString();
     }
 }

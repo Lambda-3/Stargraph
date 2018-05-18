@@ -41,23 +41,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static net.stargraph.test.TestUtils.copyResource;
-import static net.stargraph.test.TestUtils.createPath;
+import static net.stargraph.test.TestUtils.createGraphModelPath;
 
 public final class SimpleKBTest {
-    private String kbName = "simple";
     private Stargraph stargraph;
-    private KBId factsId = KBId.of(kbName, "facts");
-    private KBId entitiesId = KBId.of(kbName, "entities");
+    private String dbId = "simple";
+    private KBId factsId = KBId.of(dbId, "facts");
+    private KBId entitiesId = KBId.of(dbId, "entities");
 
     @BeforeClass
     public void before() throws IOException {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
-        Path ntPath = createPath(root, factsId).resolve("triples.nt");
-        copyResource("dataSets/simple/facts/triples.nt", ntPath);
+        Path ntPath = createGraphModelPath(root, dbId).resolve("triples.nt");
+        copyResource("dataSets/simple/graph/triples.nt", ntPath);
         ConfigFactory.invalidateCaches();
         Config config = ConfigFactory.load().getConfig("stargraph");
         stargraph = new Stargraph(config, false);
-        stargraph.setKBInitSet(kbName);
+        stargraph.setKBInitSet(dbId);
         stargraph.setDefaultIndicesFactory(new NullIndicesFactory());
         stargraph.setDefaultGraphModelProviderFactory(new NTriplesModelProviderFactory(stargraph));
         stargraph.setDataRootDir(root.toFile());

@@ -49,17 +49,15 @@ public class DataUtils {
     private static Marker marker = MarkerFactory.getMarker("core");
 
     public static Path getData(Stargraph stargraph, String resource, KBId kbId, String storeFilename) throws IOException {
-        Path baseDir = Paths.get(stargraph.getDataRootDir(), kbId.getId(), kbId.getModel());
-
-        return getData(resource, baseDir, storeFilename);
+        return getData(resource, stargraph.getModelDataDir(kbId), storeFilename);
     }
 
-    public static Path getData(String resource, Path baseDir, String storeFilename) throws IOException {
+    public static Path getData(String resource, String baseDir, String storeFilename) throws IOException {
 
         // web resource
         if (resource.startsWith("http://")) {
             String stFilename = (storeFilename != null)? storeFilename : FilenameUtils.getName(resource);
-            Path storePath = Paths.get(baseDir.toString(), stFilename);
+            Path storePath = Paths.get(baseDir, stFilename);
 
             if (storePath.toFile().exists()) {
                 // already downloaded
@@ -77,7 +75,7 @@ public class DataUtils {
             else
             // It's relative to the storeDirectory
             {
-                return Paths.get(baseDir.toString(), resource);
+                return Paths.get(baseDir, resource);
             }
     }
 

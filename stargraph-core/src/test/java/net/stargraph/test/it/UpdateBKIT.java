@@ -49,7 +49,7 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 import static net.stargraph.test.TestUtils.copyResource;
-import static net.stargraph.test.TestUtils.createPath;
+import static net.stargraph.test.TestUtils.createGraphModelPath;
 
 /**
  * Aims to test the incremental features.
@@ -69,7 +69,7 @@ public final class UpdateBKIT {
     private Stargraph stargraph;
     private KBCore core;
     private KBLoader loader;
-    private KBId kbId = KBId.of("simple", "facts");
+    private String dbId = "simple";
 
     private void setup(String type) throws IOException {
         Path root = Files.createTempFile("stargraph-", "-dataDir");
@@ -77,16 +77,16 @@ public final class UpdateBKIT {
         Path path;
         switch (type) {
             case "hdt":
-                path = createPath(root, kbId).resolve("triples.hdt");
-                copyResource("dataSets/simple/facts/triples.hdt", path);
+                path = createGraphModelPath(root, dbId).resolve("triples.hdt");
+                copyResource("dataSets/simple/graph/triples.hdt", path);
                 break;
             case "nt":
-                path = createPath(root, kbId).resolve("triples.nt");
-                copyResource("dataSets/simple/facts/triples.nt", path);
+                path = createGraphModelPath(root, dbId).resolve("triples.nt");
+                copyResource("dataSets/simple/graph/triples.nt", path);
                 break;
             case "ttl":
-                path = createPath(root, kbId).resolve("triples.ttl");
-                copyResource("dataSets/simple/facts/triples.ttl", path);
+                path = createGraphModelPath(root, dbId).resolve("triples.ttl");
+                copyResource("dataSets/simple/graph/triples.ttl", path);
                 break;
             default:
                 throw new AssertionError("Unknown type");

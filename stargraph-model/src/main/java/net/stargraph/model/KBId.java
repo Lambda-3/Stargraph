@@ -48,14 +48,6 @@ public final class KBId implements Serializable {
         return new KBId(id, model);
     }
 
-    public String getModelPath() {
-        return String.format("kb.%s.model.%s", id, model);
-    }
-
-    public String getKBPath() {
-        return String.format("kb.%s", id);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

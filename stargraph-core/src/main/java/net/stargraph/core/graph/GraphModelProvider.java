@@ -73,7 +73,7 @@ public class GraphModelProvider {
             graphModel = new MGraphModel();
         } else {
             logger.info(marker, "Prepare a stored graph model [reset={}].", reset);
-            Path storePath = getGraphModelStoreDir(stargraph, dbId);
+            Path storePath = Paths.get(stargraph.getGraphModelDataDir(dbId), "tdb-store");
             graphModel = new SGraphModel(storePath.toString(), reset);
         }
 
@@ -98,10 +98,5 @@ public class GraphModelProvider {
         }
 
         return graphModel;
-    }
-
-    private Path getGraphModelStoreDir(Stargraph stargraph, String dbId) {
-        String rootPath = stargraph.getDataRootDir();
-        return Paths.get(rootPath, dbId, "facts", "graph");
     }
 }
