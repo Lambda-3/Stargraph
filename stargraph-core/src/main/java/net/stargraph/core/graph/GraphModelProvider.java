@@ -68,30 +68,36 @@ public class GraphModelProvider {
     public BaseGraphModel createGraphModel() {
         BaseGraphModel graphModel;
 
-        long startTime = System.nanoTime() / 1000_000;
         if (inMemory) {
-            logger.info(marker, "Create an in-memory graph model..");
+            logger.info(marker, "Prepare an in-memory graph model.");
             graphModel = new MGraphModel();
         } else {
-            logger.info(marker, "Create a stored graph model [reset={}]..", reset);
+            logger.info(marker, "Prepare a stored graph model [reset={}].", reset);
             Path storePath = getGraphModelStoreDir(stargraph, dbId);
             graphModel = new SGraphModel(storePath.toString(), reset);
         }
 
-        // Extend graph model
-        try {
-            graphSources.forEach(s -> s.extend(graphModel));
-            long elapsedTime = (System.nanoTime() / 1000_000) - startTime;
+        if (inMemory || reset) {
 
-            logger.info(marker, "Graph model created in {} min, {} sec.",
-                    TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
-                    TimeUnit.MILLISECONDS.toSeconds(elapsedTime) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime))
-                    );
-            return graphModel;
-        } catch (Exception e) {
-            throw new StarGraphException(e);
+            // Extend graph model
+            try {
+                logger.info(marker, "Create graph model. This can take some time ;) ..");
+                long startTime = System.nanoTime() / 1000_000;
+
+                graphSources.forEach(s -> s.extend(graphModel));
+
+                long elapsedTime = (System.nanoTime() / 1000_000) - startTime;
+                logger.info(marker, "Graph model created in {} min, {} sec.",
+                        TimeUnit.MILLISECONDS.toMinutes(elapsedTime),
+                        TimeUnit.MILLISECONDS.toSeconds(elapsedTime) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(elapsedTime))
+                );
+            } catch (Exception e) {
+                throw new StarGraphException(e);
+            }
         }
+
+        return graphModel;
     }
 
     private Path getGraphModelStoreDir(Stargraph stargraph, String dbId) {

@@ -98,6 +98,9 @@ public class SGraphModel extends BaseGraphModel {
         try {
             if (directory.exists()) {
                 FileUtils.deleteDirectory(directory.getAbsoluteFile());
+                if (directory.exists()) {
+                    throw new StarGraphException("Directory should be gone.");
+                }
             }
             directory.mkdirs();
         } catch (IOException e) {
