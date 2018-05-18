@@ -41,7 +41,7 @@ import java.util.Objects;
 
 public abstract class FileGraphSource implements GraphSource<BaseGraphModel> {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
+    protected Marker marker = MarkerFactory.getMarker("graph");
 
     protected final Stargraph stargraph;
     protected final String dbId;

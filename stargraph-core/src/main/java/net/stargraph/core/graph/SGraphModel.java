@@ -45,7 +45,7 @@ import java.util.Objects;
  */
 public class SGraphModel extends BaseGraphModel {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
+    protected Marker marker = MarkerFactory.getMarker("graph");
 
     private final File directory;
     private Dataset dataset;
@@ -93,6 +93,8 @@ public class SGraphModel extends BaseGraphModel {
 
     @Override
     public void reset() {
+        logger.info(marker, "Reset graph model");
+
         try {
             if (directory.exists()) {
                 FileUtils.deleteDirectory(directory.getAbsoluteFile());

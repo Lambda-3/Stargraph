@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GraphModelProvider {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Marker marker = MarkerFactory.getMarker("core");
+    protected Marker marker = MarkerFactory.getMarker("graph");
 
     private Stargraph stargraph;
     private String dbId;
@@ -73,7 +73,7 @@ public class GraphModelProvider {
             logger.info(marker, "Create an in-memory graph model..");
             graphModel = new MGraphModel();
         } else {
-            logger.info(marker, "Create a stored graph model..");
+            logger.info(marker, "Create a stored graph model [reset={}]..", reset);
             Path storePath = getGraphModelStoreDir(stargraph, dbId);
             graphModel = new SGraphModel(storePath.toString(), reset);
         }
