@@ -50,14 +50,10 @@ public class SGraphModel extends BaseGraphModel {
     private final File directory;
     private Dataset dataset;
 
-    public SGraphModel(String directory, boolean reset) {
+    public SGraphModel(String directory) {
         this.directory = new File(Objects.requireNonNull(directory));
         if (!this.directory.exists()) {
             this.directory.mkdirs();
-        }
-
-        if (reset) {
-            reset();
         }
 
         this.dataset = TDBFactory.createDataset(directory);

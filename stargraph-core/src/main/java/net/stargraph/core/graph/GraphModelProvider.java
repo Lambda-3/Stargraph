@@ -67,6 +67,7 @@ public class GraphModelProvider {
 
     public BaseGraphModel createGraphModel() {
         BaseGraphModel graphModel;
+        boolean create = true;
 
         if (inMemory) {
             logger.info(marker, "Prepare an in-memory graph model.");
@@ -74,12 +75,20 @@ public class GraphModelProvider {
         } else {
             logger.info(marker, "Prepare a stored graph model [reset={}].", reset);
             Path storePath = Paths.get(stargraph.getGraphModelDataDir(dbId), "tdb-store");
-            graphModel = new SGraphModel(storePath.toString(), reset);
+
+            if (storePath.toFile().exists() && !reset) {
+                create = false;
+            }
+            graphModel = new SGraphModel(storePath.toString());
         }
 
-        if (inMemory || reset) {
+        if (reset) {
+            graphModel.reset();
+        }
 
-            // Extend graph model
+        if (create) {
+
+            // Create graph model
             try {
                 logger.info(marker, "Create graph model. This can take some time ;) ..");
                 long startTime = System.nanoTime() / 1000_000;
