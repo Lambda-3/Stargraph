@@ -30,11 +30,13 @@ import net.stargraph.StarGraphException;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +52,10 @@ public class SGraphModel extends BaseGraphModel {
     private final File directory;
     private Dataset dataset;
 
+    private ReadWrite transactionState;
+    private Model model;
+    private boolean commit;
+
     public SGraphModel(String directory) {
         this.directory = new File(Objects.requireNonNull(directory));
         if (!this.directory.exists()) {
@@ -57,33 +63,92 @@ public class SGraphModel extends BaseGraphModel {
         }
 
         this.dataset = TDBFactory.createDataset(directory);
+        this.commit = true;
+    }
+
+    public boolean inReadTransaction() {
+        return transactionState != null && transactionState.equals(ReadWrite.READ);
+    }
+
+    public boolean inWriteTransaction() {
+        return transactionState != null && transactionState.equals(ReadWrite.WRITE);
+    }
+
+    public boolean inTransaction() {
+        return inReadTransaction() || inWriteTransaction();
     }
 
     @Override
     public void doRead(ReadTransaction readTransaction) {
-        dataset.begin(ReadWrite.READ) ;
+        boolean initTransaction = !inTransaction();
+
+        if (initTransaction) {
+            transactionState = ReadWrite.READ;
+            dataset.begin(ReadWrite.READ);
+        }
+
         try {
-            readTransaction.readTransaction(dataset.getDefaultModel());
+            if (initTransaction) {
+                model = dataset.getDefaultModel();
+            }
+            if (model == null) {
+                throw new AssertionError("Model should be available.");
+            }
+
+            // read-operation
+            readTransaction.readTransaction(model);
+
         } catch (Exception e) {
             throw new StarGraphException(e);
         } finally {
-            dataset.end() ;
+            if (initTransaction) {
+                dataset.end();
+                model = null;
+                transactionState = null;
+            }
         }
     }
 
     @Override
     public void doWrite(WriteTransaction writeTransaction) {
-        dataset.begin(ReadWrite.WRITE) ;
+        if (inReadTransaction()) {
+            throw new InvalidStateException("Currently in read transaction.");
+        }
+
+        boolean initTransaction = !inTransaction();
+
+        if (initTransaction) {
+            commit = true;
+            transactionState = ReadWrite.WRITE;
+            dataset.begin(ReadWrite.WRITE);
+        }
+
         try {
-            if (writeTransaction.writeTransaction(dataset.getDefaultModel())) {
-                dataset.commit();
-            } else {
-                dataset.abort();
+            if (initTransaction) {
+                model = dataset.getDefaultModel();
+            }
+            if (model == null) {
+                throw new AssertionError("Model should be available.");
+            }
+
+            // write-operation
+            commit = commit && writeTransaction.writeTransaction(model);
+
+            if (initTransaction) {
+                if (commit) {
+                    dataset.commit();
+                } else {
+                    dataset.abort();
+                }
             }
         } catch (Exception e) {
             throw new StarGraphException(e);
         } finally {
-            dataset.end() ;
+            if (initTransaction) {
+                dataset.end();
+                model = null;
+                transactionState = null;
+            }
         }
     }
 
