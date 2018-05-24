@@ -129,8 +129,9 @@ public final class QueryEngine {
         List<DataModelBinding> bindings = queryBuilder.getBindings();
 
         triplePatterns.forEach(triplePattern -> {
-            logger.debug(marker, "Resolving {}", triplePattern);
-            resolve(asTriple(triplePattern, bindings), queryBuilder);
+            Triple triple = asTriple(triplePattern, bindings);
+            logger.debug(marker, "Resolving {}", triple);
+            resolve(triple, queryBuilder);
         });
 
         String sparqlQueryStr = queryBuilder.build();

@@ -32,10 +32,20 @@ import net.stargraph.rank.ModifiableSearchParams;
 import java.util.List;
 
 public interface SearchQueryGenerator {
+
+    // return facts that represent an is-a relationship between an arbitrary subject and an object's value matching the searchTerm
     SearchQueryHolder findClassFacts(ModifiableSearchParams searchParams);
+
+    // return entities that match any of the given ids
     SearchQueryHolder entitiesWithIds(List<String> idList, ModifiableSearchParams searchParams);
+
+    // return entities whose value matches the searchTerm (fuzzy)
     SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits);
+
+    // return property instances with either the hyponyms, hypernyms or synonyms matching the searchTerm (why not including the value?)
     SearchQueryHolder findPropertyInstances(ModifiableSearchParams searchParams);
+
+    // return facts that represent an arbitrary relationship with the pivot being either a subject or an object
     SearchQueryHolder findPivotFacts(InstanceEntity pivot, ModifiableSearchParams searchParams);
 
 }
