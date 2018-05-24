@@ -29,7 +29,7 @@ package net.stargraph.test;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.core.query.response.AnswerSetResponse;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class ClueQueryTest {
 
         String clue = "This association of British insurance underwriters began in 1688.";
         AnswerSetResponse response = (AnswerSetResponse) queryEngine.query(clue);
-        Assert.assertTrue(response.getEntityAnswer().contains(new InstanceEntity("http://dbpedia.org/resource/Lloyd%27s_of_London", "Lloyd's of London")));
+        Assert.assertTrue(response.getEntityAnswer().contains(new ResourceEntity("http://dbpedia.org/resource/Lloyd%27s_of_London", "Lloyd's of London")));
 
     }
 

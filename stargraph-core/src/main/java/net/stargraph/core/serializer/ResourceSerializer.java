@@ -28,23 +28,26 @@ package net.stargraph.core.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import net.stargraph.model.ClassEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.KBId;
 
 import java.io.IOException;
 
-class ClassSerializer extends AbstractSerializer<ClassEntity> {
+class ResourceSerializer extends AbstractSerializer<ResourceEntity> {
 
-    ClassSerializer(KBId kbId) {
-        super(kbId, ClassEntity.class);
+    ResourceSerializer(KBId kbId) {
+        super(kbId, ResourceEntity.class);
     }
 
     @Override
-    public void serialize(ClassEntity value, JsonGenerator g, SerializerProvider provider) throws IOException {
+    public void serialize(ResourceEntity value, JsonGenerator g, SerializerProvider provider) throws IOException {
         g.writeStartObject();
         g.writeStringField("id", value.getId());
         g.writeStringField("value", value.getValue());
         g.writeBooleanField("complex", value.isComplex());
+        if (!value.getOtherValues().isEmpty()) {
+            g.writeObjectField("otherValues", value.getOtherValues());
+        }
         g.writeEndObject();
     }
 }

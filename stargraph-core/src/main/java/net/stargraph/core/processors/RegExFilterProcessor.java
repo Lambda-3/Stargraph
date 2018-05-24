@@ -31,7 +31,7 @@ import net.stargraph.data.processor.BaseProcessor;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.model.PropertyEntity;
 
@@ -73,7 +73,7 @@ public class RegExFilterProcessor extends BaseProcessor {
         Fact fact = (Fact) holder.get();
         boolean excluded = false;
         if (subjExclusions != null) {
-            InstanceEntity subj = (InstanceEntity) fact.getSubject();
+            ResourceEntity subj = (ResourceEntity) fact.getSubject();
             excluded = isExcluded(subjExclusions, subj.getId());
         }
 

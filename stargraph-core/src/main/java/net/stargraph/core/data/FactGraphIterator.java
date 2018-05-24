@@ -33,7 +33,7 @@ import net.stargraph.model.*;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Statement;
 
-import static net.stargraph.ModelUtils.createInstance;
+import static net.stargraph.ModelUtils.createResource;
 import static net.stargraph.ModelUtils.createProperty;
 
 final class FactGraphIterator extends GraphIterator<Indexable> {
@@ -48,14 +48,13 @@ final class FactGraphIterator extends GraphIterator<Indexable> {
 
     @Override
     protected Indexable buildNext(Statement statement) {
-        InstanceEntity instanceEntity = createInstance(applyNS(statement.getSubject().getURI()));
+        ResourceEntity resourceEntity = createResource(applyNS(statement.getSubject().getURI()));
         PropertyEntity propertyEntity = createProperty(applyNS(statement.getPredicate().getURI()));
 
         LabeledEntity labeledEntity;
 
         if (!statement.getObject().isLiteral()) {
-            //Is created as an instance but can be changed to a class down on the workflow in EntityClassifierProcessor.
-            labeledEntity = createInstance(applyNS(statement.getObject().asResource().getURI()));
+            labeledEntity = createResource(applyNS(statement.getObject().asResource().getURI()));
         } else {
             Literal literal = statement.getObject().asLiteral();
             String dataType = literal.getDatatypeURI();
@@ -65,6 +64,6 @@ final class FactGraphIterator extends GraphIterator<Indexable> {
         }
 
 
-        return new Indexable(new Fact(kbId, instanceEntity, propertyEntity, labeledEntity), kbId);
+        return new Indexable(new Fact(kbId, resourceEntity, propertyEntity, labeledEntity), kbId);
     }
 }

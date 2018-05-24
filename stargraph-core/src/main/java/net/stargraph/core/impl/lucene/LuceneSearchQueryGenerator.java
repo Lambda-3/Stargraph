@@ -3,7 +3,7 @@ package net.stargraph.core.impl.lucene;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.SearchQueryHolder;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.rank.ModifiableSearchParams;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
@@ -35,7 +35,7 @@ public class LuceneSearchQueryGenerator implements SearchQueryGenerator {
     }
 
     @Override
-    public SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits) {
+    public SearchQueryHolder findResourceInstances(ModifiableSearchParams searchParams, int maxEdits) {
         //Query query = new FuzzyQuery(new Term("value", searchParams.getSearchTerm()), maxEdits, 0, 50, false); // This does not take into account multiple words of the search term
         Query query = fuzzyPhraseSearch("value", searchParams.getSearchTerm(), maxEdits);
 
@@ -49,7 +49,7 @@ public class LuceneSearchQueryGenerator implements SearchQueryGenerator {
     }
 
     @Override
-    public SearchQueryHolder findPivotFacts(InstanceEntity pivot, ModifiableSearchParams searchParams) {
+    public SearchQueryHolder findPivotFacts(ResourceEntity pivot, ModifiableSearchParams searchParams) {
         //TODO implement
         throw new UnsupportedOperationException("Not implemented yet");
     }

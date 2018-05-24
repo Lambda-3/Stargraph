@@ -30,7 +30,7 @@ import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.search.BaseSearcher;
 import net.stargraph.core.search.SearchQueryHolder;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.KBId;
 import net.stargraph.rank.Score;
 import net.stargraph.rank.Scores;
@@ -69,7 +69,7 @@ public final class LuceneSearcher extends BaseSearcher {
                             //TODO support indexing of other types?
                             String id = hitDoc.get("id");
                             String value = hitDoc.get("value");
-                            InstanceEntity entity = new InstanceEntity(id, value);
+                            ResourceEntity entity = new ResourceEntity(id, value);
 
                             return new Score(entity, hit.score);
                         } catch (Exception e) {

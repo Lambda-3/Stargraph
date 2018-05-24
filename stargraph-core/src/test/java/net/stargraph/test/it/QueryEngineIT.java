@@ -30,7 +30,7 @@ import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.response.SPARQLSelectResponse;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.LabeledEntity;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class QueryEngineIT {
-    private static String dbId = "dbpedia-2016";
+    private static String dbId = "obama";
     private QueryEngine queryEngine;
 
     @BeforeClass
@@ -56,7 +56,7 @@ public class QueryEngineIT {
     @Test
     public void whoIsTheWifeOfBarackObamaTest() {
         AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Who is the wife of Barack Obama?");
-        Assert.assertTrue(response.getEntityAnswer().contains(new InstanceEntity("http://dbpedia.org/resource/Michelle_Obama", "Michelle Obama")));
+        Assert.assertTrue(response.getEntityAnswer().contains(new ResourceEntity("http://dbpedia.org/resource/Michelle_Obama", "Michelle Obama")));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class QueryEngineIT {
     @DataProvider(name = "nlQueries")
     public static Iterator<Object[]> createTestSet() throws Exception {
         List<Object[]> data = new ArrayList<>();
-        try (InputStream is = ClassLoader.getSystemResourceAsStream(dbId + "-test-queries.json")) {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream("dbpedia-2016" + "-test-queries.json")) {
             JsonReader reader = Json.createReader(is);
             JsonArray arr = reader.readArray();
             arr.getValuesAs(JsonObject.class).forEach(entry -> {

@@ -28,7 +28,7 @@ package net.stargraph.core.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import net.stargraph.core.processors.EntityClassifierProcessor;
+import net.stargraph.core.processors.FactClassifierProcessor;
 import net.stargraph.model.KBId;
 import net.stargraph.model.PropertyEntity;
 
@@ -44,7 +44,7 @@ class PropertySerializer extends AbstractSerializer<PropertyEntity> {
     public void serialize(PropertyEntity value, JsonGenerator g, SerializerProvider provider) throws IOException {
         g.writeStartObject();
         g.writeStringField("id", value.getId());
-        if (!EntityClassifierProcessor.isRelation(value)) {
+        if (!FactClassifierProcessor.isRelation(value)) {
             g.writeStringField("value", value.getValue());
 
             if (value.getHypernyms() != null && !value.getHypernyms().isEmpty()) {

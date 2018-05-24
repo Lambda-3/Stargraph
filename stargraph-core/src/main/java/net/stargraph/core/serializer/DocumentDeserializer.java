@@ -59,12 +59,10 @@ class DocumentDeserializer extends AbstractDeserializer<Document> {
                         String entId = ent.get("id").asText();
                         String entValue = ent.get("value").asText();
 
-                        if (ent.has("complex")) {
-                            entities.add(new ClassEntity(entId, entValue, ent.get("complex").asBoolean()));
-                        } else if (ent.has("language")) {
+                        if (ent.has("language")) {
                             entities.add(new ValueEntity(entId, entValue, ent.get("dataType").asText(null), ent.get("language").asText(null)));
                         } else {
-                            entities.add(new InstanceEntity(entId, entValue));
+                            entities.add(new ResourceEntity(entId, entValue));
                         }
                     }
                 }

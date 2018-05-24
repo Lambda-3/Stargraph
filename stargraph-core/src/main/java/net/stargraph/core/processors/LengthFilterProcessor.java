@@ -31,7 +31,7 @@ import net.stargraph.data.processor.BaseProcessor;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.data.processor.ProcessorException;
 import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.PropertyEntity;
 
 import java.io.Serializable;
@@ -66,8 +66,8 @@ public final class LengthFilterProcessor extends BaseProcessor {
     public void doRun(Holder<Serializable> holder) throws ProcessorException {
         Serializable entry = holder.get();
 
-        if (entry instanceof InstanceEntity) {
-            String value = ((InstanceEntity) entry).getValue();
+        if (entry instanceof ResourceEntity) {
+            String value = ((ResourceEntity) entry).getValue();
             holder.setSink(!inRange(value.length(), sMin, sMax));
         }
         else if (entry instanceof PropertyEntity) {
@@ -76,8 +76,8 @@ public final class LengthFilterProcessor extends BaseProcessor {
         }
         else if (entry instanceof Fact) {
             Fact fact = (Fact) entry;
-            if (fact.getSubject() instanceof InstanceEntity) {
-                String value = ((InstanceEntity) fact.getSubject()).getValue();
+            if (fact.getSubject() instanceof ResourceEntity) {
+                String value = ((ResourceEntity) fact.getSubject()).getValue();
                 holder.setSink(!inRange(value.length(), sMin, sMax));
             }
 

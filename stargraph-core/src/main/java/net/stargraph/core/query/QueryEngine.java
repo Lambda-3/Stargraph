@@ -36,7 +36,7 @@ import net.stargraph.core.query.response.AnswerSetResponse;
 import net.stargraph.core.query.response.NoResponse;
 import net.stargraph.core.query.response.SPARQLSelectResponse;
 import net.stargraph.core.search.EntitySearcher;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.LabeledEntity;
 import net.stargraph.query.InteractionMode;
 import net.stargraph.query.Language;
@@ -164,7 +164,7 @@ public final class QueryEngine {
 
         EntityQueryBuilder queryBuilder = new EntityQueryBuilder();
         EntityQuery query = queryBuilder.parse(userQuery, ENTITY_SIMILARITY);
-        InstanceEntity instance = resolveInstance(query.getCoreEntity());
+        ResourceEntity instance = resolveInstance(query.getCoreEntity());
 
         Set<LabeledEntity> entities = new HashSet<>();
         // \TODO Call mltSearch here
@@ -187,7 +187,7 @@ public final class QueryEngine {
 
         EntityQueryBuilder queryBuilder = new EntityQueryBuilder();
         EntityQuery query = queryBuilder.parse(userQuery, DEFINITION);
-        InstanceEntity instance = resolveInstance(query.getCoreEntity());
+        ResourceEntity instance = resolveInstance(query.getCoreEntity());
 
         Set<LabeledEntity> entities = new HashSet<>();
         Set<String> textAnswers = new HashSet<>();
@@ -234,7 +234,7 @@ public final class QueryEngine {
     private void resolve(Triple triple, SPARQLQueryBuilder builder) {
         if (triple.p.getModelType() != DataModelType.TYPE) {
             // if predicate is not a type assume: I (C|P) V pattern
-            InstanceEntity pivot = resolvePivot(triple.s, builder);
+            ResourceEntity pivot = resolvePivot(triple.s, builder);
             pivot = pivot != null ? pivot : resolvePivot(triple.o, builder);
             resolvePredicate(pivot, triple.p, builder);
         }
@@ -255,7 +255,7 @@ public final class QueryEngine {
         }
     }
 
-    private void resolvePredicate(InstanceEntity pivot, DataModelBinding binding, SPARQLQueryBuilder builder) {
+    private void resolvePredicate(ResourceEntity pivot, DataModelBinding binding, SPARQLQueryBuilder builder) {
         if ((binding.getModelType() == DataModelType.CLASS
                 || binding.getModelType() == DataModelType.PROPERTY) && !builder.isResolved(binding)) {
 
@@ -266,30 +266,30 @@ public final class QueryEngine {
         }
     }
 
-    private InstanceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
+    private ResourceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
         List<Score> mappings = builder.getMappings(binding);
         if (!mappings.isEmpty()) {
-            return (InstanceEntity)mappings.get(0).getEntry();
+            return (ResourceEntity)mappings.get(0).getEntry();
         }
 
         if (binding.getModelType() == DataModelType.INSTANCE) {
 
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-            Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
-            InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
+            Scores scores = entitySearcher.resourceSearch(searchParams, rankParams);
+            ResourceEntity instance = (ResourceEntity) scores.get(0).getEntry();
             builder.add(binding, Collections.singletonList(scores.get(0)));
             return instance;
         }
         return null;
     }
 
-    private InstanceEntity resolveInstance(String instanceTerm) {
+    private ResourceEntity resolveInstance(String instanceTerm) {
 
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(instanceTerm);
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-        Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
-        return (InstanceEntity) scores.get(0).getEntry();
+        Scores scores = entitySearcher.resourceSearch(searchParams, rankParams);
+        return (ResourceEntity) scores.get(0).getEntry();
     }
 
     private Triple asTriple(TriplePattern pattern, List<DataModelBinding> bindings) {

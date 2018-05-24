@@ -29,7 +29,7 @@ package net.stargraph.test;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.query.QueryEngine;
 import net.stargraph.core.query.response.AnswerSetResponse;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -49,7 +49,7 @@ public class EntitySimilarityQueryTest {
     public void simpleEntityQuery() {
 
         AnswerSetResponse response = (AnswerSetResponse) queryEngine.query("Entities similar to Barack Obama");
-        Assert.assertTrue(response.getEntityAnswer().contains(new InstanceEntity("http://dbpedia.org/resource/Joe_Biden", "Joe Biden")));
+        Assert.assertTrue(response.getEntityAnswer().contains(new ResourceEntity("http://dbpedia.org/resource/Joe_Biden", "Joe Biden")));
 
     }
 

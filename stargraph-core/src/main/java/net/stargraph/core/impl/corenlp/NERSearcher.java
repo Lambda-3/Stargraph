@@ -31,7 +31,8 @@ import edu.stanford.nlp.ling.CoreLabel;
 import net.stargraph.core.ner.LinkedNamedEntity;
 import net.stargraph.core.ner.NER;
 import net.stargraph.core.search.EntitySearcher;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.LabeledEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.query.Language;
 import net.stargraph.rank.ModifiableSearchParams;
 import net.stargraph.rank.ParamsBuilder;
@@ -193,11 +194,11 @@ public final class NERSearcher implements NER {
 
             logger.info(marker, "Trying to link {}", namedEntity);
 
-            final Scores scores = entitySearcher.instanceSearch(searchParams, ParamsBuilder.levenshtein());
+            final Scores scores = entitySearcher.resourceSearch(searchParams, ParamsBuilder.levenshtein());
 
             // Currently, we only care about the highest scored entity.
             if (scores.size() > 0) {
-                InstanceEntity instance = (InstanceEntity) scores.get(0).getEntry();
+                LabeledEntity instance = (LabeledEntity) scores.get(0).getEntry();
                 double score = scores.get(0).getValue();
                 namedEntity.link(instance, score);
             }

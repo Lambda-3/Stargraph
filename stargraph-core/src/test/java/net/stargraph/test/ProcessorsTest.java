@@ -63,7 +63,7 @@ public final class ProcessorsTest {
                 "http://purl.org/dc/terms/subject",
                 "http://dbpedia.org/resource/Category:Football_clubs_in_Germany");
 
-        Processor entityClassifierProcessor = Processors.create(config.withOnlyPath("entity-classifier"));
+        Processor entityClassifierProcessor = Processors.create(config.withOnlyPath("fact-classifier"));
         Processor nsProcessor = Processors.create(config.withOnlyPath("sink-duplicate"));
         ProcessorChain chain = new ProcessorChain(Arrays.asList(entityClassifierProcessor, nsProcessor));
 
@@ -71,7 +71,7 @@ public final class ProcessorsTest {
         chain.run(holder);
         Fact processed = (Fact) holder.get();
 
-        Assert.assertEquals(((InstanceEntity) processed.getSubject()).getId(),
+        Assert.assertEquals(((ResourceEntity) processed.getSubject()).getId(),
                 "http://dbpedia.org/resource/FC_Oberlausitz_Neugersdorf");
         Assert.assertEquals(processed.getPredicate().getId(), "is-a");
         Assert.assertEquals(processed.getObject().getId(),

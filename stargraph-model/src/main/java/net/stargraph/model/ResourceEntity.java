@@ -26,16 +26,29 @@ package net.stargraph.model;
  * ==========================License-End===============================
  */
 
-public final class ClassEntity extends LabeledEntity {
-    private boolean complex;
+import java.util.ArrayList;
+import java.util.Collection;
 
-    public ClassEntity(String id, String value, boolean complex) {
+public final class ResourceEntity extends LabeledEntity implements ContextId {
+    private boolean complex;
+    private Collection<String> otherValues;
+
+    public ResourceEntity(String id, String value) {
+        this(id, value, new ArrayList<>());
+    }
+
+    public ResourceEntity(String id, String value, Collection<String> otherValues) {
         super(id, value);
-        this.complex = complex;
+        String[] terms = value.split("\\s+");
+        this.complex = (terms.length > 1);
+        this.otherValues = otherValues;
     }
 
     public boolean isComplex() {
         return complex;
     }
 
+    public Collection<String> getOtherValues() {
+        return otherValues;
+    }
 }

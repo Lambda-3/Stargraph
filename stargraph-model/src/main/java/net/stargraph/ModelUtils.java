@@ -31,7 +31,7 @@ import com.typesafe.config.ConfigRenderOptions;
 import net.stargraph.data.Indexable;
 import net.stargraph.data.processor.Holder;
 import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.KBId;
 import net.stargraph.model.PropertyEntity;
 
@@ -137,8 +137,8 @@ public final class ModelUtils {
         }
     }
 
-    public static InstanceEntity createInstance(String uri) {
-        return new InstanceEntity(uri, extractLabel(uri, true));
+    public static ResourceEntity createResource(String uri) {
+        return new ResourceEntity(uri, extractLabel(uri, true));
     }
 
     public static PropertyEntity createProperty(String uri) {
@@ -146,7 +146,7 @@ public final class ModelUtils {
     }
 
     public static Fact createFact(KBId kbId, String s, String p, String o) {
-        return new Fact(kbId, ModelUtils.createInstance(s), ModelUtils.createProperty(p), ModelUtils.createInstance(o));
+        return new Fact(kbId, ModelUtils.createResource(s), ModelUtils.createProperty(p), ModelUtils.createResource(o));
     }
 
     public static Holder createWrappedFact(KBId kbId, String s, String p, String o) {

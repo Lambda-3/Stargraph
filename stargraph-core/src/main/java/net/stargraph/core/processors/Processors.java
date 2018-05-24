@@ -42,7 +42,7 @@ public final class Processors {
     static {
         registered = new HashMap<String, Class<? extends Processor>>() {{
             put(SinkDuplicateProcessor.name, SinkDuplicateProcessor.class);
-            put(EntityClassifierProcessor.name, EntityClassifierProcessor.class);
+            put(FactClassifierProcessor.name, FactClassifierProcessor.class);
             put(WordNetProcessor.name, WordNetProcessor.class);
             put(RegExFilterProcessor.name, RegExFilterProcessor.class);
             put(StopPropertyFilterProcessor.name, StopPropertyFilterProcessor.class);

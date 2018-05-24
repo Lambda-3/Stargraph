@@ -30,8 +30,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.typesafe.config.Config;
 import net.stargraph.StarGraphException;
-import net.stargraph.model.ClassEntity;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.PropertyEntity;
 import net.stargraph.model.ValueEntity;
 import org.slf4j.Logger;
@@ -120,12 +119,9 @@ public final class Namespace extends TreeMap<String, String> {
 
         if (entry instanceof ValueEntity) {
             return entry;
-        } else if (entry instanceof InstanceEntity) {
-            InstanceEntity e = (InstanceEntity) entry;
-            return (S) new InstanceEntity(expandURI(e.getId()), e.getValue(), e.getOtherValues());
-        } else if (entry instanceof ClassEntity) {
-            ClassEntity e = (ClassEntity) entry;
-            return (S) new ClassEntity(expandURI(e.getId()), e.getValue(), e.isComplex());
+        } else if (entry instanceof ResourceEntity) {
+            ResourceEntity e = (ResourceEntity) entry;
+            return (S) new ResourceEntity(expandURI(e.getId()), e.getValue(), e.getOtherValues());
         } else if (entry instanceof PropertyEntity) {
             PropertyEntity e = (PropertyEntity) entry;
             return (S) new PropertyEntity(expandURI(e.getId()), e.getValue(), e.getHypernyms(), e.getHyponyms(), e.getSynonyms());

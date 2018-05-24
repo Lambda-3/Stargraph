@@ -27,6 +27,7 @@ package net.stargraph.core.ner;
  */
 
 import net.stargraph.model.LabeledEntity;
+import net.stargraph.model.ResourceEntity;
 
 import java.util.Arrays;
 import java.util.List;

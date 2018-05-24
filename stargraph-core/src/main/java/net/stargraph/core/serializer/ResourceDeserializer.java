@@ -29,22 +29,22 @@ package net.stargraph.core.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.KBId;
 
 import java.io.IOException;
 
-class InstanceDeserializer extends AbstractDeserializer<InstanceEntity> {
+class ResourceDeserializer extends AbstractDeserializer<ResourceEntity> {
 
-    InstanceDeserializer(KBId kbId) {
-        super(kbId, InstanceEntity.class);
+    ResourceDeserializer(KBId kbId) {
+        super(kbId, ResourceEntity.class);
     }
 
     @Override
-    public InstanceEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public ResourceEntity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
         String id = node.get("id").asText();
         String value = node.get("value").asText();
-        return new InstanceEntity(id, value);
+        return new ResourceEntity(id, value);
     }
 }

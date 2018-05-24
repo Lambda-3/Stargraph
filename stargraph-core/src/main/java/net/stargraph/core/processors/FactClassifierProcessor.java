@@ -37,12 +37,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public final class EntityClassifierProcessor extends BaseProcessor {
-    public static String name = "entity-classifier";
+public final class FactClassifierProcessor extends BaseProcessor {
+    public static String name = "fact-classifier";
     private static String relationStrType = "is-a";
     private List<String> relations;
 
-    public EntityClassifierProcessor(Config config) {
+    public FactClassifierProcessor(Config config) {
         super(config);
         List<Object> list = getConfig().getList("relations").unwrapped();
         relations = list.stream().map(Objects::toString).collect(Collectors.toList());
@@ -58,9 +58,6 @@ public final class EntityClassifierProcessor extends BaseProcessor {
             predicate = new PropertyEntity(relationStrType, relationStrType);
             if (object instanceof ValueEntity) {
                 throw new IllegalStateException("Expected non-literal for a relation");
-            } else {
-                String[] terms = object.getValue().split("\\s+");
-                object = new ClassEntity(object.getId(), object.getValue(), terms.length > 1);
             }
 
             holder.set(new Fact(fact.getKBId(), fact.getSubject(), predicate, object));

@@ -51,7 +51,7 @@ public final class NERAndLinkingIT {
     @Test
     public void linkObamaTest() {
         List<LinkedNamedEntity> entities = ner.searchAndLink("Barack Obama");
-        Assert.assertEquals(entities.get(0).getEntity(), ModelUtils.createInstance("dbr:Barack_Obama"));
+        Assert.assertEquals(entities.get(0).getEntity(), ModelUtils.createResource("dbr:Barack_Obama"));
     }
 
     @Test

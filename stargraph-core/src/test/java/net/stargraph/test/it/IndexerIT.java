@@ -80,7 +80,7 @@ public final class IndexerIT {
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("president");
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein();
         Scores scores = entitySearcher.classSearch(searchParams, rankParams);
-        ClassEntity expected = new ClassEntity("dbc:Presidents_of_the_United_States", "Presidents of the United States", true);
+        ResourceEntity expected = new ResourceEntity("dbc:Presidents_of_the_United_States", "Presidents of the United States");
         Assert.assertEquals(expected, scores.get(0).getEntry());
     }
 
@@ -88,10 +88,10 @@ public final class IndexerIT {
     public void instanceSearchTest() {
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("baraCk Obuma");
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
-        Scores scores = entitySearcher.instanceSearch(searchParams, rankParams);
+        Scores scores = entitySearcher.resourceSearch(searchParams, rankParams);
 
         Assert.assertEquals(1, scores.size());
-        InstanceEntity expected = new InstanceEntity("dbr:Barack_Obama", "Barack Obama");
+        ResourceEntity expected = new ResourceEntity("dbr:Barack_Obama", "Barack Obama");
         Assert.assertEquals(expected, scores.get(0).getEntry());
     }
 
@@ -110,7 +110,7 @@ public final class IndexerIT {
         ModifiableSearchParams searchParams = ModifiableSearchParams.create("obama").term("school");
         ModifiableRankParams rankParams = ParamsBuilder.word2vec().threshold(Threshold.auto());
 
-        final InstanceEntity obama = new InstanceEntity("dbr:Barack_Obama", "Barack Obama");
+        final ResourceEntity obama = new ResourceEntity("dbr:Barack_Obama", "Barack Obama");
         Scores scores = entitySearcher.pivotedSearch(obama, searchParams, rankParams);
 
         PropertyEntity expected = new PropertyEntity("dbp:education", "education");
@@ -119,8 +119,8 @@ public final class IndexerIT {
 
     @Test
     public void getEntitiesTest() {
-        LabeledEntity obama = entitySearcher.getEntity("obama", "dbr:Barack_Obama");
-        Assert.assertEquals(new InstanceEntity("dbr:Barack_Obama", "Barack Obama"), obama);
+        LabeledEntity obama = entitySearcher.getResourceEntity("obama", "dbr:Barack_Obama");
+        Assert.assertEquals(new ResourceEntity("dbr:Barack_Obama", "Barack Obama"), obama);
     }
 
     @Test

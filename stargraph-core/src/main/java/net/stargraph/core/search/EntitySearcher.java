@@ -31,8 +31,7 @@ import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.Fact;
-import net.stargraph.model.InstanceEntity;
-import net.stargraph.model.LabeledEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ import org.slf4j.MarkerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EntitySearcher {
@@ -56,15 +54,15 @@ public class EntitySearcher {
         this.stargraph = stargraph;
     }
 
-    public LabeledEntity getEntity(String dbId, String id) {
-        List<LabeledEntity> res = getEntities(dbId, Collections.singletonList(id));
+    public ResourceEntity getResourceEntity(String dbId, String id) {
+        List<ResourceEntity> res = getResourceEntities(dbId, Collections.singletonList(id));
         if (res != null && !res.isEmpty()) {
             return res.get(0);
         }
         return null;
     }
 
-    public List<LabeledEntity> getEntities(String dbId, List<String> ids) {
+    public List<ResourceEntity> getResourceEntities(String dbId, List<String> ids) {
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).model(BuiltInModel.ENTITY);
         KBCore core = stargraph.getKBCore(dbId);
 
@@ -79,7 +77,7 @@ public class EntitySearcher {
         // Fetch initial candidates from the search engine
         Scores scores = searcher.search(holder);
 
-        return scores.stream().map(s -> (LabeledEntity)s.getEntry()).collect(Collectors.toList());
+        return scores.stream().map(s -> (ResourceEntity)s.getEntry()).collect(Collectors.toList());
     }
 
     public Scores classSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
@@ -103,12 +101,12 @@ public class EntitySearcher {
         return Rankers.apply(new Scores(classes2Score), rankParams, searchParams.getSearchTerm());
     }
 
-    public Scores instanceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
+    public Scores resourceSearch(ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
         searchParams.model(BuiltInModel.ENTITY);
         KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
         SearchQueryGenerator searchQueryGenerator = core.getSearchQueryGenerator(searchParams.getKbId().getModel());
-        SearchQueryHolder holder = searchQueryGenerator.findEntityInstances(searchParams, FUZZINESS);
+        SearchQueryHolder holder = searchQueryGenerator.findResourceInstances(searchParams, FUZZINESS);
         Searcher searcher = core.getSearcher(searchParams.getKbId().getModel());
 
         // Fetch initial candidates from the search engine
@@ -135,7 +133,7 @@ public class EntitySearcher {
         return Rankers.apply(scores, rankParams, searchParams.getSearchTerm());
     }
 
-    public Scores pivotedSearch(InstanceEntity pivot,
+    public Scores pivotedSearch(ResourceEntity pivot,
                                 ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
         searchParams.model(BuiltInModel.FACT);
         KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());

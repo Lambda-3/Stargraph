@@ -33,6 +33,7 @@ import net.stargraph.core.graph.GraphSearcher;
 import net.stargraph.core.graph.BaseGraphModel;
 import net.stargraph.core.search.EntitySearcher;
 import net.stargraph.model.LabeledEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.ValueEntity;
 import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.query.QueryExecution;
@@ -95,8 +96,8 @@ public final class JenaGraphSearcher implements GraphSearcher {
                             if (!jBinding.get(jVar).isLiteral()) {
                                 String id = jBinding.get(jVar).getURI();
                                 List<LabeledEntity> entities = result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>());
-                                LabeledEntity labeledEntity = ns.isFromMainNS(id) ? entitySearcher.getEntity(dbId, id) : ModelUtils.createInstance(id);
-                                entities.add(labeledEntity);
+                                ResourceEntity resourceEntity = ns.isFromMainNS(id) ? entitySearcher.getResourceEntity(dbId, id) : ModelUtils.createResource(id);
+                                entities.add(resourceEntity);
                             } else {
                                 LiteralLabel lit = jBinding.get(jVar).getLiteral();
                                 ValueEntity valueEntity = new ValueEntity(lit.getLexicalForm(), lit.getDatatype().getURI(), lit.language());

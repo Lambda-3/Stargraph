@@ -28,7 +28,7 @@ package net.stargraph.core.impl.elastic;
 
 import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.SearchQueryHolder;
-import net.stargraph.model.InstanceEntity;
+import net.stargraph.model.ResourceEntity;
 import net.stargraph.rank.ModifiableSearchParams;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.Operator;
@@ -61,7 +61,7 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
     }
 
     @Override
-    public SearchQueryHolder findEntityInstances(ModifiableSearchParams searchParams, int maxEdits) {
+    public SearchQueryHolder findResourceInstances(ModifiableSearchParams searchParams, int maxEdits) {
         QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm())
                 .fuzziness(maxEdits).fuzzyTranspositions(false).operator(Operator.AND);
 
@@ -83,7 +83,7 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
     }
 
     @Override
-    public SearchQueryHolder findPivotFacts(InstanceEntity pivot, ModifiableSearchParams searchParams) {
+    public SearchQueryHolder findPivotFacts(ResourceEntity pivot, ModifiableSearchParams searchParams) {
         QueryBuilder queryBuilder = boolQuery()
                 .should(nestedQuery("s", termQuery("s.id", pivot.getId()), ScoreMode.Max))
                 .should(nestedQuery("o", termQuery("o.id", pivot.getId()), ScoreMode.Max)).minimumNumberShouldMatch(1);
