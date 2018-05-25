@@ -49,6 +49,7 @@ public final class Processors {
             put(LengthFilterProcessor.name, LengthFilterProcessor.class);
             put(CoreferenceResolutionProcessor.name, CoreferenceResolutionProcessor.class);
             put(PassageProcessor.name, PassageProcessor.class);
+            put(ValueGeneratorProcessor.name, ValueGeneratorProcessor.class);
         }};
     }
 
@@ -57,7 +58,7 @@ public final class Processors {
         return create(null, config);
     }
 
-    public static Processor create(Stargraph core, Config config) {
+    public static Processor create(Stargraph stargraph, Config config) {
         if (config == null) {
             throw new IllegalArgumentException("config is required.");
         }
@@ -80,10 +81,16 @@ public final class Processors {
 
         try {
 
-            // use special constructor for PassageProcessor (to pass core-reference)
-            if ((core != null) && (c.equals(PassageProcessor.class))) {
+            // use special constructor for PassageProcessor
+            if ((stargraph != null) && (c.equals(PassageProcessor.class))) {
                 Constructor<? extends Processor> constructor = c.getConstructor(Stargraph.class, Config.class);
-                return constructor.newInstance(core, config);
+                return constructor.newInstance(stargraph, config);
+            }
+
+            // use special constructor for ValueGeneratorProcessor
+            if ((stargraph != null) && (c.equals(ValueGeneratorProcessor.class))) {
+                Constructor<? extends Processor> constructor = c.getConstructor(Stargraph.class, Config.class);
+                return constructor.newInstance(stargraph, config);
             }
 
             Constructor<? extends Processor> constructor = c.getConstructor(Config.class);

@@ -31,6 +31,7 @@ import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
 import net.stargraph.model.BuiltInModel;
 import net.stargraph.model.Fact;
+import net.stargraph.model.PropertyEntity;
 import net.stargraph.model.ResourceEntity;
 import net.stargraph.rank.*;
 import org.slf4j.Logger;
@@ -134,7 +135,7 @@ public class EntitySearcher {
     }
 
     public Scores pivotedSearch(ResourceEntity pivot,
-                                ModifiableSearchParams searchParams, ModifiableRankParams rankParams) {
+                                ModifiableSearchParams searchParams, ModifiableRankParams rankParams, boolean returnBestMatchEntities) {
         searchParams.model(BuiltInModel.FACT);
         KBCore core = stargraph.getKBCore(searchParams.getKbId().getId());
 
@@ -149,6 +150,7 @@ public class EntitySearcher {
         // Fetch initial candidates from the search engine
         Scores scores = searcher.search(holder);
 
+
         // We have to remap the facts to properties, the real target of the ranker call.
         // Thus we're discarding the score values from the underlying search engine. Shall we?
         Scores propScores = new Scores(scores.stream()
@@ -157,6 +159,32 @@ public class EntitySearcher {
                 .map(p -> new Score(p, 0))
                 .collect(Collectors.toList()));
 
-        return Rankers.apply(propScores, rankParams, searchParams.getSearchTerm());
+        // Re-Rank
+        Scores rankedScores = Rankers.apply(propScores, rankParams, searchParams.getSearchTerm());
+        Scores result = rankedScores;
+
+        if (returnBestMatchEntities) {
+            if (rankedScores.size() <= 0) {
+                return new Scores();
+            }
+            Score bestScore = rankedScores.get(0);
+            PropertyEntity bestProperty = (PropertyEntity) bestScore.getEntry();
+            logger.debug("Best match is {}, returning instances ..", bestProperty);
+
+            result = new Scores();
+            for (Score score : scores) {
+                Fact fact = (Fact)score.getEntry();
+                if (fact.getPredicate().equals(bestProperty)) {
+                    if (fact.getSubject().equals(pivot)) {
+                        result.add(new Score(fact.getObject(), bestScore.getValue()));
+                    } else {
+                        result.add(new Score(fact.getSubject(), bestScore.getValue()));
+                    }
+                }
+            }
+
+        }
+
+        return result;
     }
 }

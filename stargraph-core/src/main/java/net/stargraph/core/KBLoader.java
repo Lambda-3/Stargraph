@@ -165,7 +165,8 @@ public final class KBLoader {
             List<KBId> successful = new ArrayList<>();
             List<KBId> failing = new ArrayList<>();
 
-            core.getKBIds().forEach(kbId -> { // why not parallel?
+            //TODO load in correct order! (documents after entities, entities after facts)
+            core.getKBIds().forEach(kbId -> {
                 try {
                     Indexer indexer = core.getIndexer(kbId.getModel());
                     indexer.load(true, -1);
