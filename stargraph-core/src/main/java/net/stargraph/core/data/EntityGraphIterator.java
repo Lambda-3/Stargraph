@@ -77,12 +77,15 @@ public final class EntityGraphIterator implements Iterator<Indexable> {
             currentNode = innerIt.next();
             //skipping literals and blank nodes.
             if ((!currentNode.isBlank() && !currentNode.isLiteral())) {
-                 if (namespace.isFromMainNS(currentNode.getURI())) {
-                     return true;
-                 }
-                 else {
-                     logger.trace(marker, "Discarded. NOT from main NS: [{}]", currentNode.getURI());
-                 }
+
+                //TODO re-enable?
+                //if (namespace.isFromMainNS(currentNode.getURI())) {
+                //    return true;
+                //}
+                //else {
+                //    logger.info(marker, "Discarded. NOT from main NS: [{}]", currentNode.getURI());
+                //}
+                return true;
             }
         }
 

@@ -96,7 +96,15 @@ public final class JenaGraphSearcher implements GraphSearcher {
                             if (!jBinding.get(jVar).isLiteral()) {
                                 String id = jBinding.get(jVar).getURI();
                                 List<LabeledEntity> entities = result.computeIfAbsent(jVar.getVarName(), (v) -> new ArrayList<>());
-                                ResourceEntity resourceEntity = ns.isFromMainNS(id) ? entitySearcher.getResourceEntity(dbId, id) : ModelUtils.createResource(id);
+
+                                //TODO re-enable?
+                                //ResourceEntity resourceEntity = ns.isFromMainNS(id) ? entitySearcher.getResourceEntity(dbId, id) : ModelUtils.createResource(id);
+
+                                ResourceEntity resourceEntity = entitySearcher.getResourceEntity(dbId, id);
+                                if (resourceEntity == null) {
+                                    resourceEntity = ModelUtils.createResource(id);
+                                }
+
                                 entities.add(resourceEntity);
                             } else {
                                 LiteralLabel lit = jBinding.get(jVar).getLiteral();
