@@ -30,6 +30,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.stargraph.ModelUtils;
 import net.stargraph.core.processors.CoreferenceResolutionProcessor;
+import net.stargraph.core.processors.FactClassifierProcessor;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.data.Indexable;
 import net.stargraph.data.processor.FatalProcessorException;
@@ -73,7 +74,7 @@ public final class ProcessorsTest {
 
         Assert.assertEquals(((ResourceEntity) processed.getSubject()).getId(),
                 "http://dbpedia.org/resource/FC_Oberlausitz_Neugersdorf");
-        Assert.assertEquals(processed.getPredicate().getId(), "is-a");
+        Assert.assertEquals(processed.getPredicate().getId(), FactClassifierProcessor.CLASS_RELATION_STR);
         Assert.assertEquals(processed.getObject().getId(),
                 "http://dbpedia.org/resource/Category:Football_clubs_in_Germany");
     }

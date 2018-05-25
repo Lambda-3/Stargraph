@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 public final class FactClassifierProcessor extends BaseProcessor {
     public static String name = "fact-classifier";
-    private static String relationStrType = "is-a";
+    public static final String CLASS_RELATION_STR = "is-a";
     private List<String> relations;
 
     public FactClassifierProcessor(Config config) {
@@ -55,7 +55,7 @@ public final class FactClassifierProcessor extends BaseProcessor {
         LabeledEntity object = fact.getObject();
 
         if (relations.contains(predicate.getId())) {
-            predicate = new PropertyEntity(relationStrType, relationStrType);
+            predicate = new PropertyEntity(CLASS_RELATION_STR, CLASS_RELATION_STR);
             if (object instanceof ValueEntity) {
                 throw new IllegalStateException("Expected non-literal for a relation");
             }
@@ -72,7 +72,7 @@ public final class FactClassifierProcessor extends BaseProcessor {
     /**
      * Attention: Assumes the usage is considered after this processor has being applied.
      */
-    public static boolean isRelation(PropertyEntity p) {
-        return p.getId().equalsIgnoreCase(relationStrType);
+    public static boolean isClassRelation(PropertyEntity p) {
+        return p.getId().equalsIgnoreCase(CLASS_RELATION_STR);
     }
 }

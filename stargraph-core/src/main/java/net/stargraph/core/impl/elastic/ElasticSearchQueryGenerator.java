@@ -26,6 +26,7 @@ package net.stargraph.core.impl.elastic;
  * ==========================License-End===============================
  */
 
+import net.stargraph.core.processors.FactClassifierProcessor;
 import net.stargraph.core.search.SearchQueryGenerator;
 import net.stargraph.core.search.SearchQueryHolder;
 import net.stargraph.model.ResourceEntity;
@@ -45,7 +46,7 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
 
         QueryBuilder queryBuilder = boolQuery()
                 .must(nestedQuery("p",
-                        termQuery("p.id", "is-a"),  ScoreMode.Max))
+                        termQuery("p.id", FactClassifierProcessor.CLASS_RELATION_STR),  ScoreMode.Max))
                 .should(nestedQuery("o",
                         matchQuery("o.value", searchParams.getSearchTerm()),  ScoreMode.Max))
                 .minimumShouldMatch("1");
