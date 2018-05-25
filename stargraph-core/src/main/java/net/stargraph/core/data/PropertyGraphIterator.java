@@ -33,7 +33,7 @@ import net.stargraph.model.KBId;
 import net.stargraph.model.PropertyEntity;
 import org.apache.jena.rdf.model.Statement;
 
-import static net.stargraph.ModelUtils.createProperty;
+import static net.stargraph.ModelCreator.createProperty;
 
 final class PropertyGraphIterator extends GraphIterator<Indexable> {
 

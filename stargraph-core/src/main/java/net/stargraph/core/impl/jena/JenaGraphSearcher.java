@@ -26,6 +26,7 @@ package net.stargraph.core.impl.jena;
  * ==========================License-End===============================
  */
 
+import net.stargraph.ModelCreator;
 import net.stargraph.ModelUtils;
 import net.stargraph.core.Namespace;
 import net.stargraph.core.Stargraph;
@@ -102,7 +103,7 @@ public final class JenaGraphSearcher implements GraphSearcher {
 
                                 ResourceEntity resourceEntity = entitySearcher.getResourceEntity(dbId, id);
                                 if (resourceEntity == null) {
-                                    resourceEntity = ModelUtils.createResource(id);
+                                    resourceEntity = ModelCreator.createResource(id);
                                 }
 
                                 entities.add(resourceEntity);

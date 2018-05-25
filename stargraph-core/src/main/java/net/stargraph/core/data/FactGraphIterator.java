@@ -33,8 +33,8 @@ import net.stargraph.model.*;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Statement;
 
-import static net.stargraph.ModelUtils.createResource;
-import static net.stargraph.ModelUtils.createProperty;
+import static net.stargraph.ModelCreator.createProperty;
+import static net.stargraph.ModelCreator.createResource;
 
 final class FactGraphIterator extends GraphIterator<Indexable> {
 

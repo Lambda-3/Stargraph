@@ -28,6 +28,7 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import net.stargraph.ModelCreator;
 import net.stargraph.ModelUtils;
 import net.stargraph.core.processors.Processors;
 import net.stargraph.core.processors.StopPropertyFilterProcessor;
@@ -49,7 +50,7 @@ public class StopPropertyFilterTest {
     public void simpleTest() {
         Config cfg = buildConfig(Collections.singletonList("^rdf:type$"));
 
-        Holder holder = ModelUtils.createWrappedProperty(kbId, "rdf:type");
+        Holder holder = ModelCreator.createWrappedProperty(kbId, "rdf:type");
         Assert.assertFalse(holder.isSinkable());
 
         Processor processor = Processors.create(cfg);
@@ -62,7 +63,7 @@ public class StopPropertyFilterTest {
     public void noFilterTest() {
         Config cfg = buildConfig(Collections.emptyList());
 
-        Holder holder = ModelUtils.createWrappedProperty(kbId, "rdf:type");
+        Holder holder = ModelCreator.createWrappedProperty(kbId, "rdf:type");
         Assert.assertFalse(holder.isSinkable());
 
         Processor processor = Processors.create(cfg);
@@ -75,7 +76,7 @@ public class StopPropertyFilterTest {
     public void noMatchTest() {
         Config cfg = buildConfig(Collections.emptyList());
 
-        Holder holder = ModelUtils.createWrappedProperty(kbId, "rdf:x");
+        Holder holder = ModelCreator.createWrappedProperty(kbId, "rdf:x");
         Assert.assertFalse(holder.isSinkable());
 
         Processor processor = Processors.create(cfg);

@@ -26,12 +26,11 @@ package net.stargraph.test;
  * ==========================License-End===============================
  */
 
+import net.stargraph.ModelCreator;
 import net.stargraph.ModelUtils;
 import net.stargraph.core.Namespace;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static net.stargraph.ModelUtils.extractLabel;
 
 /**
  * Among other tests this runs the label extraction against the dump file dbpedia-2016-labels_en.txt.bz2.
@@ -45,73 +44,73 @@ public final class LabelExtractionTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void namespaceFailTest() {
-        extractLabel("http://r.co", "http://dbpedia.com/AnyLabel");
+        ModelCreator.extractLabel("http://r.co", "http://dbpedia.com/AnyLabel");
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void emptyFail1Test() {
-        extractLabel("", "http://dbpedia.com/AnyLabel");
+        ModelCreator.extractLabel("", "http://dbpedia.com/AnyLabel");
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void emptyFail2Test() {
-        extractLabel(null, "http://dbpedia.com/AnyLabel");
+        ModelCreator.extractLabel(null, "http://dbpedia.com/AnyLabel");
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void namespaceFail3Test() {
-        extractLabel("http://r.co", "");
+        ModelCreator.extractLabel("http://r.co", "");
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void namespaceFail4Test() {
-        extractLabel("http://r.co", null);
+        ModelCreator.extractLabel("http://r.co", null);
     }
 
     @Test
     public void shortLabelTest() {
-        Assert.assertEquals(extractLabel("co:", "co:x"), "x");
+        Assert.assertEquals(ModelCreator.extractLabel("co:", "co:x"), "x");
     }
 
     @Test
     public void shortLabel2Test() {
-        Assert.assertEquals(extractLabel("co:xYz", true), "x Yz");
+        Assert.assertEquals(ModelCreator.extractLabel("co:xYz", true), "x Yz");
     }
 
     @Test
     public void mapAndLabelExtractionTest() {
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Template:Editnotices/Page/Barack_Obama");
-        Assert.assertEquals(ModelUtils.extractLabel(uri), "Editnotices/Page/Barack_Obama");
+        Assert.assertEquals(ModelCreator.extractLabel(uri), "Editnotices/Page/Barack_Obama");
     }
 
     @Test
     public void pathOnLabelExtractionTest() {
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Mount_Wellington,_BC/Canada");
-        Assert.assertEquals(ModelUtils.extractLabel(uri), "Mount Wellington, BC/Canada");
+        Assert.assertEquals(ModelCreator.extractLabel(uri), "Mount Wellington, BC/Canada");
     }
 
     @Test
     public void labelWithParenthesisExtractionTest() {
         String uri = ns.shrinkURI("http://dbpedia.org/resource/Project_Agreements_(Project_Labor_Agreements_–_Canada)");
-        Assert.assertEquals(ModelUtils.extractLabel(uri), "Project Agreements (Project Labor Agreements – Canada)");
+        Assert.assertEquals(ModelCreator.extractLabel(uri), "Project Agreements (Project Labor Agreements – Canada)");
     }
 
     @Test
     public void doubleSlashTest() {
-        Assert.assertEquals(extractLabel("co:", "co:x/y/z"), "x/y/z");
-        Assert.assertEquals(extractLabel("http://stargraph.net/", "http://stargraph.net/x/y/z"), "x/y/z");
-        Assert.assertEquals(extractLabel("http://stargraph.net/", "http://stargraph.net/x/y_z"), "x/y z");
+        Assert.assertEquals(ModelCreator.extractLabel("co:", "co:x/y/z"), "x/y/z");
+        Assert.assertEquals(ModelCreator.extractLabel("http://stargraph.net/", "http://stargraph.net/x/y/z"), "x/y/z");
+        Assert.assertEquals(ModelCreator.extractLabel("http://stargraph.net/", "http://stargraph.net/x/y_z"), "x/y z");
     }
 
     @Test
     public void camelCaseTest() {
-        Assert.assertEquals(extractLabel("co:", "co:AbrahamLincoln", true), "Abraham Lincoln");
-        Assert.assertEquals(extractLabel("co:", "co:AbrahamLincoln", false), "AbrahamLincoln");
+        Assert.assertEquals(ModelCreator.extractLabel("co:", "co:AbrahamLincoln", true), "Abraham Lincoln");
+        Assert.assertEquals(ModelCreator.extractLabel("co:", "co:AbrahamLincoln", false), "AbrahamLincoln");
     }
 
     @Test
     public void sampleTest() {
-        Assert.assertEquals(extractLabel("http://dbpedia.org/resource/",
+        Assert.assertEquals(ModelCreator.extractLabel("http://dbpedia.org/resource/",
                 "http://dbpedia.org/resource/Democratic_Party_(United_States)"), "Democratic Party (United States)");
     }
 

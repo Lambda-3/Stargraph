@@ -27,7 +27,7 @@ package net.stargraph.test.it;
  */
 
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.ModelUtils;
+import net.stargraph.ModelCreator;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.ner.LinkedNamedEntity;
 import net.stargraph.core.ner.NER;
@@ -51,7 +51,7 @@ public final class NERAndLinkingIT {
     @Test
     public void linkObamaTest() {
         List<LinkedNamedEntity> entities = ner.searchAndLink("Barack Obama");
-        Assert.assertEquals(entities.get(0).getEntity(), ModelUtils.createResource("dbr:Barack_Obama"));
+        Assert.assertEquals(entities.get(0).getEntity(), ModelCreator.createResource("dbr:Barack_Obama"));
     }
 
     @Test

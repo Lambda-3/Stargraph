@@ -28,7 +28,7 @@ package net.stargraph.test;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import net.stargraph.ModelUtils;
+import net.stargraph.ModelCreator;
 import net.stargraph.core.processors.CoreferenceResolutionProcessor;
 import net.stargraph.core.processors.FactClassifierProcessor;
 import net.stargraph.core.processors.Processors;
@@ -59,7 +59,7 @@ public final class ProcessorsTest {
     public void simpleProcessorChainTest() {
         final KBId kbId = KBId.of("obama", "facts");
 
-        Holder holder = ModelUtils.createWrappedFact(kbId,
+        Holder holder = ModelCreator.createWrappedFact(kbId,
                 "http://dbpedia.org/resource/FC_Oberlausitz_Neugersdorf",
                 "http://purl.org/dc/terms/subject",
                 "http://dbpedia.org/resource/Category:Football_clubs_in_Germany");
@@ -83,7 +83,7 @@ public final class ProcessorsTest {
     @Test
     public void duplicateProcessorTest() {
         KBId kbId = KBId.of("obama", "facts");
-        PropertyEntity prop = ModelUtils.createProperty("http://dbpedia.org/property/president");
+        PropertyEntity prop = ModelCreator.createProperty("http://dbpedia.org/property/president");
         Processor processor = Processors.create(config.withOnlyPath("sink-duplicate"));
         Holder holder = new Indexable(prop, kbId);
         processor.run(holder);

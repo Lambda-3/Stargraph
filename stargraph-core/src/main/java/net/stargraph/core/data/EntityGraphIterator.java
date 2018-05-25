@@ -46,7 +46,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import static net.stargraph.ModelUtils.createResource;
+import static net.stargraph.ModelCreator.createResource;
 
 public final class EntityGraphIterator implements Iterator<Indexable> {
     private Logger logger = LoggerFactory.getLogger(getClass());
