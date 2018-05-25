@@ -133,8 +133,8 @@ public final class ModelCreator {
         return new Indexable(propertyEntity, kbId);
     }
 
-    private static String getNamespace(String uriStr) {
-        if (uriStr.startsWith("http://")) {
+    public static String getNamespace(String uriStr) {
+        if (uriStr.toLowerCase().startsWith("http://") || uriStr.toLowerCase().startsWith("https://")) {
             return SplitIRI.namespace(uriStr);
         }
         else {
