@@ -180,9 +180,10 @@ public final class AnalysisStep {
     private Replacement replace(Pattern pattern, String target, String replacementStr) {
         try {
             String str = target.trim();
+            logger.debug(marker, "Target: '{}'", str);
             Matcher matcher = pattern.matcher(str);
             if (matcher.matches()) {
-                logger.debug(marker, "{} on '{}' with '{}'", pattern, str, replacementStr);
+                logger.debug(marker, "Replace '{}' ---> '{}'", pattern, replacementStr);
                 // As we expect just one capture capture per pattern this will replaceWithModelType the capture by the desired replacement.
                 StringBuffer sb = new StringBuffer();
                 String capturedStr = matcher.group(1);
@@ -190,7 +191,7 @@ public final class AnalysisStep {
                 matcher.appendTail(sb);
                 return new Replacement(sb.toString(), capturedStr);
             } else {
-                logger.warn(marker, "Nothing changed: {} on '{}' with '{}'", pattern, str, replacementStr);
+                logger.warn(marker, "Not replaced: '{}' ---> '{}'", pattern, replacementStr);
             }
             return new Replacement(target, null);
         }
