@@ -10,6 +10,8 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.TermsQuery;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 
 import java.util.ArrayList;
@@ -37,7 +39,12 @@ public class LuceneSearchQueryGenerator implements SearchQueryGenerator {
     @Override
     public SearchQueryHolder findResourceInstances(ModifiableSearchParams searchParams, int maxEdits) {
         //Query query = new FuzzyQuery(new Term("value", searchParams.getSearchTerm()), maxEdits, 0, 50, false); // This does not take into account multiple words of the search term
-        Query query = fuzzyPhraseSearch("value", searchParams.getSearchTerm(), maxEdits);
+
+        BooleanQuery query = new BooleanQuery.Builder()
+                .add(fuzzyPhraseSearch("value", searchParams.getSearchTerm(), maxEdits), BooleanClause.Occur.SHOULD)
+                .add(fuzzyPhraseSearch("otherValues", searchParams.getSearchTerm(), maxEdits), BooleanClause.Occur.SHOULD)
+                .setMinimumNumberShouldMatch(1)
+                .build();
 
         return new LuceneQueryHolder(query, searchParams);
     }
@@ -69,7 +76,7 @@ public class LuceneSearchQueryGenerator implements SearchQueryGenerator {
         queryStr.append(")");
 
         try {
-            return new ComplexPhraseQueryParser("value", new StandardAnalyzer()).parse(queryStr.toString());
+            return new ComplexPhraseQueryParser(field, new StandardAnalyzer()).parse(queryStr.toString());
         } catch (ParseException e) {
             throw new StarGraphException(e);
         }

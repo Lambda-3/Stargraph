@@ -49,7 +49,7 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
                         termQuery("p.id", FactClassifierProcessor.CLASS_RELATION_STR),  ScoreMode.Max))
                 .should(nestedQuery("o",
                         matchQuery("o.value", searchParams.getSearchTerm()),  ScoreMode.Max))
-                .minimumShouldMatch("1");
+                .minimumNumberShouldMatch(1);
 
         return new ElasticQueryHolder(queryBuilder, searchParams);
     }
@@ -63,8 +63,12 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
 
     @Override
     public SearchQueryHolder findResourceInstances(ModifiableSearchParams searchParams, int maxEdits) {
-        QueryBuilder queryBuilder = matchQuery("value", searchParams.getSearchTerm())
-                .fuzziness(maxEdits).fuzzyTranspositions(false).operator(Operator.AND);
+        QueryBuilder queryBuilder = boolQuery()
+                .should(matchQuery("value", searchParams.getSearchTerm())
+                        .fuzziness(maxEdits).fuzzyTranspositions(false).operator(Operator.AND))
+                .should(matchQuery("otherValues", searchParams.getSearchTerm())
+                        .fuzziness(maxEdits).fuzzyTranspositions(false).operator(Operator.AND))
+                .minimumNumberShouldMatch(1);;
 
         return new ElasticQueryHolder(queryBuilder, searchParams);
     }
@@ -87,7 +91,8 @@ public class ElasticSearchQueryGenerator implements SearchQueryGenerator {
     public SearchQueryHolder findPivotFacts(ResourceEntity pivot, ModifiableSearchParams searchParams) {
         QueryBuilder queryBuilder = boolQuery()
                 .should(nestedQuery("s", termQuery("s.id", pivot.getId()), ScoreMode.Max))
-                .should(nestedQuery("o", termQuery("o.id", pivot.getId()), ScoreMode.Max)).minimumNumberShouldMatch(1);
+                .should(nestedQuery("o", termQuery("o.id", pivot.getId()), ScoreMode.Max))
+                .minimumNumberShouldMatch(1);
 
         return new ElasticQueryHolder(queryBuilder, searchParams);
     }
