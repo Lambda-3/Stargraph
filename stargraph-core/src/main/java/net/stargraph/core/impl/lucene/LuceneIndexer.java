@@ -29,8 +29,8 @@ package net.stargraph.core.impl.lucene;
 import net.stargraph.StarGraphException;
 import net.stargraph.core.Stargraph;
 import net.stargraph.core.index.BaseIndexer;
-import net.stargraph.model.ResourceEntity;
 import net.stargraph.model.KBId;
+import net.stargraph.model.ResourceEntity;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -143,6 +143,10 @@ public final class LuceneIndexer extends BaseIndexer {
             ResourceEntity entity = (ResourceEntity)data;
             doc.add(new StringField("id", entity.getId(), Field.Store.YES));
             doc.add(new TextField("value", entity.getValue(), Field.Store.YES));
+            doc.add(new StringField("complex", entity.isComplex()? "true": "false", Field.Store.YES));
+            for (String otherValue : entity.getOtherValues()) {
+                doc.add(new TextField("otherValues", otherValue, Field.Store.YES));
+            }
 
             return doc;
         }
