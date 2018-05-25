@@ -56,6 +56,10 @@ public final class IndraRanker extends BaseRanker {
 
     @Override
     Scores doScore(Scores inputScores, Rankable target) {
+        if (inputScores.size() <= 0) {
+            return inputScores;
+        }
+
         List<TextPair> pairs = inputScores.stream()
                 .map(score -> new TextPair(score.getRankableView().getValue(), target.getValue()))
                 .collect(Collectors.toList());
