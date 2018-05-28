@@ -120,6 +120,9 @@ public final class SPARQLQueryBuilder {
         triplePatterns.forEach(triplePattern -> {
 
             String[] components = triplePattern.getPattern().split("\\s");
+
+
+            // TODO (?) The mappings for predicates may be retrieved by pivotedSearch, which returns bidirectional predicates (e.h. has-wife, wife-of). Here, this fact is not considered.
             List<String> sURIs = placeHolder2URIs(components[0]);
             List<String> pURIs = placeHolder2URIs(components[1]);
             List<String> oURIs = placeHolder2URIs(components[2]);
