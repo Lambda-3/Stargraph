@@ -232,14 +232,20 @@ public final class QueryEngine {
     }
 
     private void resolve(Triple triple, SPARQLQueryBuilder builder) {
+        logger.debug(marker, "Resolve triple {}", triple);
+
         if (triple.p.getModelType() != DataModelType.TYPE) {
             // if predicate is not a type assume: I (C|P) V pattern
+            logger.debug(marker, "Assume 'I (C|P) V' pattern");
+
             ResourceEntity pivot = resolvePivot(triple.s, builder);
             pivot = pivot != null ? pivot : resolvePivot(triple.o, builder);
             resolvePredicate(pivot, triple.p, builder);
         }
         else {
             // Probably is: V T C
+            logger.debug(marker, "Assume 'V T C' pattern");
+
             DataModelBinding binding = triple.s.getModelType() == DataModelType.VARIABLE ? triple.o : triple.s;
             resolveClass(binding, builder);
         }
@@ -247,28 +253,40 @@ public final class QueryEngine {
 
     private void resolveClass(DataModelBinding binding, SPARQLQueryBuilder builder) {
         if (binding.getModelType() == DataModelType.CLASS) {
+            final int LIMIT = 3;
 
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = entitySearcher.classSearch(searchParams, rankParams);
-            builder.add(binding, scores.stream().limit(3).collect(Collectors.toList()));
+
+            logger.debug(marker, "Resolved class, searching for term '{}' (classSearch)", searchParams.getSearchTerm());
+            logger.debug(marker, "Results: {}", scores);
+            logger.debug(marker, "Map {} to binding {}", scores.stream().limit(LIMIT).collect(Collectors.toList()), binding);
+            builder.add(binding, scores.stream().limit(LIMIT).collect(Collectors.toList()));
         }
     }
 
     private void resolvePredicate(ResourceEntity pivot, DataModelBinding binding, SPARQLQueryBuilder builder) {
         if ((binding.getModelType() == DataModelType.CLASS
                 || binding.getModelType() == DataModelType.PROPERTY) && !builder.isResolved(binding)) {
+            final int LIMIT = 6;
 
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.word2vec();
             Scores scores = entitySearcher.pivotedSearch(pivot, searchParams, rankParams, false);
-            builder.add(binding, scores.stream().limit(6).collect(Collectors.toList()));
+
+            logger.debug(marker, "Resolved predicate for pivot {}, searching for term '{}' (pivotedSearch)", pivot, searchParams.getSearchTerm());
+            logger.debug(marker, "Results: {}", scores);
+            logger.debug(marker, "Map {} to binding {}", scores.stream().limit(LIMIT).collect(Collectors.toList()), binding);
+            builder.add(binding, scores.stream().limit(LIMIT).collect(Collectors.toList()));
         }
     }
 
     private ResourceEntity resolvePivot(DataModelBinding binding, SPARQLQueryBuilder builder) {
         List<Score> mappings = builder.getMappings(binding);
         if (!mappings.isEmpty()) {
+            logger.debug(marker, "Pivot was already resolved");
+            logger.debug(marker, "Return " + mappings.get(0));
             return (ResourceEntity)mappings.get(0).getEntry();
         }
 
@@ -277,6 +295,10 @@ public final class QueryEngine {
             ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(binding.getTerm());
             ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
             Scores scores = entitySearcher.resourceSearch(searchParams, rankParams);
+
+            logger.debug(marker, "Resolved pivot, searching for term '{}' (resourceSearch)", searchParams.getSearchTerm());
+            logger.debug(marker, "Results: {}", scores);
+            logger.debug(marker, "Map {} to binding {}", scores.get(0), binding);
             ResourceEntity instance = (ResourceEntity) scores.get(0).getEntry();
             builder.add(binding, Collections.singletonList(scores.get(0)));
             return instance;
@@ -289,6 +311,10 @@ public final class QueryEngine {
         ModifiableSearchParams searchParams = ModifiableSearchParams.create(dbId).term(instanceTerm);
         ModifiableRankParams rankParams = ParamsBuilder.levenshtein(); // threshold defaults to auto
         Scores scores = entitySearcher.resourceSearch(searchParams, rankParams);
+
+        logger.debug(marker, "Resolve instance/resource, searching for term '{}' (resourceSearch)", searchParams.getSearchTerm());
+        logger.debug(marker, "Results: {}", scores);
+        logger.debug(marker, "Return: {}", scores.get(0));
         return (ResourceEntity) scores.get(0).getEntry();
     }
 
