@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +111,7 @@ public class SGraphModel extends BaseGraphModel {
     @Override
     public void doWrite(WriteTransaction writeTransaction) {
         if (inReadTransaction()) {
-            throw new InvalidStateException("Currently in read transaction.");
+            throw new IllegalStateException("Currently in read transaction.");
         }
 
         boolean initTransaction = !inTransaction();

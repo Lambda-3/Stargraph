@@ -28,8 +28,6 @@ package net.stargraph.core.graph;
 
 import net.stargraph.model.GraphModel;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.shared.AddDeniedException;
 
 import java.io.IOException;
 
