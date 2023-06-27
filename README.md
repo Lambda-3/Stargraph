@@ -1,5 +1,7 @@
 ![](stargraph_logo2_black.png)
 
+(_All dependabot alerts are merged, please be advised that the new library versions are untested._)
+
 Table of Contents
 =================
 
