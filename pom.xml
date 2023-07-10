@@ -43,7 +43,7 @@
         <slf4j.version>2.0.7</slf4j.version>
         <logback.version>1.4.8</logback.version>
         <jackson.version>2.15.2</jackson.version>
-        <jena.version>4.8.0</jena.version>
+        <jena.version>4.9.0</jena.version>
         <jersey.version>3.1.2</jersey.version>
         <license.licenseName>mit</license.licenseName>
     </properties>
