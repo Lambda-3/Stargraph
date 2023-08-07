@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>2.0.7</slf4j.version>
-        <logback.version>1.4.8</logback.version>
+        <logback.version>1.4.9</logback.version>
         <jackson.version>2.15.2</jackson.version>
         <jena.version>4.9.0</jena.version>
         <jersey.version>3.1.3</jersey.version>
