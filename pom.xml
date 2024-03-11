@@ -41,8 +41,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>2.0.12</slf4j.version>
-        <logback.version>1.5.2</logback.version>
-        <jackson.version>2.16.1</jackson.version>
+        <logback.version>1.5.3</logback.version>
+        <jackson.version>2.16.2</jackson.version>
         <jena.version>4.10.0</jena.version>
         <jersey.version>3.1.5</jersey.version>
         <license.licenseName>mit</license.licenseName>
@@ -191,7 +191,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.7.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
