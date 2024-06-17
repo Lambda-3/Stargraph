@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <es.version>7.17.21</es.version>
+        <es.version>7.17.22</es.version>
         <corenlp.version>4.5.7</corenlp.version>
         <graphene.version>2.0.0-SNAPSHOT</graphene.version>
         <lucene.version>8.11.3</lucene.version>
