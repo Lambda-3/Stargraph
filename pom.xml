@@ -44,7 +44,7 @@
         <logback.version>1.5.16</logback.version>
         <jackson.version>2.18.2</jackson.version>
         <jena.version>5.2.0</jena.version>
-        <jersey.version>3.1.9</jersey.version>
+        <jersey.version>3.1.10</jersey.version>
         <license.licenseName>mit</license.licenseName>
     </properties>
 
