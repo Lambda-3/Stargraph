@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.17</logback.version>
+        <logback.version>1.5.18</logback.version>
         <jackson.version>2.18.3</jackson.version>
         <jena.version>5.3.0</jena.version>
         <jersey.version>3.1.10</jersey.version>
@@ -257,7 +257,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.4.0-jre</version>
+                <version>33.4.5-jre</version>
             </dependency>
 
             <dependency>
